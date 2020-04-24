@@ -1,4 +1,4 @@
-defmodule Cashtray.Accounts.Entity do
+defmodule Cashtray.Entities.Entity do
   use Ecto.Schema
   import Ecto.Changeset
 
