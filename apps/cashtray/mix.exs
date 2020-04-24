@@ -38,7 +38,8 @@ defmodule Cashtray.MixProject do
     [
       {:ecto_sql, "~> 3.1"},
       {:postgrex, ">= 0.0.0"},
-      {:jason, "~> 1.0"}
+      {:jason, "~> 1.0"},
+      {:argon2_elixir, "~> 2.3"}
     ]
   end
 

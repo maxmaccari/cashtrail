@@ -6,9 +6,21 @@ defmodule Cashtray.AccountsTest do
   describe "users" do
     alias Cashtray.Accounts.User
 
-    @valid_attrs %{email: "some email", first_name: "some first_name", last_name: "some last_name", password_hash: "some password_hash"}
-    @update_attrs %{email: "some updated email", first_name: "some updated first_name", last_name: "some updated last_name", password_hash: "some updated password_hash"}
-    @invalid_attrs %{email: nil, first_name: nil, last_name: nil, password_hash: nil}
+    @valid_attrs %{
+      email: "some email",
+      first_name: "some first_name",
+      last_name: "some last_name",
+      password: "some password",
+      password_confirmation: "some password"
+    }
+    @update_attrs %{
+      email: "some updated email",
+      first_name: "some updated first_name",
+      last_name: "some updated last_name",
+      password: "updated password",
+      password_confirmation: "updated password"
+    }
+    @invalid_attrs %{email: nil, first_name: nil, last_name: nil, password: nil}
 
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =
@@ -16,7 +28,7 @@ defmodule Cashtray.AccountsTest do
         |> Enum.into(@valid_attrs)
         |> Accounts.create_user()
 
-      user
+      %{user | password: nil}
     end
 
     test "list_users/0 returns all users" do
@@ -34,7 +46,7 @@ defmodule Cashtray.AccountsTest do
       assert user.email == "some email"
       assert user.first_name == "some first_name"
       assert user.last_name == "some last_name"
-      assert user.password_hash == "some password_hash"
+      assert user.password_hash != nil
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -42,12 +54,12 @@ defmodule Cashtray.AccountsTest do
     end
 
     test "update_user/2 with valid data updates the user" do
-      user = user_fixture()
+      user = %{password_hash: old_password_hash} = user_fixture()
       assert {:ok, %User{} = user} = Accounts.update_user(user, @update_attrs)
       assert user.email == "some updated email"
       assert user.first_name == "some updated first_name"
       assert user.last_name == "some updated last_name"
-      assert user.password_hash == "some updated password_hash"
+      assert user.password_hash != old_password_hash
     end
 
     test "update_user/2 with invalid data returns error changeset" do
