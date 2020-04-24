@@ -118,6 +118,19 @@ defmodule Cashtray.Accounts do
   end
 
   @doc """
+  Returns the list of entities from the given user.
+
+  ## Examples
+
+      iex> list_entities(owner)
+      [%Entity{}, ...]
+
+  """
+  def list_entities_from(%User{} = owner) do
+    Repo.all(from Entity, where: [owner_id: ^owner.id])
+  end
+
+  @doc """
   Gets a single entity.
 
   Raises `Ecto.NoResultsError` if the Entity does not exist.

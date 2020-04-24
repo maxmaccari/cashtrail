@@ -103,11 +103,15 @@ defmodule Cashtray.AccountsTest do
     end
 
     def entity_fixture(attrs \\ %{}) do
-      user = user_fixture()
+      owner_id =
+        case attrs do
+          %{owner_id: id} -> id
+          _ -> user_fixture().id
+        end
 
       {:ok, entity} =
         attrs
-        |> Enum.into(%{@valid_attrs | owner_id: user.id})
+        |> Enum.into(%{@valid_attrs | owner_id: owner_id})
         |> Accounts.create_entity()
 
       remove_owner(entity)
@@ -116,6 +120,15 @@ defmodule Cashtray.AccountsTest do
     test "list_entities/0 returns all entities" do
       entity = entity_fixture()
       assert Accounts.list_entities() == [entity]
+    end
+
+    test "list_entities_from/1 returns all entities from an user" do
+      entity_fixture()
+      owner = user_fixture(%{email: "john_doe_2@example.com"})
+      entity_fixture(%{owner_id: owner.id})
+
+      assert [%Entity{owner_id: owner_id}] = Accounts.list_entities_from(owner)
+      assert owner_id == owner.id
     end
 
     test "get_entity!/1 returns the entity with given id" do
