@@ -32,8 +32,8 @@ defmodule Cashtray.EntitiesTest do
           email: "john_doe@example.com",
           first_name: "some first_name",
           last_name: "some last_name",
-          password: "some password",
-          password_confirmation: "some password"
+          password: "my_password123",
+          password_confirmation: "my_password123"
         })
         |> Accounts.create_user()
 

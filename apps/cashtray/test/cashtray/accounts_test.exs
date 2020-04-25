@@ -10,15 +10,15 @@ defmodule Cashtray.AccountsTest do
       email: "john_doe@example.com",
       first_name: "some first_name",
       last_name: "some last_name",
-      password: "my_password",
-      password_confirmation: "my_password"
+      password: "my_password123",
+      password_confirmation: "my_password123"
     }
     @update_attrs %{
       email: "updated_john_doe@example.com",
       first_name: "some updated first_name",
       last_name: "some updated last_name",
-      password: "updated password",
-      password_confirmation: "updated password"
+      password: "updated_password123",
+      password_confirmation: "updated_password123"
     }
     @invalid_attrs %{email: nil, first_name: nil, last_name: nil, password: nil}
 
@@ -38,7 +38,7 @@ defmodule Cashtray.AccountsTest do
 
     test "authenticate_user/2 returns the user with the given id and password" do
       user = user_fixture()
-      assert {:ok, autenticated} = Accounts.authenticate("john_doe@example.com", "my_password")
+      assert {:ok, autenticated} = Accounts.authenticate("john_doe@example.com", "my_password123")
       assert autenticated == user
     end
 
@@ -49,7 +49,7 @@ defmodule Cashtray.AccountsTest do
 
     test "authenticate_user/2 with invalid email return :not_found error" do
       user_fixture()
-      assert {:error, :not_found} = Accounts.authenticate("invalid@example.com", "my_password")
+      assert {:error, :not_found} = Accounts.authenticate("invalid@example.com", "my_password123")
     end
 
     test "create_user/1 with valid data creates a user" do
@@ -67,6 +67,37 @@ defmodule Cashtray.AccountsTest do
     test "create_user/1 with invalid email returns error changeset" do
       assert {:error, %Ecto.Changeset{errors: [email: {"is an invalid email", _}]}} =
                Accounts.create_user(%{@valid_attrs | email: "invalid_email"})
+    end
+
+    test "create_user/1 with a invalid returns error changeset" do
+      assert {:error,
+              %Ecto.Changeset{errors: [password: {"should be at least %{count} character(s)", _}]}} =
+               Accounts.create_user(%{
+                 @valid_attrs
+                 | password: "@abc567",
+                   password_confirmation: "@abc567"
+               })
+
+      assert {:error,
+              %Ecto.Changeset{errors: [password: {"should be at most %{count} character(s)", _}]}} =
+               Accounts.create_user(%{
+                 @valid_attrs
+                 | password: "@abc56789012345678901",
+                   password_confirmation: "@abc56789012345678901"
+               })
+
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  password:
+                    {"should have at least one special character, one number and one letter", _}
+                ]
+              }} =
+               Accounts.create_user(%{
+                 @valid_attrs
+                 | password: "is invalid",
+                   password_confirmation: "is invalid"
+               })
     end
 
     test "update_user/2 with valid data updates the user" do
