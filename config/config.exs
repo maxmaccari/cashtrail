@@ -13,6 +13,8 @@ use Mix.Config
 config :cashtray,
   ecto_repos: [Cashtray.Repo]
 
+config :triplex, repo: Cashtray.Repo
+
 config :cashtray_web,
   ecto_repos: [Cashtray.Repo],
   generators: [context_app: :cashtray, binary_id: true]

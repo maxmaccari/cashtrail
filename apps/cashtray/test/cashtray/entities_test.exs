@@ -91,6 +91,13 @@ defmodule Cashtray.EntitiesTest do
       assert entity.owner_id == user.id
     end
 
+    test "create_entity/1 with valid data creates a prefix with the entity id" do
+      user = user_fixture()
+
+      assert {:ok, %Entity{} = entity} = Entities.create_entity(user, @valid_attrs)
+      assert Triplex.exists?(entity.id)
+    end
+
     test "create_entity/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} =
                Entities.create_entity(%Accounts.User{}, @invalid_attrs)
@@ -128,6 +135,12 @@ defmodule Cashtray.EntitiesTest do
       entity = entity_fixture()
       assert {:ok, %Entity{}} = Entities.delete_entity(entity)
       assert_raise Ecto.NoResultsError, fn -> Entities.get_entity!(entity.id) end
+    end
+
+    test "delete_entity/1 deletes the entity tenant" do
+      entity = entity_fixture()
+      assert {:ok, %Entity{}} = Entities.delete_entity(entity)
+      refute Triplex.exists?(entity.id)
     end
 
     test "change_entity/1 returns a entity changeset" do

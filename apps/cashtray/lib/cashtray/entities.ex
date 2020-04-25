@@ -25,7 +25,7 @@ defmodule Cashtray.Entities do
     from(e in Entity)
     |> join(:left, [e], m in assoc(e, :members))
     |> or_where([e], e.owner_id == ^user.id)
-    |> or_where([e,m], m.user_id == ^user.id)
+    |> or_where([e, m], m.user_id == ^user.id)
     |> Repo.all()
   end
 
@@ -58,10 +58,21 @@ defmodule Cashtray.Entities do
 
   """
   def create_entity(%User{} = user, attrs \\ %{}) do
-    user
-    |> Ecto.build_assoc(:entities)
-    |> Entity.changeset(attrs)
-    |> Repo.insert()
+    changeset =
+      user
+      |> Ecto.build_assoc(:entities)
+      |> Entity.changeset(attrs)
+
+    with {:ok, entity} <- Repo.insert(changeset),
+         {:ok, _tenant} <- create_tenant(entity) do
+      {:ok, entity}
+    end
+  end
+
+  defp create_tenant(%Entity{id: id}) do
+    id
+    |> Triplex.to_prefix()
+    |> Triplex.create()
   end
 
   @doc """
@@ -95,7 +106,16 @@ defmodule Cashtray.Entities do
 
   """
   def delete_entity(%Entity{} = entity) do
-    Repo.delete(entity)
+    with {:ok, entity} <- Repo.delete(entity),
+         {:ok, _tenant} <- delete_tenant(entity) do
+      {:ok, entity}
+    end
+  end
+
+  defp delete_tenant(%Entity{id: id}) do
+    id
+    |> Triplex.to_prefix()
+    |> Triplex.drop()
   end
 
   @doc """
@@ -133,20 +153,13 @@ defmodule Cashtray.Entities do
   def transfer_ownership(%Entity{} = entity, %User{} = from, %User{} = to) do
     cond do
       entity.owner_id == from.id ->
-        result =
-          entity
-          |> Entity.transfer_changeset(%{owner_id: to.id})
-          |> Repo.update()
+        changeset = Entity.transfer_changeset(entity, %{owner_id: to.id})
 
-        case result do
-          {:ok, entity} ->
-            remove_member(entity, to)
-            add_member(entity, from, "admin")
+        with {:ok, entity} <- Repo.update(changeset) do
+          remove_member(entity, to)
+          add_member(entity, from, "admin")
 
-            {:ok, entity}
-
-          error ->
-            error
+          {:ok, entity}
         end
 
       true ->
