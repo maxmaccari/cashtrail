@@ -7,11 +7,11 @@ defmodule Cashtray.AccountsTest do
     alias Cashtray.Accounts.User
 
     @valid_attrs %{
-      email: "some email",
+      email: "john_doe@example.com",
       first_name: "some first_name",
       last_name: "some last_name",
-      password: "some password",
-      password_confirmation: "some password"
+      password: "my_password",
+      password_confirmation: "my_password"
     }
     @update_attrs %{
       email: "some updated email",
@@ -36,9 +36,25 @@ defmodule Cashtray.AccountsTest do
       assert Accounts.get_user!(user.id) == user
     end
 
+    test "authenticate_user/2 returns the user with the given id and password" do
+      user = user_fixture()
+      assert {:ok, autenticated} = Accounts.authenticate("john_doe@example.com", "my_password")
+      assert autenticated == user
+    end
+
+    test "authenticate_user/2 with invalid password return :unathorized error" do
+      user_fixture()
+      assert {:error, :unauthorized} = Accounts.authenticate("john_doe@example.com", "invalid")
+    end
+
+    test "authenticate_user/2 with invalid email return :not_found error" do
+      user_fixture()
+      assert {:error, :not_found} = Accounts.authenticate("invalid@example.com", "my_password")
+    end
+
     test "create_user/1 with valid data creates a user" do
       assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
-      assert user.email == "some email"
+      assert user.email == "john_doe@example.com"
       assert user.first_name == "some first_name"
       assert user.last_name == "some last_name"
       assert user.password_hash != nil

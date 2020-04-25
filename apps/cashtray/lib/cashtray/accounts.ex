@@ -25,6 +25,41 @@ defmodule Cashtray.Accounts do
   def get_user!(id), do: Repo.get!(User, id)
 
   @doc """
+  Authenticates a user.
+
+  Returns:
+    * {:ok, user} if user is found and the passwords match.
+    * {:error, :unauthorized} if passwords does not match.
+    * {:error, :not_found} if user email is not found.
+
+  ## Examples
+
+      iex> authenticate(email, password)
+      {:ok, %User{}}
+
+      iex> authenticate(email, wrong_pass)
+      {:error, :unauthorized}
+
+      iex> authenticate(wrong_email, password)
+      {:error, :not_found}
+  """
+  def authenticate(email, password) do
+    user = Repo.get_by(User, email: email)
+
+    cond do
+      user && Argon2.verify_pass(password, user.password_hash) ->
+        {:ok, user}
+
+      user ->
+        {:error, :unauthorized}
+
+      true ->
+        Argon2.no_user_verify()
+        {:error, :not_found}
+    end
+  end
+
+  @doc """
   Creates a user.
 
   ## Examples
