@@ -1,5 +1,7 @@
 use Mix.Config
 
+config :cashtray, comeonin_hash_module: Cashtray.FakePasswordHash
+
 # Configure your database
 config :cashtray, Cashtray.Repo,
   username: "postgres",

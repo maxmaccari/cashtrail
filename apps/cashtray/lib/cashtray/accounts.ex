@@ -6,7 +6,7 @@ defmodule Cashtray.Accounts do
   import Ecto.Query, warn: false
   alias Cashtray.Repo
 
-  alias Cashtray.Accounts.User
+  alias Cashtray.Accounts.{PasswordHash, User}
 
   @doc """
   Gets a single user.
@@ -63,14 +63,14 @@ defmodule Cashtray.Accounts do
     user = get_user_by(email: email)
 
     cond do
-      user && Argon2.verify_pass(password, user.password_hash) ->
+      user && PasswordHash.verify_pass(password, user.password_hash) ->
         {:ok, user}
 
       user ->
         {:error, :unauthorized}
 
       true ->
-        Argon2.no_user_verify()
+        PasswordHash.no_user_verify()
         {:error, :not_found}
     end
   end

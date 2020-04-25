@@ -2,6 +2,7 @@ defmodule Cashtray.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Cashtray.Accounts.PasswordHash
   alias Cashtray.Entities.Entity
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -38,7 +39,7 @@ defmodule Cashtray.Accounts.User do
   defp change_password(changeset) do
     case changeset do
       %Ecto.Changeset{changes: %{password: password}, valid?: true} ->
-        put_change(changeset, :password_hash, Argon2.hash_pwd_salt(password))
+        put_change(changeset, :password_hash, PasswordHash.hash_pwd_salt(password))
 
       _ ->
         changeset

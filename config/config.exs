@@ -11,7 +11,8 @@ use Mix.Config
 
 # Configure Mix tasks and generators
 config :cashtray,
-  ecto_repos: [Cashtray.Repo]
+  ecto_repos: [Cashtray.Repo],
+  comeonin_hash_module: Argon2
 
 config :triplex, repo: Cashtray.Repo
 
