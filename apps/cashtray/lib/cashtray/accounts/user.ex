@@ -19,6 +19,9 @@ defmodule Cashtray.Accounts.User do
     user
     |> cast(attrs, [:first_name, :last_name, :email, :password])
     |> validate_required([:first_name, :last_name, :email, :password])
+    |> validate_format(:email, ~r/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/,
+      message: "is an invalid email"
+    )
     |> unique_constraint(:email)
     |> validate_confirmation(:password)
     |> change_password()

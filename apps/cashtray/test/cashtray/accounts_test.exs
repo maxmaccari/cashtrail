@@ -14,7 +14,7 @@ defmodule Cashtray.AccountsTest do
       password_confirmation: "my_password"
     }
     @update_attrs %{
-      email: "some updated email",
+      email: "updated_john_doe@example.com",
       first_name: "some updated first_name",
       last_name: "some updated last_name",
       password: "updated password",
@@ -64,10 +64,15 @@ defmodule Cashtray.AccountsTest do
       assert {:error, %Ecto.Changeset{}} = Accounts.create_user(@invalid_attrs)
     end
 
+    test "create_user/1 with invalid email returns error changeset" do
+      assert {:error, %Ecto.Changeset{errors: [email: {"is an invalid email", _}]}} =
+               Accounts.create_user(%{@valid_attrs | email: "invalid_email"})
+    end
+
     test "update_user/2 with valid data updates the user" do
       user = %{password_hash: old_password_hash} = user_fixture()
       assert {:ok, %User{} = user} = Accounts.update_user(user, @update_attrs)
-      assert user.email == "some updated email"
+      assert user.email == "updated_john_doe@example.com"
       assert user.first_name == "some updated first_name"
       assert user.last_name == "some updated last_name"
       assert user.password_hash != old_password_hash

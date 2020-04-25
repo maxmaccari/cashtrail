@@ -29,7 +29,7 @@ defmodule Cashtray.EntitiesTest do
       {:ok, users} =
         attrs
         |> Enum.into(%{
-          email: "some email",
+          email: "john_doe@example.com",
           first_name: "some first_name",
           last_name: "some last_name",
           password: "some password",
