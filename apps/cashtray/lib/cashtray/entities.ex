@@ -126,11 +126,21 @@ defmodule Cashtray.Entities do
   def transfer_ownership(%Entity{} = entity, %User{} = from, %User{} = to) do
     cond do
       entity.owner_id == from.id ->
-        # TODO: remove to member if it his a member
-        # TODO: set from as a member with :admin permission
-        entity
-        |> Entity.transfer_changeset(%{owner_id: to.id})
-        |> Repo.update()
+        result =
+          entity
+          |> Entity.transfer_changeset(%{owner_id: to.id})
+          |> Repo.update()
+
+        case result do
+          {:ok, entity} ->
+            remove_member(entity, to)
+            add_member(entity, from, "admin")
+
+            {:ok, entity}
+
+          error ->
+            error
+        end
 
       true ->
         {:error, :unauthorized}
@@ -233,8 +243,8 @@ defmodule Cashtray.Entities do
       {:error, :not_found}
 
   """
-  def remove_member(%Entity{id: entity_id}, %User{id: user_id}) do
-    case Repo.get_by(EntityMember, entity_id: entity_id, user_id: user_id) do
+  def remove_member(entity, user) do
+    case member_from_user(entity, user) do
       %EntityMember{} = entity_member -> Repo.delete(entity_member)
       _ -> {:error, :not_found}
     end
@@ -261,11 +271,11 @@ defmodule Cashtray.Entities do
     {:error, :not_found}
   """
   def update_member_permission(
-        %Entity{id: entity_id, owner_id: owner_id},
-        %User{id: user_id},
+        %Entity{owner_id: owner_id} = entity,
+        %User{id: user_id} = user,
         permission
       ) do
-    case Repo.get_by(EntityMember, entity_id: entity_id, user_id: user_id) do
+    case member_from_user(entity, user) do
       %EntityMember{} = entity_member ->
         entity_member
         |> EntityMember.changeset(%{permission: permission})
@@ -293,9 +303,10 @@ defmodule Cashtray.Entities do
     iex> get_member_permission(entity, another_user)
     :unauthorized
   """
-  def get_member_permission(%Entity{id: entity_id, owner_id: owner_id}, %User{id: user_id}) do
-    case Repo.get_by(EntityMember, entity_id: entity_id, user_id: user_id) do
+  def get_member_permission(%Entity{owner_id: owner_id} = entity, %User{id: user_id} = user) do
+    case member_from_user(entity, user) do
       %EntityMember{} = entity_member ->
+        # For security reasons to avoid reach the atom limit
         _trusted_values = [:read, :write, :admin]
         String.to_existing_atom(entity_member.permission)
 
@@ -305,6 +316,25 @@ defmodule Cashtray.Entities do
       _ ->
         :unauthorized
     end
+  end
+
+  @doc """
+  Returns the member struct from the user and the entity. Returns nil if the user is
+  not a member from the entity or is the owner.
+
+  ## Examples
+
+    iex> member_from_user(entity, user)
+    %EntityMember{}
+
+    iex> member_from_user(entity, owner)
+    nil
+
+    iex> member_from_user(entity, non_member_user)
+    nil
+  """
+  def member_from_user(%Entity{id: entity_id}, %User{id: user_id}) do
+    Repo.get_by(EntityMember, entity_id: entity_id, user_id: user_id)
   end
 
   @doc """

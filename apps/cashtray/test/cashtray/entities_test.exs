@@ -5,6 +5,7 @@ defmodule Cashtray.EntitiesTest do
 
   describe "entities" do
     alias Cashtray.Entities.Entity
+    alias Cashtray.Entities.EntityMember
 
     @valid_attrs %{name: "some name", status: "active", type: "personal", owner_id: nil}
     @update_attrs %{
@@ -152,6 +153,27 @@ defmodule Cashtray.EntitiesTest do
                  user,
                  %Accounts.User{id: Ecto.UUID.generate()}
                )
+    end
+
+    test "transfer_ownership/3 remove membership if the new owner was a member" do
+      from_user = user_fixture()
+      entity = entity_fixture(%{owner: from_user})
+      to_user = user_fixture(%{email: "john_doe2@example.com"})
+      # TODO: change to use fixture or factory here
+      Entities.add_member(entity, to_user)
+      assert {:ok, %Entity{} = entity} = Entities.transfer_ownership(entity, from_user, to_user)
+      assert Entities.member_from_user(entity, to_user) == nil
+    end
+
+    test "transfer_ownership/3 sets the owner as a new member with admin privilegies" do
+      from_user = user_fixture()
+      entity = entity_fixture(%{owner: from_user})
+      to_user = user_fixture(%{email: "john_doe2@example.com"})
+
+      assert {:ok, %Entity{} = entity} = Entities.transfer_ownership(entity, from_user, to_user)
+      assert %EntityMember{} = member = Entities.member_from_user(entity, from_user)
+      assert member.user_id == from_user.id
+      assert member.permission == "admin"
     end
 
     test "belongs_to?/2 checks if the entity belongs to user" do
@@ -340,6 +362,25 @@ defmodule Cashtray.EntitiesTest do
       entity_member_fixture(%{entity: entity})
 
       assert Entities.get_member_permission(entity, user) == :unauthorized
+    end
+
+    test "get_member_from_user/2 return the member of the entity and the user" do
+      user = user_fixture(@user_attrs)
+      entity = entity_fixture()
+      entity_member_fixture(%{entity: entity, user_id: user.id})
+
+      %EntityMember{} = member = Entities.member_from_user(entity, user)
+      assert member.entity_id == entity.id
+      assert member.user_id == user.id
+    end
+
+    test "get_member_from_user/2 return the member nil if is not member or is the owner" do
+      user = user_fixture(@user_attrs)
+      owner = user_fixture(%{@user_attrs | email: "owner@example.com"})
+      entity = entity_fixture(%{owner: owner})
+
+      assert Entities.member_from_user(entity, user) == nil
+      assert Entities.member_from_user(entity, owner) == nil
     end
 
     test "change_member/1 returns a entity_member changeset" do
