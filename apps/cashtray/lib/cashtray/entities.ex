@@ -6,7 +6,7 @@ defmodule Cashtray.Entities do
   import Ecto.Query, warn: false
   alias Cashtray.Repo
 
-  alias Cashtray.Entities.{Entity, EntityMember}
+  alias Cashtray.Entities.{Entity, EntityMember, Tenants}
   alias Cashtray.Accounts.User
 
   @doc """
@@ -64,15 +64,9 @@ defmodule Cashtray.Entities do
       |> Entity.changeset(attrs)
 
     with {:ok, entity} <- Repo.insert(changeset),
-         {:ok, _tenant} <- create_tenant(entity) do
+         {:ok, _tenant} <- Tenants.create(entity) do
       {:ok, entity}
     end
-  end
-
-  defp create_tenant(%Entity{id: id}) do
-    id
-    |> Triplex.to_prefix()
-    |> Triplex.create()
   end
 
   @doc """
@@ -107,15 +101,9 @@ defmodule Cashtray.Entities do
   """
   def delete_entity(%Entity{} = entity) do
     with {:ok, entity} <- Repo.delete(entity),
-         {:ok, _tenant} <- delete_tenant(entity) do
+         {:ok, _tenant} <- Tenants.drop(entity) do
       {:ok, entity}
     end
-  end
-
-  defp delete_tenant(%Entity{id: id}) do
-    id
-    |> Triplex.to_prefix()
-    |> Triplex.drop()
   end
 
   @doc """
