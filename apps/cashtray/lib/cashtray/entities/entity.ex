@@ -3,6 +3,7 @@ defmodule Cashtray.Entities.Entity do
   import Ecto.Changeset
 
   alias Cashtray.Accounts.User
+  alias Cashtray.Entities.EntityMember
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -11,6 +12,7 @@ defmodule Cashtray.Entities.Entity do
     field :status, :string, default: "active"
     field :type, :string, default: "personal"
     belongs_to :owner, User
+    has_many :members, EntityMember
 
     timestamps()
   end

@@ -43,7 +43,7 @@ defmodule Cashtray.EntitiesTest do
     def entity_fixture(attrs \\ %{}) do
       owner =
         case attrs do
-          %{owner: owner} ->
+          %{owner: %Accounts.User{} = owner} ->
             owner
 
           _ ->
@@ -161,6 +161,190 @@ defmodule Cashtray.EntitiesTest do
 
       assert Entities.belongs_to?(entity, owner)
       refute Entities.belongs_to?(entity, user)
+    end
+  end
+
+  describe "entity_members" do
+    alias Cashtray.Entities.EntityMember
+
+    @user_attrs %{
+      email: "john_doe_member@example.com",
+      first_name: "john",
+      last_name: "doe",
+      password: "my_password123",
+      password_confirmation: "my_password123"
+    }
+    @valid_attrs %{permission: "read", user: @user_attrs}
+    @invalid_attrs %{permission: nil, user: %{email: "invalid"}}
+
+    def remove_user(entity_member) do
+      %{
+        entity_member
+        | user: %Ecto.Association.NotLoaded{
+            __cardinality__: :one,
+            __field__: :user,
+            __owner__: Cashtray.Entities.EntityMember
+          }
+      }
+    end
+
+    def entity_member_fixture(attrs \\ %{}) do
+      entity =
+        case attrs do
+          %{entity: %Entities.Entity{} = entity} ->
+            entity
+
+          _ ->
+            entity_fixture(Map.get(attrs, :entity, %{}))
+        end
+
+      attrs = Enum.into(attrs, @valid_attrs)
+
+      {:ok, entity_member} = Entities.create_member(entity, attrs)
+
+      remove_user(entity_member)
+    end
+
+    test "list_members/1 returns all entity_members from the entity" do
+      entity = entity_fixture(%{owner: %{@user_attrs | email: "doe@example.com"}})
+      entity_member_fixture(%{@valid_attrs | user: %{@user_attrs | email: "john@example.com"}})
+      entity_member = entity_member_fixture(%{entity: entity})
+      assert Entities.list_members(entity) == [entity_member]
+    end
+
+    test "create_member/2 with valid data creates a entity_member with the user" do
+      entity = entity_fixture()
+      assert {:ok, %EntityMember{} = entity_member} = Entities.create_member(entity, @valid_attrs)
+      assert entity_member.permission == "read"
+      assert entity_member.user.email == "john_doe_member@example.com"
+      assert entity_member.user.first_name == "john"
+      assert entity_member.user.last_name == "doe"
+    end
+
+    test "create_member/2 with email from a created user create member with the user" do
+      user = user_fixture(@user_attrs)
+      entity = entity_fixture()
+      assert {:ok, %EntityMember{} = entity_member} = Entities.create_member(entity, @valid_attrs)
+      assert entity_member.permission == "read"
+      assert entity_member.user_id == user.id
+    end
+
+    test "create_member/2 with invalid data returns error changeset" do
+      entity = entity_fixture()
+      assert {:error, %Ecto.Changeset{}} = Entities.create_member(entity, @invalid_attrs)
+    end
+
+    test "create_member/2 with same user returns error changeset" do
+      entity = entity_fixture()
+      assert {:ok, %EntityMember{} = entity_member} = Entities.create_member(entity, @valid_attrs)
+
+      assert {:error, %Ecto.Changeset{errors: [entity_id: {"has already been added", _}]}} =
+               Entities.create_member(entity, @valid_attrs)
+    end
+
+    test "add_member/2 adds a user as a member with 'read' permission" do
+      user = user_fixture(@user_attrs)
+      entity = entity_fixture()
+      assert {:ok, %EntityMember{} = entity_member} = Entities.add_member(entity, user)
+      assert entity_member.permission == "read"
+    end
+
+    test "add_member/3 adds a user as a member with the given permission" do
+      user = user_fixture(@user_attrs)
+      entity = entity_fixture()
+      assert {:ok, %EntityMember{} = entity_member} = Entities.add_member(entity, user, "write")
+      assert entity_member.permission == "write"
+    end
+
+    test "add_member/3 twice with the same user returns error changeset" do
+      user = user_fixture(@user_attrs)
+      entity = entity_fixture()
+      assert {:ok, %EntityMember{} = entity_member} = Entities.add_member(entity, user)
+
+      assert {:error, %Ecto.Changeset{errors: [entity_id: {"has already been added", _}]}} =
+               Entities.add_member(entity, user)
+    end
+
+    test "remove_member/2 remove user as member of the entity not deleting the user" do
+      user = user_fixture(@user_attrs)
+      entity = entity_fixture()
+      entity_member_fixture(%{entity: entity, user_id: user.id})
+
+      assert {:ok, %EntityMember{}} = Entities.remove_member(entity, user)
+      refute Repo.get_by(EntityMember, entity_id: entity.id, user_id: user.id)
+      assert Cashtray.Accounts.get_user!(user.id)
+    end
+
+    test "remove_member/2 with a non member user returns error" do
+      user = user_fixture(%{@user_attrs | email: "john@example.com"})
+      entity = entity_fixture()
+      entity_member_fixture(%{entity: entity})
+
+      assert {:error, :not_found} = Entities.remove_member(entity, user)
+    end
+
+    test "update_member_permission/3 updates the permission of the member" do
+      user = user_fixture(@user_attrs)
+      entity = entity_fixture()
+      entity_member_fixture(%{entity: entity, user_id: user.id, permission: "read"})
+
+      assert {:ok, %EntityMember{} = entity_member} =
+               Entities.update_member_permission(entity, user, "write")
+
+      assert entity_member.permission == "write"
+    end
+
+    test "update_member_permission/3 with invalid permission returns error" do
+      user = user_fixture(@user_attrs)
+      entity = entity_fixture()
+      entity_member_fixture(%{entity: entity, user_id: user.id})
+
+      assert {:error, %Ecto.Changeset{}} =
+               Entities.update_member_permission(entity, user, "invalid")
+    end
+
+    test "update_member_permission/3 with a owner returns error" do
+      user = user_fixture(%{@user_attrs | email: "john@example.com"})
+      entity = entity_fixture(%{owner: user})
+      entity_member_fixture(%{entity: entity})
+
+      assert {:error, :invalid} = Entities.update_member_permission(entity, user, "write")
+    end
+
+    test "update_member_permission/3 with a non member user returns error" do
+      user = user_fixture(%{@user_attrs | email: "john@example.com"})
+      entity = entity_fixture()
+      entity_member_fixture(%{entity: entity})
+
+      assert {:error, :not_found} = Entities.update_member_permission(entity, user, "write")
+    end
+
+    test "get_member_permission/2 returns the member permission as atom from the user" do
+      user = user_fixture(@user_attrs)
+      entity = entity_fixture()
+      entity_member_fixture(%{entity: entity, user_id: user.id, permission: "read"})
+
+      assert Entities.get_member_permission(entity, user) == :read
+    end
+
+    test "get_member_permission/2 when is owner returns :admin permission" do
+      user = user_fixture(@user_attrs)
+      entity = entity_fixture(%{owner: user})
+
+      assert Entities.get_member_permission(entity, user) == :admin
+    end
+
+    test "get_member_permission/2 returns :unauthorized if the user is not a member" do
+      user = user_fixture(%{@user_attrs | email: "john@example.com"})
+      entity = entity_fixture()
+      entity_member_fixture(%{entity: entity})
+
+      assert Entities.get_member_permission(entity, user) == :unauthorized
+    end
+
+    test "change_member/1 returns a entity_member changeset" do
+      entity_member = entity_member_fixture()
+      assert %Ecto.Changeset{} = Entities.change_member(entity_member)
     end
   end
 end

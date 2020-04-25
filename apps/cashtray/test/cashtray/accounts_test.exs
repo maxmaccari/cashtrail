@@ -36,6 +36,11 @@ defmodule Cashtray.AccountsTest do
       assert Accounts.get_user!(user.id) == user
     end
 
+    test "get_user_by/1 returns the user with given param" do
+      user = user_fixture()
+      assert Accounts.get_user_by(email: user.email) == user
+    end
+
     test "authenticate_user/2 returns the user with the given id and password" do
       user = user_fixture()
       assert {:ok, autenticated} = Accounts.authenticate("john_doe@example.com", "my_password123")

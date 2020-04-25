@@ -151,4 +151,172 @@ defmodule Cashtray.Entities do
   def belongs_to?(%Entity{owner_id: owner_id}, %User{id: user_id}) do
     owner_id == user_id
   end
+
+  alias Cashtray.Accounts
+  alias Cashtray.Entities.EntityMember
+
+  @doc """
+  Returns the list of entity_members.
+
+  ## Examples
+
+      iex> list_entity_members()
+      [%EntityMember{}, ...]
+
+  """
+  def list_members(%Entity{id: entity_id}) do
+    Repo.all(from EntityMember, where: [entity_id: ^entity_id])
+  end
+
+  @doc """
+  Creates a entity_member for the entity.
+
+  ## Examples
+
+      iex> create_member(entity, %{field: value})
+      {:ok, %EntityMember{}}
+
+      iex> create_member(entity, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_member(%Entity{} = entity, attrs \\ %{}) do
+    email = get_in(attrs, [:user, :email]) || get_in(attrs, ["user", "email"])
+
+    attrs =
+      case Accounts.get_user_by(email: email) do
+        %User{} = user ->
+          attrs |> Map.delete(:user) |> Map.delete("user") |> Map.put(:user_id, user.id)
+
+        _ ->
+          attrs
+      end
+
+    entity
+    |> Ecto.build_assoc(:members)
+    |> EntityMember.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Creates a entity_member for the entity, the user and the permission.
+
+  Returns %Ecto.Changeset{} if the given user_id is invalid or is already added
+
+  ## Examples
+
+      iex> add_member(entity, user)
+      {:ok, %EntityMember{}}
+
+      iex> add_member(entity, invalid_user)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def add_member(%Entity{} = entity, %User{id: user_id}, permission \\ "read") do
+    entity
+    |> Ecto.build_assoc(:members)
+    |> EntityMember.changeset(%{user_id: user_id, permission: permission})
+    |> Repo.insert()
+  end
+
+  @doc """
+  Deletes a entity_member.
+
+  If entity member is not found, it returns a error
+
+  ## Examples
+
+      iex> delete_entity_member(entity_member)
+      {:ok, %EntityMember{}}
+
+      iex> delete_entity_member(entity_member)
+      {:error, :not_found}
+
+  """
+  def remove_member(%Entity{id: entity_id}, %User{id: user_id}) do
+    case Repo.get_by(EntityMember, entity_id: entity_id, user_id: user_id) do
+      %EntityMember{} = entity_member -> Repo.delete(entity_member)
+      _ -> {:error, :not_found}
+    end
+  end
+
+  @doc """
+  Updates the member permission.
+
+  If the user is not member or is the owner, returns error. The owner always
+  will have the admin permission.
+
+  ## Examples
+
+    iex> update_member_permission(entity, user, "write")
+    {:ok, %Entity{}}
+
+    iex> update_member_permission(entity, user, "invalid")
+    {:error, %Error.Changeset{}}
+
+    iex> update_member_permission(entity, owner, "write")
+    {:error, :invalid}
+
+    iex> update_member_permission(entity, another_user, "write)
+    {:error, :not_found}
+  """
+  def update_member_permission(
+        %Entity{id: entity_id, owner_id: owner_id},
+        %User{id: user_id},
+        permission
+      ) do
+    case Repo.get_by(EntityMember, entity_id: entity_id, user_id: user_id) do
+      %EntityMember{} = entity_member ->
+        entity_member
+        |> EntityMember.changeset(%{permission: permission})
+        |> Repo.update()
+
+      _ when owner_id == user_id ->
+        {:error, :invalid}
+
+      _ ->
+        {:error, :not_found}
+    end
+  end
+
+  @doc """
+  Returns the member permission as a atom or :unauthorized if the member is not
+  found.
+
+  If the user is the owner, returns the permission as :admin
+
+  ## Examples
+
+    iex> get_member_permission(entity, user)
+    :admin
+
+    iex> get_member_permission(entity, another_user)
+    :unauthorized
+  """
+  def get_member_permission(%Entity{id: entity_id, owner_id: owner_id}, %User{id: user_id}) do
+    case Repo.get_by(EntityMember, entity_id: entity_id, user_id: user_id) do
+      %EntityMember{} = entity_member ->
+        _trusted_values = [:read, :write, :admin]
+        String.to_existing_atom(entity_member.permission)
+
+      _ when owner_id == user_id ->
+        :admin
+
+      _ ->
+        :unauthorized
+    end
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking entity_member changes.
+
+  ## Examples
+
+      iex> change_member(entity_member)
+      %Ecto.Changeset{source: %EntityMember{}}
+
+  """
+  def change_member(%EntityMember{} = entity_member) do
+    EntityMember.changeset(entity_member, %{})
+  end
 end

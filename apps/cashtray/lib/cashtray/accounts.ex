@@ -25,6 +25,22 @@ defmodule Cashtray.Accounts do
   def get_user!(id), do: Repo.get!(User, id)
 
   @doc """
+  Gets a single user by the given param.
+
+  Returns nil the User does not exist.
+
+  ## Examples
+
+      iex> get_user_by(email: "john@example.com")
+      %User{}
+
+      iex> get_user_by(email: "noexists')
+      nil
+
+  """
+  def get_user_by(params \\ []), do: Repo.get_by(User, params)
+
+  @doc """
   Authenticates a user.
 
   Returns:
@@ -44,7 +60,7 @@ defmodule Cashtray.Accounts do
       {:error, :not_found}
   """
   def authenticate(email, password) do
-    user = Repo.get_by(User, email: email)
+    user = get_user_by(email: email)
 
     cond do
       user && Argon2.verify_pass(password, user.password_hash) ->
