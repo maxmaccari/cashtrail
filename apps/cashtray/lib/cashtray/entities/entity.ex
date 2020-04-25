@@ -24,4 +24,12 @@ defmodule Cashtray.Entities.Entity do
     |> validate_inclusion(:status, ["active", "archived"])
     |> foreign_key_constraint(:owner_id)
   end
+
+  @doc false
+  def transfer_changeset(entity, attrs) do
+    entity
+    |> cast(attrs, [:owner_id])
+    |> validate_required([:owner_id])
+    |> foreign_key_constraint(:owner_id)
+  end
 end

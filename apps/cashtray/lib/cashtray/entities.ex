@@ -103,4 +103,37 @@ defmodule Cashtray.Entities do
   def change_entity(%Entity{} = entity) do
     Entity.changeset(entity, %{})
   end
+
+  @doc """
+  Transfer the ownership of a entity from one user to another.
+
+  Returns:
+    * {:ok, %Entity{}} if the entity is transfered successfully.
+    * {:error, changeset} if to user is invalid or it's not found.
+    * {:error, :unauthorized} if from user is not the owner of the entity.
+
+  ## Examples
+
+      iex> transfer_ownership(entity, from, to)
+      {:ok, %Entity{}}
+
+      iex> transfer_ownership(entity, from, to)
+      {:error, %Ecto.Changeset{source: %Entity{}}}
+
+      iex> transfer_ownership(entity, invalid_from, to)
+      {:error, :unauthorized}
+  """
+  def transfer_ownership(%Entity{} = entity, %User{} = from, %User{} = to) do
+    cond do
+      entity.owner_id == from.id ->
+        # TODO: remove to member if it his a member
+        # TODO: set from as a member with :admin permission
+        entity
+        |> Entity.transfer_changeset(%{owner_id: to.id})
+        |> Repo.update()
+
+      true ->
+        {:error, :unauthorized}
+    end
+  end
 end

@@ -82,12 +82,15 @@ defmodule Cashtray.EntitiesTest do
     end
 
     test "create_entity/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Entities.create_entity(%Accounts.User{}, @invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} =
+               Entities.create_entity(%Accounts.User{}, @invalid_attrs)
     end
 
     test "create_entity/1 with invalid user returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Entities.create_entity(%Accounts.User{}, @valid_attrs)
-      assert {:error, %Ecto.Changeset{}} = Entities.create_entity(%Accounts.User{id: Ecto.UUID.generate()}, @valid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Entities.create_entity(%Accounts.User{id: Ecto.UUID.generate()}, @valid_attrs)
     end
 
     test "update_entity/2 with valid data updates the entity" do
@@ -120,6 +123,35 @@ defmodule Cashtray.EntitiesTest do
     test "change_entity/1 returns a entity changeset" do
       entity = entity_fixture()
       assert %Ecto.Changeset{} = Entities.change_entity(entity)
+    end
+
+    test "transfer_ownership/3 transfer ownership from an user to another" do
+      from_user = user_fixture()
+      entity = entity_fixture(%{owner: from_user})
+      to_user = user_fixture(%{email: "john_doe2@example.com"})
+      assert {:ok, %Entity{} = entity} = Entities.transfer_ownership(entity, from_user, to_user)
+      assert entity.owner_id == to_user.id
+    end
+
+    test "transfer_ownership/3 fails if from user is not the owner" do
+      entity = entity_fixture()
+      user = user_fixture(%{email: "john_doe2@example.com"})
+      assert {:error, :unauthorized} = Entities.transfer_ownership(entity, user, user)
+    end
+
+    test "transfer_ownership/3 fails if to user is invalid" do
+      user = user_fixture()
+      entity = entity_fixture(%{owner: user})
+
+      assert {:error, %Ecto.Changeset{}} =
+               Entities.transfer_ownership(entity, user, %Accounts.User{})
+
+      assert {:error, %Ecto.Changeset{}} =
+               Entities.transfer_ownership(
+                 entity,
+                 user,
+                 %Accounts.User{id: Ecto.UUID.generate()}
+               )
     end
   end
 end
