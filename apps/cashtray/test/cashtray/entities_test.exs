@@ -66,6 +66,15 @@ defmodule Cashtray.EntitiesTest do
       assert owner_id == owner.id
     end
 
+    test "list_entities_from/1 returns all entities from an user that is member" do
+      entity = entity_fixture()
+      user = user_fixture(%{email: "john_doe_2@example.com"})
+      # TODO: change to use fixture or factory here
+      Entities.add_member(entity, user)
+
+      assert Entities.list_entities_from(user) == [entity]
+    end
+
     test "get_entity!/1 returns the entity with given id" do
       entity = entity_fixture()
       assert Entities.get_entity!(entity.id) == entity

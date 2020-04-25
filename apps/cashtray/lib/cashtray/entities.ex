@@ -6,7 +6,7 @@ defmodule Cashtray.Entities do
   import Ecto.Query, warn: false
   alias Cashtray.Repo
 
-  alias Cashtray.Entities.Entity
+  alias Cashtray.Entities.{Entity, EntityMember}
   alias Cashtray.Accounts.User
 
   @doc """
@@ -17,9 +17,16 @@ defmodule Cashtray.Entities do
       iex> list_entities(owner)
       [%Entity{}, ...]
 
+      iex> list_entities(member)
+      [%Entity{}, ...]
+
   """
-  def list_entities_from(%User{} = owner) do
-    Repo.all(from(Entity, where: [owner_id: ^owner.id]))
+  def list_entities_from(%User{} = user) do
+    from(e in Entity)
+    |> join(:left, [e], m in assoc(e, :members))
+    |> or_where([e], e.owner_id == ^user.id)
+    |> or_where([e,m], m.user_id == ^user.id)
+    |> Repo.all()
   end
 
   @doc """
@@ -163,7 +170,6 @@ defmodule Cashtray.Entities do
   end
 
   alias Cashtray.Accounts
-  alias Cashtray.Entities.EntityMember
 
   @doc """
   Returns the list of entity_members.
