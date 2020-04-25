@@ -136,4 +136,19 @@ defmodule Cashtray.Entities do
         {:error, :unauthorized}
     end
   end
+
+  @doc """
+  Display if the entity belongs to the user
+
+  ## Examples
+
+    iex> belongs_to?(%Entity{owner_id: "aaa"}, %User{id: "aaa"})
+    true
+
+    iex> belongs_to?(%Entity{owner_id: "bbb"}, %User{id: "aaa"})
+    false
+  """
+  def belongs_to?(%Entity{owner_id: owner_id}, %User{id: user_id}) do
+    owner_id == user_id
+  end
 end

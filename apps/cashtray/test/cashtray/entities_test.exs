@@ -153,5 +153,14 @@ defmodule Cashtray.EntitiesTest do
                  %Accounts.User{id: Ecto.UUID.generate()}
                )
     end
+
+    test "belongs_to?/2 checks if the entity belongs to user" do
+      user = user_fixture()
+      owner = user_fixture(%{email: "john_doe2@example.com"})
+      entity = entity_fixture(%{owner: owner})
+
+      assert Entities.belongs_to?(entity, owner)
+      refute Entities.belongs_to?(entity, user)
+    end
   end
 end
