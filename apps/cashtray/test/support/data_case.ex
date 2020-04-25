@@ -24,6 +24,10 @@ defmodule Cashtray.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import Cashtray.DataCase
+
+      # Factories
+      import Cashtray.Factories.AccountsFactory, warn: false
+      import Cashtray.Factories.EntitiesFactory, warn: false
     end
   end
 

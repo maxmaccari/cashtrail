@@ -22,38 +22,29 @@ defmodule Cashtray.AccountsTest do
     }
     @invalid_attrs %{email: nil, first_name: nil, last_name: nil, password: nil}
 
-    def user_fixture(attrs \\ %{}) do
-      {:ok, user} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Accounts.create_user()
-
-      %{user | password: nil}
-    end
-
     test "get_user!/1 returns the user with given id" do
-      user = user_fixture()
+      user = insert_user()
       assert Accounts.get_user!(user.id) == user
     end
 
     test "get_user_by/1 returns the user with given param" do
-      user = user_fixture()
+      user = insert_user()
       assert Accounts.get_user_by(email: user.email) == user
     end
 
     test "authenticate_user/2 returns the user with the given id and password" do
-      user = user_fixture()
+      user = insert_user(%{password: "my_password123"})
       assert {:ok, autenticated} = Accounts.authenticate("john_doe@example.com", "my_password123")
       assert autenticated == user
     end
 
     test "authenticate_user/2 with invalid password return :unathorized error" do
-      user_fixture()
+      insert_user(%{password: "my_password123"})
       assert {:error, :unauthorized} = Accounts.authenticate("john_doe@example.com", "invalid")
     end
 
     test "authenticate_user/2 with invalid email return :not_found error" do
-      user_fixture()
+      insert_user(%{password: "my_password123"})
       assert {:error, :not_found} = Accounts.authenticate("invalid@example.com", "my_password123")
     end
 
@@ -106,7 +97,7 @@ defmodule Cashtray.AccountsTest do
     end
 
     test "update_user/2 with valid data updates the user" do
-      user = %{password_hash: old_password_hash} = user_fixture()
+      user = %{password_hash: old_password_hash} = insert_user()
       assert {:ok, %User{} = user} = Accounts.update_user(user, @update_attrs)
       assert user.email == "updated_john_doe@example.com"
       assert user.first_name == "some updated first_name"
@@ -115,19 +106,19 @@ defmodule Cashtray.AccountsTest do
     end
 
     test "update_user/2 with invalid data returns error changeset" do
-      user = user_fixture()
+      user = insert_user()
       assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user, @invalid_attrs)
       assert user == Accounts.get_user!(user.id)
     end
 
     test "delete_user/1 deletes the user" do
-      user = user_fixture()
+      user = insert_user()
       assert {:ok, %User{}} = Accounts.delete_user(user)
       assert_raise Ecto.NoResultsError, fn -> Accounts.get_user!(user.id) end
     end
 
     test "change_user/1 returns a user changeset" do
-      user = user_fixture()
+      user = insert_user()
       assert %Ecto.Changeset{} = Accounts.change_user(user)
     end
   end
