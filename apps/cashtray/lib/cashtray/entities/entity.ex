@@ -7,10 +7,10 @@ defmodule Cashtray.Entities.Entity do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "entities" do
-    field(:name, :string)
-    field(:status, :string, default: "active")
-    field(:type, :string, default: "personal")
-    belongs_to(:owner, User)
+    field :name, :string
+    field :status, :string, default: "active"
+    field :type, :string, default: "personal"
+    belongs_to :owner, User
 
     timestamps()
   end
@@ -18,9 +18,10 @@ defmodule Cashtray.Entities.Entity do
   @doc false
   def changeset(entity, attrs) do
     entity
-    |> cast(attrs, [:name, :type, :status, :owner_id])
+    |> cast(attrs, [:name, :type, :status])
     |> validate_required([:name, :type, :status, :owner_id])
     |> validate_inclusion(:type, ["personal", "company", "other"])
     |> validate_inclusion(:status, ["active", "archived"])
+    |> foreign_key_constraint(:owner_id)
   end
 end

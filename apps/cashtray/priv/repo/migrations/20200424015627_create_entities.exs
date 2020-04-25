@@ -7,7 +7,7 @@ defmodule Cashtray.Repo.Migrations.CreateEntities do
       add :name, :string, null: false
       add :type, :string, null: false, default: "personal"
       add :status, :string, null: false, default: "active"
-      add :owner_id, references(:users, on_delete: :delete_all, type: :binary_id)
+      add :owner_id, references(:users, on_delete: :delete_all, type: :binary_id), null: false
 
       timestamps()
     end

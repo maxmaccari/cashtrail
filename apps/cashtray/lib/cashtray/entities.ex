@@ -10,19 +10,6 @@ defmodule Cashtray.Entities do
   alias Cashtray.Accounts.User
 
   @doc """
-  Returns the list of entities.
-
-  ## Examples
-
-      iex> list_entities()
-      [%Entity{}, ...]
-
-  """
-  def list_entities do
-    Repo.all(Entity)
-  end
-
-  @doc """
   Returns the list of entities from the given user.
 
   ## Examples
@@ -63,8 +50,9 @@ defmodule Cashtray.Entities do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_entity(attrs \\ %{}) do
-    %Entity{}
+  def create_entity(%User{} = user, attrs \\ %{}) do
+    user
+    |> Ecto.build_assoc(:entities)
     |> Entity.changeset(attrs)
     |> Repo.insert()
   end

@@ -2,6 +2,8 @@ defmodule Cashtray.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Cashtray.Entities.Entity
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "users" do
@@ -10,6 +12,8 @@ defmodule Cashtray.Accounts.User do
     field :last_name, :string
     field :password_hash, :string
     field :password, :string, virtual: true
+
+    has_many :entities, Entity, foreign_key: :owner_id
 
     timestamps()
   end

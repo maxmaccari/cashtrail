@@ -41,32 +41,25 @@ defmodule Cashtray.EntitiesTest do
     end
 
     def entity_fixture(attrs \\ %{}) do
-      owner_id =
+      owner =
         case attrs do
-          %{owner_id: id} ->
-            id
+          %{owner: owner} ->
+            owner
 
           _ ->
-            user_fixture(Map.get(attrs, :owner, %{})).id
+            user_fixture(Map.get(attrs, :owner, %{}))
         end
 
-      {:ok, entity} =
-        attrs
-        |> Enum.into(%{@valid_attrs | owner_id: owner_id})
-        |> Entities.create_entity()
+      attrs = Enum.into(attrs, @valid_attrs)
+      {:ok, entity} = Entities.create_entity(owner, attrs)
 
       remove_owner(entity)
     end
 
-    test "list_entities/0 returns all entities" do
-      entity = entity_fixture()
-      assert Entities.list_entities() == [entity]
-    end
-
-    test "list_entities_from/1 returns all entities from an user" do
+    test "list_entities_from/1 returns all entities from an user that is owner" do
       entity_fixture()
       owner = user_fixture(%{email: "john_doe_2@example.com"})
-      entity_fixture(%{owner_id: owner.id})
+      entity_fixture(%{owner: owner})
 
       assert [%Entity{owner_id: owner_id}] = Entities.list_entities_from(owner)
       assert owner_id == owner.id
@@ -80,8 +73,7 @@ defmodule Cashtray.EntitiesTest do
     test "create_entity/1 with valid data creates a entity" do
       user = user_fixture()
 
-      assert {:ok, %Entity{} = entity} =
-               @valid_attrs |> Map.put(:owner_id, user.id) |> Entities.create_entity()
+      assert {:ok, %Entity{} = entity} = Entities.create_entity(user, @valid_attrs)
 
       assert entity.name == "some name"
       assert entity.status == "active"
@@ -90,7 +82,12 @@ defmodule Cashtray.EntitiesTest do
     end
 
     test "create_entity/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Entities.create_entity(@invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Entities.create_entity(%Accounts.User{}, @invalid_attrs)
+    end
+
+    test "create_entity/1 with invalid user returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Entities.create_entity(%Accounts.User{}, @valid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Entities.create_entity(%Accounts.User{id: Ecto.UUID.generate()}, @valid_attrs)
     end
 
     test "update_entity/2 with valid data updates the entity" do
@@ -99,6 +96,13 @@ defmodule Cashtray.EntitiesTest do
       assert entity.name == "some updated name"
       assert entity.status == "archived"
       assert entity.type == "company"
+    end
+
+    test "update_entity/2 does not allow to change the owner" do
+      entity = entity_fixture()
+      user = user_fixture(%{email: "john_doe2@example.com"})
+      assert {:ok, %Entity{} = entity} = Entities.update_entity(entity, %{owner_id: user.id})
+      assert entity.owner_id != user.id
     end
 
     test "update_entity/2 with invalid data returns error changeset" do
