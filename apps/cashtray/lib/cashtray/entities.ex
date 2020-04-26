@@ -217,7 +217,8 @@ defmodule Cashtray.Entities do
   @doc """
   Creates a entity_member for the entity, the user and the permission.
 
-  Returns %Ecto.Changeset{} if the given user_id is invalid or is already added
+  Returns %Ecto.Changeset{} if the given user is invalid or is already added
+  Returns :invalid if the given user is the owner of the entity
 
   ## Examples
 
@@ -228,6 +229,10 @@ defmodule Cashtray.Entities do
       {:error, %Ecto.Changeset{}}
 
   """
+  def add_member(%Entity{owner_id: owner_id}, %User{id: user_id}) when owner_id == user_id do
+    {:error, :invalid}
+  end
+
   def add_member(%Entity{} = entity, %User{id: user_id}, permission \\ "read") do
     entity
     |> Ecto.build_assoc(:members)

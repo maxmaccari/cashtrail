@@ -287,6 +287,11 @@ defmodule Cashtray.EntitiesTest do
                Entities.add_member(entity, user)
     end
 
+    test "add_member/3 with the owner user returns :invalid error" do
+      entity = insert(:entity)
+      assert {:error, :invalid} = Entities.add_member(entity, entity.owner)
+    end
+
     test "remove_member/2 remove user as member of the entity not deleting the user" do
       member = insert(:entity_member)
 
