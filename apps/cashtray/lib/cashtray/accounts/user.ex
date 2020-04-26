@@ -33,7 +33,7 @@ defmodule Cashtray.Accounts.User do
     )
     |> unique_constraint(:email)
     |> validate_length(:password, min: 8, max: 20)
-    |> validate_format(:password, ~r/^(?=.*\d)(?=.*[a-z])(?=.*[!@#\$%\^&\*\_]).*/,
+    |> validate_format(:password, ~r/^(?=.*\d)(?=.*[a-z])(?=.*[!@#\$%\^&\*\_\=]).*/,
       message: "should have at least one special character, one number and one letter"
     )
     |> validate_confirmation(:password)
