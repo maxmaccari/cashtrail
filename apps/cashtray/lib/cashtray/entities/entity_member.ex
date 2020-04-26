@@ -1,4 +1,11 @@
 defmodule Cashtray.Entities.EntityMember do
+  @moduledoc """
+  Represents a member of an Entity that links authorized users to the Entity,
+  except the owner.
+
+  The owner is not a member of the Entity.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

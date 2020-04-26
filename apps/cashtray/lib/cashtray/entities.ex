@@ -6,8 +6,8 @@ defmodule Cashtray.Entities do
   import Ecto.Query, warn: false
   alias Cashtray.Repo
 
-  alias Cashtray.Entities.{Entity, EntityMember, Tenants}
   alias Cashtray.Accounts.User
+  alias Cashtray.Entities.{Entity, EntityMember, Tenants}
 
   @doc """
   Returns the list of entities from the given user.
@@ -139,19 +139,17 @@ defmodule Cashtray.Entities do
       {:error, :unauthorized}
   """
   def transfer_ownership(%Entity{} = entity, %User{} = from, %User{} = to) do
-    cond do
-      entity.owner_id == from.id ->
-        changeset = Entity.transfer_changeset(entity, %{owner_id: to.id})
+    if entity.owner_id == from.id do
+      changeset = Entity.transfer_changeset(entity, %{owner_id: to.id})
 
-        with {:ok, entity} <- Repo.update(changeset) do
-          remove_member(entity, to)
-          add_member(entity, from, "admin")
+      with {:ok, entity} <- Repo.update(changeset) do
+        remove_member(entity, to)
+        add_member(entity, from, "admin")
 
-          {:ok, entity}
-        end
-
-      true ->
-        {:error, :unauthorized}
+        {:ok, entity}
+      end
+    else
+      {:error, :unauthorized}
     end
   end
 

@@ -1,5 +1,7 @@
 defmodule Cashtray.Factory.AccountsFactory do
-  alias Cashtray.Accounts.{User, PasswordHash}
+  @moduledoc false
+
+  alias Cashtray.Accounts.{PasswordHash, User}
 
   defmacro __using__(_opts) do
     quote do

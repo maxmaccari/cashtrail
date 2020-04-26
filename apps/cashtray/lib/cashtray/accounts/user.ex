@@ -1,4 +1,8 @@
 defmodule Cashtray.Accounts.User do
+  @moduledoc """
+  It represents a user of the application.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

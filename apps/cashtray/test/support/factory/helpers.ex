@@ -1,4 +1,6 @@
 defmodule Cashtray.Factory.Helpers do
+  @moduledoc false
+
   def forget(_, _, cardinality \\ :one)
 
   def forget(struct, fields, cardinality) when is_list(fields),

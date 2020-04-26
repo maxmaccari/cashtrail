@@ -1,4 +1,6 @@
 defmodule Cashtray.Factory.EntitiesFactory do
+  @moduledoc false
+
   alias Cashtray.Entities.{Entity, EntityMember}
 
   defmacro __using__(_opts) do
