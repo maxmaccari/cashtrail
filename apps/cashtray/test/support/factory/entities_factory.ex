@@ -5,9 +5,9 @@ defmodule Cashtray.Factory.EntitiesFactory do
     quote do
       def entity_factory(attrs \\ %{}) do
         entity = %Entity{
-          name: "some name",
+          name: "personal finances",
           status: "active",
-          type: "personal",
+          type: Enum.random(["personal", "company", "other"]),
           owner: unless(Map.has_key?(attrs, :entity_id), do: build(:user), else: nil)
         }
 
@@ -16,7 +16,7 @@ defmodule Cashtray.Factory.EntitiesFactory do
 
       def entity_member_factory(attrs \\ %{}) do
         entity_member = %EntityMember{
-          permission: "read",
+          permission: Enum.random(["read", "write", "admin"]),
           entity: unless(Map.has_key?(attrs, :entity_id), do: build(:entity), else: nil),
           user: unless(Map.has_key?(attrs, :user_id), do: build(:user), else: nil)
         }

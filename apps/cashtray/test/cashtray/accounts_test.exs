@@ -6,15 +6,6 @@ defmodule Cashtray.AccountsTest do
   describe "users" do
     alias Cashtray.Accounts.User
 
-    @update_attrs %{
-      email: "updated_john_doe@example.com",
-      first_name: "some updated first_name",
-      last_name: "some updated last_name",
-      password: "updated_password123",
-      password_confirmation: "updated_password123"
-    }
-    @invalid_attrs %{email: nil, first_name: nil, last_name: nil, password: nil}
-
     test "get_user!/1 returns the user with given id" do
       user = insert(:user)
       assert Accounts.get_user!(user.id) == user
@@ -27,28 +18,30 @@ defmodule Cashtray.AccountsTest do
 
     test "authenticate_user/2 returns the user with the given id and password" do
       user = insert(:user, password_hash: "my_password123")
-      assert {:ok, autenticated} = Accounts.authenticate("john_doe@example.com", "my_password123")
+      assert {:ok, autenticated} = Accounts.authenticate(user.email, "my_password123")
       assert autenticated == user
     end
 
     test "authenticate_user/2 with invalid password return :unathorized error" do
-      insert(:user, password_hash: "my_password123")
-      assert {:error, :unauthorized} = Accounts.authenticate("john_doe@example.com", "invalid")
+      user = insert(:user, password_hash: "my_password123")
+      assert {:error, :unauthorized} = Accounts.authenticate(user.email, "invalid")
     end
 
     test "authenticate_user/2 with invalid email return :not_found error" do
       insert(:user, password_hash: "my_password123")
-      assert {:error, :not_found} = Accounts.authenticate("invalid@example.com", "my_password123")
+      assert {:error, :not_found} = Accounts.authenticate("invalid", "my_password123")
     end
 
     test "create_user/1 with valid data creates a user" do
-      assert {:ok, %User{} = user} = Accounts.create_user(params_for(:user, password: "@abc1234"))
-      assert user.email == "john_doe@example.com"
-      assert user.first_name == "some first_name"
-      assert user.last_name == "some last_name"
+      user_params = params_for(:user, password: "@abc1234")
+      assert {:ok, %User{} = user} = Accounts.create_user(user_params)
+      assert user.email == user_params.email
+      assert user.first_name == user_params.first_name
+      assert user.last_name == user_params.last_name
       assert user.password_hash != nil
     end
 
+    @invalid_attrs %{email: nil, first_name: nil, last_name: nil, password: nil}
     test "create_user/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Accounts.create_user(@invalid_attrs)
     end
@@ -77,6 +70,13 @@ defmodule Cashtray.AccountsTest do
               }} = Accounts.create_user(params_for(:user, password: "is invalid"))
     end
 
+    @update_attrs %{
+      email: "updated_john_doe@example.com",
+      first_name: "some updated first_name",
+      last_name: "some updated last_name",
+      password: "updated_password123",
+      password_confirmation: "updated_password123"
+    }
     test "update_user/2 with valid data updates the user" do
       user = %{password_hash: old_password_hash} = insert(:user)
       assert {:ok, %User{} = user} = Accounts.update_user(user, @update_attrs)

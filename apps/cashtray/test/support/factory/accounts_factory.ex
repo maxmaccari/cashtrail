@@ -10,9 +10,9 @@ defmodule Cashtray.Factory.AccountsFactory do
           Map.put(attrs, :password_hash, AccountsFactory.put_pass_hash(attrs, "my_password_123"))
 
         user = %User{
-          email: "john_doe@example.com",
-          first_name: "some first_name",
-          last_name: "some last_name"
+          email: Faker.Internet.email(),
+          first_name: Faker.Name.first_name(),
+          last_name: Faker.Name.last_name()
         }
 
         merge_attributes(user, attrs)
