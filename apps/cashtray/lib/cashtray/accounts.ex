@@ -8,6 +8,8 @@ defmodule Cashtray.Accounts do
 
   alias Cashtray.Accounts.{PasswordHash, User}
 
+  @type user() :: Cashtray.Accounts.User.t()
+
   @doc """
   Gets a single user.
 
@@ -22,6 +24,7 @@ defmodule Cashtray.Accounts do
       ** (Ecto.NoResultsError)
 
   """
+  @spec get_user!(Ecto.UUID.t()) :: user()
   def get_user!(id), do: Repo.get!(User, id)
 
   @doc """
@@ -38,6 +41,7 @@ defmodule Cashtray.Accounts do
       nil
 
   """
+  @spec get_user_by(keyword | map) :: nil | user()
   def get_user_by(params \\ []), do: Repo.get_by(User, params)
 
   @doc """
@@ -59,6 +63,8 @@ defmodule Cashtray.Accounts do
       iex> authenticate(wrong_email, password)
       {:error, :not_found}
   """
+  @spec authenticate(String.t(), String.t()) ::
+          {:ok, user()} | {:error, :not_found | :unauthorized}
   def authenticate(email, password) do
     user = get_user_by(email: email)
 
@@ -87,6 +93,8 @@ defmodule Cashtray.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec create_user(map) ::
+          {:ok, user()} | {:error, Ecto.Changeset.t(user())}
   def create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
@@ -105,6 +113,7 @@ defmodule Cashtray.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec update_user(user(), map) :: {:ok, user()} | {:error, Ecto.Changeset.t(user())}
   def update_user(%User{} = user, attrs) do
     user
     |> User.changeset(attrs)
@@ -123,6 +132,7 @@ defmodule Cashtray.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec delete_user(user()) :: {:ok, user()} | {:error, Ecto.Changeset.t(user())}
   def delete_user(%User{} = user) do
     Repo.delete(user)
   end
@@ -136,6 +146,7 @@ defmodule Cashtray.Accounts do
       %Ecto.Changeset{source: %User{}}
 
   """
+  @spec change_user(user()) :: Ecto.Changeset.t(user())
   def change_user(%User{} = user) do
     User.changeset(user, %{})
   end

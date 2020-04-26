@@ -3,6 +3,15 @@ defmodule Cashtray.Accounts.User do
   It represents a user of the application.
   """
 
+  @type t() :: %Cashtray.Accounts.User{
+          id: Ecto.UUID.t() | nil,
+          email: String.t() | nil,
+          first_name: String.t() | nil,
+          last_name: String.t() | nil,
+          password: String.t() | nil,
+          password_hash: String.t() | nil
+        }
+
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -23,6 +32,7 @@ defmodule Cashtray.Accounts.User do
     timestamps()
   end
 
+  @spec changeset(t() | Ecto.Changeset.t(t()), map) :: Ecto.Changeset.t(t())
   @doc false
   def changeset(user, attrs) do
     user

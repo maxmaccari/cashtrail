@@ -6,6 +6,15 @@ defmodule Cashtray.Entities.EntityMember do
   The owner is not a member of the Entity.
   """
 
+  @type t() :: %Cashtray.Entities.EntityMember{
+          id: Ecto.UUID.t() | nil,
+          permission: String.t() | nil,
+          entity_id: Ecto.UUID.t() | nil,
+          entity: Ecto.Association.NotLoaded.t() | Cashtray.Entities.Entity.t() | nil,
+          user_id: Ecto.UUID.t() | nil,
+          user: Ecto.Association.NotLoaded.t() | Cashtray.Accounts.User.t() | nil
+        }
+
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -23,6 +32,7 @@ defmodule Cashtray.Entities.EntityMember do
   end
 
   @doc false
+  @spec changeset(t() | Ecto.Changeset.t(t()), map) :: Ecto.Changeset.t(t())
   def changeset(entity_member, attrs) do
     entity_member
     |> cast(attrs, [:permission, :user_id])

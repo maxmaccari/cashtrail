@@ -7,6 +7,16 @@ defmodule Cashtray.Entities.Entity do
   Each Entity generates a prefix in Ecto.
   """
 
+  @type t() :: %Cashtray.Entities.Entity{
+          id: Ecto.UUID.t() | nil,
+          name: String.t() | nil,
+          status: String.t() | nil,
+          type: String.t() | nil,
+          owner_id: Ecto.UUID.t() | nil,
+          owner: Ecto.Association.NotLoaded.t() | Cashtray.Accounts.User.t() | nil,
+          members: Ecto.Association.NotLoaded.t() | list(Cashtray.Entities.EntityMember.t()) | []
+        }
+
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -26,6 +36,7 @@ defmodule Cashtray.Entities.Entity do
   end
 
   @doc false
+  @spec changeset(t() | Ecto.Changeset.t(t()), map) :: Ecto.Changeset.t(t())
   def changeset(entity, attrs) do
     entity
     |> cast(attrs, [:name, :type, :status])
@@ -36,6 +47,7 @@ defmodule Cashtray.Entities.Entity do
   end
 
   @doc false
+  @spec transfer_changeset(t() | Ecto.Changeset.t(t()), map) :: Ecto.Changeset.t(t())
   def transfer_changeset(entity, attrs) do
     entity
     |> cast(attrs, [:owner_id])

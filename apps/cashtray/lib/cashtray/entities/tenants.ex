@@ -13,6 +13,8 @@ defmodule Cashtray.Entities.Tenants do
 
   See `Triplex.create/2` docs for more information.
   """
+  @spec create(%Cashtray.Entities.Entity{id: Ecto.UUID.t()}) ::
+          {:error, String.t()} | {:ok, Ecto.UUID.t()}
   def create(%Entity{} = entity) do
     entity
     |> Triplex.to_prefix()
@@ -24,6 +26,8 @@ defmodule Cashtray.Entities.Tenants do
 
   See `Triplex.create/2` docs for more information.
   """
+  @spec drop(%Cashtray.Entities.Entity{id: Ecto.UUID.t()}) ::
+          {:error, String.t()} | {:ok, Ecto.UUID.t()}
   def drop(%Entity{} = entity) do
     entity
     |> Triplex.to_prefix()

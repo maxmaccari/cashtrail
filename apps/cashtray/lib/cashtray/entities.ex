@@ -3,6 +3,12 @@ defmodule Cashtray.Entities do
   The Entities context.
   """
 
+  @type entity :: Cashtray.Entities.Entity.t()
+  @type entity_member :: Cashtray.Entities.EntityMember.t()
+  @type page(type) :: %Scrivener.Page{
+          entries: list(type)
+        }
+
   import Ecto.Query, warn: false
   alias Cashtray.Repo
 
@@ -21,6 +27,7 @@ defmodule Cashtray.Entities do
       %Scrivener.Page{entries: [%Entity{}, ...]}
 
   """
+  @spec list_entities_from(Cashtray.Accounts.User.t(), keyword | map) :: page(entity())
   def list_entities_from(%User{} = user, params \\ []) do
     from(e in Entity)
     |> join(:left, [e], m in assoc(e, :members))
@@ -43,6 +50,7 @@ defmodule Cashtray.Entities do
       ** (Ecto.NoResultsError)
 
   """
+  @spec get_entity!(Ecto.UUID.t()) :: entity()
   def get_entity!(id), do: Repo.get!(Entity, id)
 
   @doc """
@@ -57,6 +65,8 @@ defmodule Cashtray.Entities do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec create_entity(Cashtray.Accounts.User.t(), map) ::
+          {:ok, entity()} | {:error, Ecto.Changeset.t(entity())}
   def create_entity(%User{} = user, attrs \\ %{}) do
     changeset =
       user
@@ -81,6 +91,7 @@ defmodule Cashtray.Entities do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec update_entity(entity(), map) :: {:ok, entity()} | {:error, Ecto.Changeset.t(entity())}
   def update_entity(%Entity{} = entity, attrs) do
     entity
     |> Entity.changeset(attrs)
@@ -99,6 +110,9 @@ defmodule Cashtray.Entities do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec delete_entity(entity()) ::
+          {:ok, entity()}
+          | {:error, Ecto.Changeset.t(entity())}
   def delete_entity(%Entity{} = entity) do
     with {:ok, entity} <- Repo.delete(entity),
          {:ok, _tenant} <- Tenants.drop(entity) do
@@ -115,6 +129,7 @@ defmodule Cashtray.Entities do
       %Ecto.Changeset{source: %Entity{}}
 
   """
+  @spec change_entity(entity()) :: Ecto.Changeset.t(entity())
   def change_entity(%Entity{} = entity) do
     Entity.changeset(entity, %{})
   end
@@ -138,6 +153,8 @@ defmodule Cashtray.Entities do
       iex> transfer_ownership(entity, invalid_from, to)
       {:error, :unauthorized}
   """
+  @spec transfer_ownership(entity(), Cashtray.Accounts.User.t(), Cashtray.Accounts.User.t()) ::
+          {:error, :unauthorized} | {:ok, entity()}
   def transfer_ownership(%Entity{} = entity, %User{} = from, %User{} = to) do
     if entity.owner_id == from.id do
       changeset = Entity.transfer_changeset(entity, %{owner_id: to.id})
@@ -164,6 +181,7 @@ defmodule Cashtray.Entities do
     iex> belongs_to?(%Entity{owner_id: "bbb"}, %User{id: "aaa"})
     false
   """
+  @spec belongs_to?(entity(), Cashtray.Accounts.User.t()) :: boolean
   def belongs_to?(%Entity{owner_id: owner_id}, %User{id: user_id}) do
     owner_id == user_id
   end
@@ -179,6 +197,7 @@ defmodule Cashtray.Entities do
       [%EntityMember{}, ...]
 
   """
+  @spec list_members(entity, keyword | map) :: page(entity_member)
   def list_members(%Entity{id: entity_id}, params \\ []) do
     from(EntityMember, where: [entity_id: ^entity_id])
     |> Repo.paginate(params)
@@ -196,6 +215,8 @@ defmodule Cashtray.Entities do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec create_member(entity, map) ::
+          {:ok, entity_member} | {:error, Ecto.Changeset.t(entity_member)}
   def create_member(%Entity{} = entity, attrs \\ %{}) do
     email = get_in(attrs, [:user, :email]) || get_in(attrs, ["user", "email"])
 
@@ -229,6 +250,8 @@ defmodule Cashtray.Entities do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec add_member(entity, Cashtray.Accounts.User.t()) ::
+          {:ok, entity_member} | {:error, :invalid | Ecto.Changeset.t(entity)}
   def add_member(%Entity{owner_id: owner_id}, %User{id: user_id}) when owner_id == user_id do
     {:error, :invalid}
   end
@@ -254,6 +277,8 @@ defmodule Cashtray.Entities do
       {:error, :not_found}
 
   """
+  @spec remove_member(entity, Cashtray.Accounts.User.t()) ::
+          {:ok, entity_member} | {:error, :not_found}
   def remove_member(entity, user) do
     case member_from_user(entity, user) do
       %EntityMember{} = entity_member -> Repo.delete(entity_member)
@@ -270,10 +295,10 @@ defmodule Cashtray.Entities do
   ## Examples
 
     iex> update_member_permission(entity, user, "write")
-    {:ok, %Entity{}}
+    {:ok, %EntityMember{}}
 
     iex> update_member_permission(entity, user, "invalid")
-    {:error, %Error.Changeset{}}
+    {:error, %Ecto.Changeset{}}
 
     iex> update_member_permission(entity, owner, "write")
     {:error, :invalid}
@@ -281,6 +306,8 @@ defmodule Cashtray.Entities do
     iex> update_member_permission(entity, another_user, "write)
     {:error, :not_found}
   """
+  @spec update_member_permission(entity, Cashtray.Accounts.User.t(), String.t()) ::
+          {:ok, entity_member} | {:error, Ecto.Changeset.t(entity_member) | :invalid | :not_found}
   def update_member_permission(
         %Entity{owner_id: owner_id} = entity,
         %User{id: user_id} = user,
@@ -314,6 +341,7 @@ defmodule Cashtray.Entities do
     iex> get_member_permission(entity, another_user)
     :unauthorized
   """
+  @spec get_member_permission(entity(), Cashtray.Accounts.User.t()) :: atom()
   def get_member_permission(%Entity{owner_id: owner_id} = entity, %User{id: user_id} = user) do
     case member_from_user(entity, user) do
       %EntityMember{} = entity_member ->
@@ -344,6 +372,8 @@ defmodule Cashtray.Entities do
     iex> member_from_user(entity, non_member_user)
     nil
   """
+  @spec member_from_user(entity(), Cashtray.Accounts.User.t()) ::
+          entity_member | nil
   def member_from_user(%Entity{id: entity_id}, %User{id: user_id}) do
     Repo.get_by(EntityMember, entity_id: entity_id, user_id: user_id)
   end
@@ -357,6 +387,7 @@ defmodule Cashtray.Entities do
       %Ecto.Changeset{source: %EntityMember{}}
 
   """
+  @spec change_member(entity_member()) :: Ecto.Changeset.t(entity_member())
   def change_member(%EntityMember{} = entity_member) do
     EntityMember.changeset(entity_member, %{})
   end
