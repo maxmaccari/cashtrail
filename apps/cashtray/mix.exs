@@ -40,7 +40,8 @@ defmodule Cashtray.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:jason, "~> 1.0"},
       {:argon2_elixir, "~> 2.3"},
-      {:triplex, "~> 1.3.0"}
+      {:triplex, "~> 1.3.0"},
+      {:ex_machina, "~> 2.4", only: :test}
     ]
   end
 

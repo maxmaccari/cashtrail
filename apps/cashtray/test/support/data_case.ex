@@ -26,8 +26,8 @@ defmodule Cashtray.DataCase do
       import Cashtray.DataCase
 
       # Factories
-      import Cashtray.Factories.AccountsFactory, warn: false
-      import Cashtray.Factories.EntitiesFactory, warn: false
+      import Cashtray.Factory, warn: false
+      import Cashtray.Factory.Helpers, warn: false
     end
   end
 
