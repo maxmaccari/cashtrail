@@ -10,23 +10,23 @@ defmodule Cashtray.Entities do
   alias Cashtray.Entities.{Entity, EntityMember, Tenants}
 
   @doc """
-  Returns the list of entities from the given user.
+  Returns a %Scrivener.Page{} struct with list of entities from the given user.
 
   ## Examples
 
       iex> list_entities(owner)
-      [%Entity{}, ...]
+      %Scrivener.Page{entries: [%Entity{}, ...]}
 
       iex> list_entities(member)
-      [%Entity{}, ...]
+      %Scrivener.Page{entries: [%Entity{}, ...]}
 
   """
-  def list_entities_from(%User{} = user) do
+  def list_entities_from(%User{} = user, params \\ []) do
     from(e in Entity)
     |> join(:left, [e], m in assoc(e, :members))
     |> or_where([e], e.owner_id == ^user.id)
     |> or_where([e, m], m.user_id == ^user.id)
-    |> Repo.all()
+    |> Repo.paginate(params)
   end
 
   @doc """

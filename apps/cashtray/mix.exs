@@ -44,7 +44,8 @@ defmodule Cashtray.MixProject do
       {:argon2_elixir, "~> 2.3"},
       {:triplex, "~> 1.3.0"},
       {:ex_machina, "~> 2.4", only: :test},
-      {:faker, "~> 0.13.0", only: :test}
+      {:faker, "~> 0.13.0", only: :test},
+      {:scrivener_ecto, "~> 2.3"}
     ]
   end
 
