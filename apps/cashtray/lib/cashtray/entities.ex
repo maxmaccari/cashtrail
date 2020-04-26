@@ -179,8 +179,9 @@ defmodule Cashtray.Entities do
       [%EntityMember{}, ...]
 
   """
-  def list_members(%Entity{id: entity_id}) do
-    Repo.all(from EntityMember, where: [entity_id: ^entity_id])
+  def list_members(%Entity{id: entity_id}, params \\ []) do
+    from(EntityMember, where: [entity_id: ^entity_id])
+    |> Repo.paginate(params)
   end
 
   @doc """

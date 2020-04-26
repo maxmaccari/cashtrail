@@ -7,7 +7,7 @@ defmodule Cashtray.EntitiesTest do
     alias Cashtray.Entities.Entity
     alias Cashtray.Entities.EntityMember
 
-    test "list_entities_from/1 returns a paginated by Scrivener" do
+    test "list_entities_from/1 returns results paginated by Scrivener" do
       owner = insert(:user)
       insert_list(30, :entity, owner: owner)
       owner_id = owner.id
@@ -184,7 +184,23 @@ defmodule Cashtray.EntitiesTest do
   end
 
   describe "entity_members" do
-    alias Cashtray.Entities.EntityMember
+    alias Cashtray.Entities.{Entity, EntityMember}
+
+    test "list_members/1 returns results paginated by Scrivener " do
+      entity = insert(:entity)
+      insert_list(30, :entity_member, entity: entity)
+      entity_id = entity.id
+
+      assert %Scrivener.Page{
+               page_number: 2,
+               page_size: 10,
+               total_pages: 3,
+               total_entries: 30,
+               entries: entries
+             } = Entities.list_members(entity, page: 2, page_size: 10)
+
+      assert [%EntityMember{entity_id: ^entity_id} | _] = entries
+    end
 
     test "list_members/1 returns all entity_members from the entity" do
       insert(:entity_member)
@@ -195,7 +211,7 @@ defmodule Cashtray.EntitiesTest do
         |> forget(:user)
         |> forget(:entity)
 
-      assert Entities.list_members(entity) == [entity_member]
+      assert Entities.list_members(entity).entries == [entity_member]
     end
 
     test "create_member/2 with valid data creates a entity_member with the user" do
