@@ -10,23 +10,29 @@ defmodule Cashtray.Currencies do
 
   alias Cashtray.Currencies.Currency
   alias Cashtray.Entities.Entity
+  alias Cashtray.Paginator
 
   import Cashtray.Entities.Tenants, only: [to_prefix: 1]
 
   @doc """
-  Returns the list of currencies.
+  Returns the list of currencies paginated.
 
   You must pass the entity to find the currency correctely.
+
+  See `Cashtray.Paginator` docs to see the options related to pagination.
 
   ## Examples
 
       iex> list_currencies(entity)
-      [%Currency{}, ...]
+      %Cashtray.Paginator.Page{entries: [%Currency{}, ...], ...}
 
   """
-  @spec list_currencies(Cashtray.Entities.Entity.t()) :: list(currency)
-  def list_currencies(%Entity{} = entity) do
-    Repo.all(Currency, prefix: to_prefix(entity))
+  @spec list_currencies(Cashtray.Entities.Entity.t(), keyword) :: Paginator.Page.t()
+  def list_currencies(%Entity{} = entity, params \\ []) do
+    Currency
+    |> Ecto.Queryable.to_query()
+    |> Map.put(:prefix, to_prefix(entity))
+    |> Paginator.paginate(params)
   end
 
   @doc """

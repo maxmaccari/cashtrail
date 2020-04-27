@@ -3,21 +3,23 @@ defmodule Cashtray.CurrenciesTest do
 
   alias Cashtray.Currencies
 
-  setup_all do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Cashtray.Repo)
-    Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
+  setup do
+    Ecto.Adapters.SQL.Sandbox.mode(Repo, {:shared, self()})
 
-    owner = insert(:user)
-    {:ok, entity} = Cashtray.Entities.create_entity(owner, params_for(:entity))
+    entity = insert(:entity)
+
+    Ecto.Adapters.SQL.Sandbox.mode(Repo, :auto)
+
+    Cashtray.Entities.Tenants.create(entity)
 
     on_exit(fn ->
-      :ok = Ecto.Adapters.SQL.Sandbox.checkout(Cashtray.Repo)
-      Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
-
-      Cashtray.Entities.delete_entity(entity)
+      Ecto.Adapters.SQL.Sandbox.mode(Repo, :auto)
+      Cashtray.Entities.Tenants.drop(entity)
     end)
 
-    {:ok, %{entity: %{entity | owner: owner}}}
+    Ecto.Adapters.SQL.Sandbox.mode(Repo, {:shared, self()})
+
+    {:ok, %{entity: entity}}
   end
 
   describe "currencies" do
@@ -25,7 +27,7 @@ defmodule Cashtray.CurrenciesTest do
 
     test "list_currencies/1 returns all currencies", %{entity: entity} do
       currency = insert(:currency, entity: entity)
-      assert Currencies.list_currencies(entity) == [currency]
+      assert Currencies.list_currencies(entity).entries == [currency]
     end
 
     test "get_currency!/2 returns the currency with given id", %{entity: entity} do
