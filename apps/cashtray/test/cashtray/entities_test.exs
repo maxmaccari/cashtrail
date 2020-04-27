@@ -2,7 +2,6 @@ defmodule Cashtray.EntitiesTest do
   use Cashtray.DataCase
 
   alias Cashtray.{Accounts, Entities}
-  alias Cashtray.Paginator.Page
 
   describe "entities" do
     alias Cashtray.Entities.Entity
@@ -12,26 +11,19 @@ defmodule Cashtray.EntitiesTest do
       Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
     end
 
-    def cleanup_entity_tenants(entity) do
+    def cleanup_entity_tenants(entity, owner_id \\ nil) do
       on_exit(fn ->
-        entity && Entities.delete_entity(entity)
+        if entity do
+          Entities.delete_entity(entity)
+        end
+
+        owner_id = entity && entity.owner_id || owner_id
+
+        if owner_id do
+          from(Cashtray.Accounts.User, where: [id: ^owner_id])
+          |> Repo.delete_all()
+        end
       end)
-    end
-
-    test "list_entities_from/1 returns results paginated" do
-      owner = insert(:user)
-      insert_list(30, :entity, owner: owner)
-      owner_id = owner.id
-
-      assert %Page{
-               page_number: 2,
-               page_size: 10,
-               total_pages: 3,
-               total_entries: 30,
-               entries: entries
-             } = Entities.list_entities_from(owner, page: 2, page_size: 10)
-
-      assert [%Entity{owner_id: ^owner_id} | _] = entries
     end
 
     test "list_entities_from/1 returns all entities from an user that is owner" do
@@ -133,6 +125,7 @@ defmodule Cashtray.EntitiesTest do
       {:ok, entity} = insert(:user) |> Entities.create_entity(params_for(:entity))
       assert {:ok, %Entity{}} = Entities.delete_entity(entity)
       assert_raise Ecto.NoResultsError, fn -> Entities.get_entity!(entity.id) end
+      cleanup_entity_tenants(nil, entity.owner_id)
     end
 
     test "delete_entity/1 deletes the entity tenant" do
@@ -140,6 +133,7 @@ defmodule Cashtray.EntitiesTest do
       {:ok, entity} = insert(:user) |> Entities.create_entity(params_for(:entity))
       assert {:ok, %Entity{}} = Entities.delete_entity(entity)
       refute Triplex.exists?(entity.id)
+      cleanup_entity_tenants(nil, entity.owner_id)
     end
 
     test "change_entity/1 returns a entity changeset" do
@@ -210,22 +204,6 @@ defmodule Cashtray.EntitiesTest do
 
   describe "entity_members" do
     alias Cashtray.Entities.{Entity, EntityMember}
-
-    test "list_members/1 returns results paginated" do
-      entity = insert(:entity)
-      insert_list(30, :entity_member, entity: entity)
-      entity_id = entity.id
-
-      assert %Page{
-               page_number: 2,
-               page_size: 10,
-               total_pages: 3,
-               total_entries: 30,
-               entries: entries
-             } = Entities.list_members(entity, page: 2, page_size: 10)
-
-      assert [%EntityMember{entity_id: ^entity_id} | _] = entries
-    end
 
     test "list_members/1 returns all entity_members from the entity" do
       insert(:entity_member)
