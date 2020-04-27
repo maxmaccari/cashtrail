@@ -2,6 +2,7 @@ defmodule Cashtray.EntitiesTest do
   use Cashtray.DataCase
 
   alias Cashtray.{Accounts, Entities}
+  alias Cashtray.Paginator.Page
 
   describe "entities" do
     alias Cashtray.Entities.Entity
@@ -12,7 +13,7 @@ defmodule Cashtray.EntitiesTest do
       insert_list(30, :entity, owner: owner)
       owner_id = owner.id
 
-      assert %Scrivener.Page{
+      assert %Page{
                page_number: 2,
                page_size: 10,
                total_pages: 3,
@@ -191,7 +192,7 @@ defmodule Cashtray.EntitiesTest do
       insert_list(30, :entity_member, entity: entity)
       entity_id = entity.id
 
-      assert %Scrivener.Page{
+      assert %Page{
                page_number: 2,
                page_size: 10,
                total_pages: 3,
