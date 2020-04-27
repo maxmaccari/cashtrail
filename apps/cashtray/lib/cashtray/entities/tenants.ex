@@ -33,4 +33,14 @@ defmodule Cashtray.Entities.Tenants do
     |> Triplex.to_prefix()
     |> Triplex.drop()
   end
+
+  @doc """
+  Return the prefix from Entity.
+
+  See `Triplex.to_prefix/1` docs for more information.
+  """
+  @spec to_prefix(Cashtray.Entities.Entity.t()) :: String.t()
+  def to_prefix(%Entity{} = entity) do
+    Triplex.to_prefix(entity)
+  end
 end
