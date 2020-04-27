@@ -21,19 +21,39 @@ defmodule Cashtray.Currencies do
 
   See `Cashtray.Paginator` docs to see the options related to pagination.
 
+  You can also a map to :filters as params to filter the results:
+    * `:type` or `"type" to filter by type
+
   ## Examples
 
       iex> list_currencies(entity)
       %Cashtray.Paginator.Page{entries: [%Currency{}, ...], ...}
 
+      iex> list_currencies(entity, page: 2)
+      %Cashtray.Paginator.Page{entries: [%Currency{}, ...], page: 2}
+
+      iex> list_currencies(entity, filter: %{type: "cash"})
+      %Cashtray.Paginator.Page{entries: [%Currency{type: "cash"}, ...]}
+
   """
   @spec list_currencies(Cashtray.Entities.Entity.t(), keyword) :: Paginator.Page.t()
-  def list_currencies(%Entity{} = entity, params \\ []) do
+  def list_currencies(%Entity{} = entity, options \\ []) do
     Currency
+    |> filter(Keyword.get(options, :filter))
     |> Ecto.Queryable.to_query()
     |> Map.put(:prefix, to_prefix(entity))
-    |> Paginator.paginate(params)
+    |> Paginator.paginate(options)
   end
+
+  defp filter(query, filters) when is_map(filters) do
+    Enum.reduce(filters, query, fn
+      {"type", value}, query -> from(q in query, where: [type: ^value])
+      {:type, value}, query -> from(q in query, where: [type: ^value])
+      _, query -> query
+    end)
+  end
+
+  defp filter(query, _), do: query
 
   @doc """
   Gets a single currency.

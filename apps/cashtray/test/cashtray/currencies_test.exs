@@ -30,6 +30,14 @@ defmodule Cashtray.CurrenciesTest do
       assert Currencies.list_currencies(entity).entries == [currency]
     end
 
+    test "list_currencies/1 filtering by type", %{entity: entity} do
+      insert(:currency, entity: entity, type: "digital_currency")
+      currency = insert(:currency, entity: entity, type: "cash")
+
+      assert Currencies.list_currencies(entity, filter: %{type: "cash"}).entries == [currency]
+      assert Currencies.list_currencies(entity, filter: %{"type" => "cash"}).entries == [currency]
+    end
+
     test "get_currency!/2 returns the currency with given id", %{entity: entity} do
       currency = insert(:currency, entity: entity)
       assert Currencies.get_currency!(entity, currency.id) == currency
