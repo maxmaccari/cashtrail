@@ -46,6 +46,7 @@ defmodule Cashtray.EntitiesTest do
     end
 
     test "create_entity/1 with valid data creates a entity" do
+      Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
       user = insert(:user)
       entity_params = params_for(:entity)
       assert {:ok, %Entity{} = entity} = Entities.create_entity(user, entity_params)
@@ -57,6 +58,8 @@ defmodule Cashtray.EntitiesTest do
     end
 
     test "create_entity/1 with valid data creates a prefix with the entity id" do
+      Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
+
       user = insert(:user)
 
       assert {:ok, %Entity{} = entity} = Entities.create_entity(user, params_for(:entity))
@@ -65,11 +68,15 @@ defmodule Cashtray.EntitiesTest do
 
     @invalid_attrs %{name: nil, status: nil, type: nil, owner_id: nil}
     test "create_entity/1 with invalid data returns error changeset" do
+      Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
+
       assert {:error, %Ecto.Changeset{}} =
                Entities.create_entity(%Accounts.User{}, @invalid_attrs)
     end
 
     test "create_entity/1 with invalid user returns error changeset" do
+      Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
+
       assert {:error, %Ecto.Changeset{}} =
                Entities.create_entity(%Accounts.User{}, params_for(:entity))
 
@@ -107,12 +114,14 @@ defmodule Cashtray.EntitiesTest do
     end
 
     test "delete_entity/1 deletes the entity" do
+      Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
       {:ok, entity} = insert(:user) |> Entities.create_entity(params_for(:entity))
       assert {:ok, %Entity{}} = Entities.delete_entity(entity)
       assert_raise Ecto.NoResultsError, fn -> Entities.get_entity!(entity.id) end
     end
 
     test "delete_entity/1 deletes the entity tenant" do
+      Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
       {:ok, entity} = insert(:user) |> Entities.create_entity(params_for(:entity))
       assert {:ok, %Entity{}} = Entities.delete_entity(entity)
       refute Triplex.exists?(entity.id)
