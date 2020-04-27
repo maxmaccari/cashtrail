@@ -5,7 +5,7 @@ defmodule Cashtray.Entities do
 
   @type entity :: Cashtray.Entities.Entity.t()
   @type entity_member :: Cashtray.Entities.EntityMember.t()
-  @type page(type) :: %Scrivener.Page{
+  @type page(type) :: %Cashtray.Paginator.Page{
           entries: list(type)
         }
 
@@ -14,17 +14,21 @@ defmodule Cashtray.Entities do
 
   alias Cashtray.Accounts.User
   alias Cashtray.Entities.{Entity, EntityMember, Tenants}
+  alias Cashtray.Paginator
 
   @doc """
-  Returns a %Scrivener.Page{} struct with list of entities from the given user.
+  Returns a %Cashtray.Paginator.Page{} struct with list of entities from the
+  given user.
+
+  See `Cashtray.Paginator` docs to see the options related to pagination.
 
   ## Examples
 
       iex> list_entities(owner)
-      %Scrivener.Page{entries: [%Entity{}, ...]}
+      %Cashtray.Paginator.Page{entries: [%Entity{}, ...]}
 
       iex> list_entities(member)
-      %Scrivener.Page{entries: [%Entity{}, ...]}
+      %Cashtray.Paginator.Page{entries: [%Entity{}, ...]}
 
   """
   @spec list_entities_from(Cashtray.Accounts.User.t(), keyword | map) :: page(entity())
@@ -33,7 +37,7 @@ defmodule Cashtray.Entities do
     |> join(:left, [e], m in assoc(e, :members))
     |> or_where([e], e.owner_id == ^user.id)
     |> or_where([e, m], m.user_id == ^user.id)
-    |> Repo.paginate(params)
+    |> Paginator.paginate(params)
   end
 
   @doc """
@@ -189,18 +193,20 @@ defmodule Cashtray.Entities do
   alias Cashtray.Accounts
 
   @doc """
-  Returns the list of entity_members.
+  Returns a %Cashtray.Paginator.Page{} struct of the list of entity_members.
+
+  See `Cashtray.Paginator` docs to see the options related to pagination.
 
   ## Examples
 
-      iex> list_entity_members()
-      [%EntityMember{}, ...]
+      iex> list_entity_members(entity)
+      %Cashtray.Paginator.Page{entries: [%EntityMember{}, ...]}
 
   """
   @spec list_members(entity, keyword | map) :: page(entity_member)
   def list_members(%Entity{id: entity_id}, params \\ []) do
     from(EntityMember, where: [entity_id: ^entity_id])
-    |> Repo.paginate(params)
+    |> Paginator.paginate(params)
   end
 
   @doc """
