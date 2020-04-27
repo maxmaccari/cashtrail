@@ -5,4 +5,5 @@ defmodule Cashtray.Factory do
 
   use Cashtray.Factory.AccountsFactory
   use Cashtray.Factory.EntitiesFactory
+  use Cashtray.Factory.CurrenciesFactory
 end
