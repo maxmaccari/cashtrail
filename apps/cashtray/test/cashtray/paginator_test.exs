@@ -1,5 +1,5 @@
 defmodule Cashtray.PaginatorTest do
-  use Cashtray.DataCase, async: true
+  use Cashtray.DataCase
 
   alias Cashtray.Entities.Entity
   alias Cashtray.Paginator

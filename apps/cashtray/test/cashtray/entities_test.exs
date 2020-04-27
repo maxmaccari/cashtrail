@@ -8,7 +8,17 @@ defmodule Cashtray.EntitiesTest do
     alias Cashtray.Entities.Entity
     alias Cashtray.Entities.EntityMember
 
-    test "list_entities_from/1 returns results paginated by Scrivener" do
+    def allow_create_entity_tenants() do
+      Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
+    end
+
+    def cleanup_entity_tenants(entity) do
+      on_exit(fn ->
+        entity && Entities.delete_entity(entity)
+      end)
+    end
+
+    test "list_entities_from/1 returns results paginated" do
       owner = insert(:user)
       insert_list(30, :entity, owner: owner)
       owner_id = owner.id
@@ -46,10 +56,13 @@ defmodule Cashtray.EntitiesTest do
     end
 
     test "create_entity/1 with valid data creates a entity" do
-      Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
+      allow_create_entity_tenants()
+
       user = insert(:user)
       entity_params = params_for(:entity)
       assert {:ok, %Entity{} = entity} = Entities.create_entity(user, entity_params)
+
+      cleanup_entity_tenants(entity)
 
       assert entity.name == entity_params.name
       assert entity.status == entity_params.status
@@ -58,24 +71,26 @@ defmodule Cashtray.EntitiesTest do
     end
 
     test "create_entity/1 with valid data creates a prefix with the entity id" do
-      Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
+      allow_create_entity_tenants()
 
       user = insert(:user)
 
       assert {:ok, %Entity{} = entity} = Entities.create_entity(user, params_for(:entity))
+      cleanup_entity_tenants(entity)
+
       assert Triplex.exists?(entity.id)
     end
 
     @invalid_attrs %{name: nil, status: nil, type: nil, owner_id: nil}
     test "create_entity/1 with invalid data returns error changeset" do
-      Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
+      allow_create_entity_tenants()
 
       assert {:error, %Ecto.Changeset{}} =
                Entities.create_entity(%Accounts.User{}, @invalid_attrs)
     end
 
     test "create_entity/1 with invalid user returns error changeset" do
-      Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
+      allow_create_entity_tenants()
 
       assert {:error, %Ecto.Changeset{}} =
                Entities.create_entity(%Accounts.User{}, params_for(:entity))
@@ -114,14 +129,14 @@ defmodule Cashtray.EntitiesTest do
     end
 
     test "delete_entity/1 deletes the entity" do
-      Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
+      allow_create_entity_tenants()
       {:ok, entity} = insert(:user) |> Entities.create_entity(params_for(:entity))
       assert {:ok, %Entity{}} = Entities.delete_entity(entity)
       assert_raise Ecto.NoResultsError, fn -> Entities.get_entity!(entity.id) end
     end
 
     test "delete_entity/1 deletes the entity tenant" do
-      Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
+      allow_create_entity_tenants()
       {:ok, entity} = insert(:user) |> Entities.create_entity(params_for(:entity))
       assert {:ok, %Entity{}} = Entities.delete_entity(entity)
       refute Triplex.exists?(entity.id)
@@ -196,7 +211,7 @@ defmodule Cashtray.EntitiesTest do
   describe "entity_members" do
     alias Cashtray.Entities.{Entity, EntityMember}
 
-    test "list_members/1 returns results paginated by Scrivener " do
+    test "list_members/1 returns results paginated" do
       entity = insert(:entity)
       insert_list(30, :entity_member, entity: entity)
       entity_id = entity.id
