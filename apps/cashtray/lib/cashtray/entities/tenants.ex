@@ -43,4 +43,16 @@ defmodule Cashtray.Entities.Tenants do
   def to_prefix(%Entity{} = entity) do
     Triplex.to_prefix(entity)
   end
+
+  @doc """
+  Put ecto prefix in a queryable.
+
+  See `Triplex.to_prefix/1` docs for more information.
+  """
+  @spec put_prefix(Ecto.Queryable.t(), Cashtray.Entities.t()) :: Ecto.Query.t()
+  def put_prefix(queryable, %Entity{} = entity) do
+    queryable
+    |> Ecto.Queryable.to_query()
+    |> Map.put(:prefix, to_prefix(entity))
+  end
 end
