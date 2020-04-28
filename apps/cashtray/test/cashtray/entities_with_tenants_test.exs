@@ -5,8 +5,14 @@ defmodule Cashtray.EntitiesWithTenantsTest do
     alias Cashtray.Entities
     alias Cashtray.Entities.Entity
 
-    def allow_create_entity_tenants() do
+    setup do
       Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
+
+      on_exit(fn ->
+        Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :manual)
+      end)
+
+      :ok
     end
 
     def cleanup_entity_tenants(entity, owner_id \\ nil) do
@@ -25,21 +31,21 @@ defmodule Cashtray.EntitiesWithTenantsTest do
     end
 
     test "create_entity/3 with valid data creates a tenant with the entity id" do
-      allow_create_entity_tenants()
-
       user = insert(:user)
-
       assert {:ok, %Entity{} = entity} = Entities.create_entity(user, params_for(:entity))
-      cleanup_entity_tenants(entity)
 
       assert Triplex.exists?(entity.id)
+
+      cleanup_entity_tenants(entity)
     end
 
     test "delete_entity/3 deletes the entity tenant" do
-      allow_create_entity_tenants()
-      {:ok, entity} = insert(:user) |> Entities.create_entity(params_for(:entity))
+      user = insert(:user)
+      {:ok, entity} = Entities.create_entity(user, params_for(:entity))
+
       assert {:ok, %Entity{}} = Entities.delete_entity(entity)
       refute Triplex.exists?(entity.id)
+
       cleanup_entity_tenants(nil, entity.owner_id)
     end
   end

@@ -3,23 +3,25 @@ defmodule Cashtray.CurrenciesTest do
 
   alias Cashtray.Currencies
 
-  setup do
-    Ecto.Adapters.SQL.Sandbox.mode(Repo, {:shared, self()})
+  setup_all do
+    Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
 
-    entity = insert(:entity)
+    uuid = Ecto.UUID.generate()
+    tenant = %Cashtray.Entities.Entity{id: uuid}
 
-    Ecto.Adapters.SQL.Sandbox.mode(Repo, :auto)
-
-    Cashtray.Entities.Tenants.create(entity)
+    Cashtray.Entities.Tenants.create(tenant)
 
     on_exit(fn ->
-      Ecto.Adapters.SQL.Sandbox.mode(Repo, :auto)
-      Cashtray.Entities.Tenants.drop(entity)
+      Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
+
+      Cashtray.Entities.Tenants.drop(tenant)
+
+      Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :manual)
     end)
 
-    Ecto.Adapters.SQL.Sandbox.mode(Repo, {:shared, self()})
+    Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :manual)
 
-    {:ok, %{entity: entity}}
+    {:ok, [entity: tenant]}
   end
 
   describe "currencies" do
