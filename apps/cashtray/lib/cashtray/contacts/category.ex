@@ -7,9 +7,9 @@ defmodule Cashtray.Contacts.Category do
   import Ecto.Changeset
 
   @type t :: %Cashtray.Contacts.Category{
-    id: Ecto.UUID.t() | nil,
-    description: String.t() | nil
-  }
+          id: Ecto.UUID.t() | nil,
+          description: String.t() | nil
+        }
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
