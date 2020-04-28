@@ -17,7 +17,7 @@ defmodule Cashtray.EntitiesTest do
           Entities.delete_entity(entity)
         end
 
-        owner_id = entity && entity.owner_id || owner_id
+        owner_id = (entity && entity.owner_id) || owner_id
 
         if owner_id do
           from(Cashtray.Accounts.User, where: [id: ^owner_id])
