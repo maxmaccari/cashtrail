@@ -7,7 +7,7 @@ defmodule Cashtray.EntitiesTest do
     alias Cashtray.Entities.Entity
     alias Cashtray.Entities.EntityMember
 
-    test "list_entities_from/1 returns all entities from an user that is owner" do
+    test "list_entities_from/2 returns all entities from an user that is owner" do
       insert(:entity)
       owner = insert(:user)
       entity = insert(:entity, owner: owner) |> forget(:owner)
@@ -15,7 +15,7 @@ defmodule Cashtray.EntitiesTest do
       assert Entities.list_entities_from(owner).entries == [entity]
     end
 
-    test "list_entities_from/1 returns all entities from an user that is member" do
+    test "list_entities_from/2 returns all entities from an user that is member" do
       entity = insert(:entity) |> forget(:owner)
       user = insert(:user)
       insert(:entity_member, entity: entity, user: user)
@@ -23,12 +23,12 @@ defmodule Cashtray.EntitiesTest do
       assert Entities.list_entities_from(user).entries == [entity]
     end
 
-    test "get_entity!/1 returns the entity with given id" do
+    test "get_entity!/2 returns the entity with given id" do
       entity = insert(:entity) |> forget(:owner)
       assert Entities.get_entity!(entity.id) == entity
     end
 
-    test "create_entity/1 with valid data creates a entity" do
+    test "create_entity/2 with valid data creates a entity" do
       user = insert(:user)
       entity_params = params_for(:entity)
       assert {:ok, %Entity{} = entity} = Entities.create_entity(user, entity_params, false)
@@ -40,12 +40,12 @@ defmodule Cashtray.EntitiesTest do
     end
 
     @invalid_attrs %{name: nil, status: nil, type: nil, owner_id: nil}
-    test "create_entity/1 with invalid data returns error changeset" do
+    test "create_entity/3 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} =
                Entities.create_entity(%Accounts.User{}, @invalid_attrs, false)
     end
 
-    test "create_entity/1 with invalid user returns error changeset" do
+    test "create_entity/3 with invalid user returns error changeset" do
       assert {:error, %Ecto.Changeset{}} =
                Entities.create_entity(%Accounts.User{}, params_for(:entity), false)
 
@@ -158,7 +158,7 @@ defmodule Cashtray.EntitiesTest do
   describe "entity_members" do
     alias Cashtray.Entities.{Entity, EntityMember}
 
-    test "list_members/1 returns all entity_members from the entity" do
+    test "list_members/2 returns all entity_members from the entity" do
       insert(:entity_member)
       entity = insert(:entity)
 

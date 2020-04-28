@@ -24,7 +24,7 @@ defmodule Cashtray.EntitiesWithTenantsTest do
       end)
     end
 
-    test "create_entity/1 with valid data creates a tenant with the entity id" do
+    test "create_entity/3 with valid data creates a tenant with the entity id" do
       allow_create_entity_tenants()
 
       user = insert(:user)
@@ -35,7 +35,7 @@ defmodule Cashtray.EntitiesWithTenantsTest do
       assert Triplex.exists?(entity.id)
     end
 
-    test "delete_entity/1 deletes the entity tenant" do
+    test "delete_entity/3 deletes the entity tenant" do
       allow_create_entity_tenants()
       {:ok, entity} = insert(:user) |> Entities.create_entity(params_for(:entity))
       assert {:ok, %Entity{}} = Entities.delete_entity(entity)
