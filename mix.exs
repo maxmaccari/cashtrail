@@ -6,6 +6,7 @@ defmodule Cashtray.Umbrella.MixProject do
       apps_path: "apps",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      aliases: aliases(),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [coveralls: :test]
     ]
@@ -27,6 +28,12 @@ defmodule Cashtray.Umbrella.MixProject do
     [
       {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.12.3", only: :test}
+    ]
+  end
+
+  def aliases do
+    [
+      check: ["format --check-formatted", "credo"]
     ]
   end
 end
