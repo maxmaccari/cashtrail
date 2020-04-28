@@ -123,9 +123,24 @@ defmodule Cashtray.Contacts do
   """
   def list_contacts(entity, options \\ []) do
     Contact
+    |> filter(Keyword.get(options, :filter))
     |> put_prefix(entity)
     |> Paginator.paginate(options)
   end
+
+  defp filter(query, filters) when is_map(filters) do
+    Enum.reduce(filters, query, fn
+      {"type", value}, query -> from(q in query, where: [type: ^value])
+      {:type, value}, query -> from(q in query, where: [type: ^value])
+      {"customer", value}, query -> from(q in query, where: [customer: ^value])
+      {:customer, value}, query -> from(q in query, where: [customer: ^value])
+      {"supplier", value}, query -> from(q in query, where: [supplier: ^value])
+      {:supplier, value}, query -> from(q in query, where: [supplier: ^value])
+      _, query -> query
+    end)
+  end
+
+  defp filter(query, _), do: query
 
   @doc """
   Gets a single contact.

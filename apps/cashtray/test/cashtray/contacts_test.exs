@@ -89,6 +89,33 @@ defmodule Cashtray.ContactsTest do
       }
     end
 
+    test "list_contacts/2 filtering by type", %{tenant: tenant} do
+      insert(:contact, tenant: tenant, type: "person")
+      contact = insert(:contact, tenant: tenant, type: "company") |> forget(:category)
+      assert Contacts.list_contacts(tenant, filter: %{type: "company"}).entries == [contact]
+      assert Contacts.list_contacts(tenant, filter: %{"type" => "company"}).entries == [contact]
+    end
+
+    test "list_contacts/2 filtering by customer", %{tenant: tenant} do
+      insert(:contact, tenant: tenant, customer: false)
+      contact = insert(:contact, tenant: tenant, customer: true) |> forget(:category)
+      assert Contacts.list_contacts(tenant, filter: %{customer: true}).entries == [contact]
+      assert Contacts.list_contacts(tenant, filter: %{"customer" => true}).entries == [contact]
+    end
+
+    test "list_contacts/2 filtering by supplier", %{tenant: tenant} do
+      insert(:contact, tenant: tenant, supplier: false)
+      contact = insert(:contact, tenant: tenant, supplier: true) |> forget(:category)
+      assert Contacts.list_contacts(tenant, filter: %{supplier: true}).entries == [contact]
+      assert Contacts.list_contacts(tenant, filter: %{"supplier" => true}).entries == [contact]
+    end
+
+    test "list_contacts/2 filtering by invalid key", %{tenant: tenant} do
+      contact = insert(:contact, tenant: tenant) |> forget(:category)
+      assert Contacts.list_contacts(tenant, filter: %{invalid: nil}).entries == [contact]
+    end
+
+
     test "get_contact!/2 returns the contact with given id", %{tenant: tenant} do
       contact = insert(:contact, tenant: tenant) |> forget(:category)
       assert Contacts.get_contact!(tenant, contact.id) == contact
