@@ -13,6 +13,19 @@ defmodule Cashtray.ContactsTest do
       assert Contacts.list_categories(tenant).entries == [category]
     end
 
+    test "list_categories/2 works with pagination", %{tenant: tenant} do
+      categories = insert_list(25, :contact_category, tenant: tenant)
+        |> Enum.slice(20, 5)
+
+      assert Contacts.list_categories(tenant, page: 2) == %Cashtray.Paginator.Page{
+        entries: categories,
+        page_number: 2,
+        page_size: 20,
+        total_entries: 25,
+        total_pages: 2
+      }
+    end
+
     test "get_category!/2 returns the category with given id", %{tenant: tenant} do
       category = insert(:contact_category, tenant: tenant)
 
@@ -58,17 +71,30 @@ defmodule Cashtray.ContactsTest do
   describe "contacts" do
     alias Cashtray.Contacts.Contact
 
-    test "list_contacts/0 returns all contacts", %{tenant: tenant} do
+    test "list_contacts/2 returns all contacts", %{tenant: tenant} do
       contact = insert(:contact, tenant: tenant) |> forget(:category)
       assert Contacts.list_contacts(tenant).entries == [contact]
     end
 
-    test "get_contact!/1 returns the contact with given id", %{tenant: tenant} do
+    test "list_contacts/2 works with pagination", %{tenant: tenant} do
+      categories = insert_list(25, :contact, tenant: tenant)
+        |> Enum.slice(20, 5) |> Enum.map(&forget(&1, :category))
+
+      assert Contacts.list_contacts(tenant, page: 2) == %Cashtray.Paginator.Page{
+        entries: categories,
+        page_number: 2,
+        page_size: 20,
+        total_entries: 25,
+        total_pages: 2
+      }
+    end
+
+    test "get_contact!/2 returns the contact with given id", %{tenant: tenant} do
       contact = insert(:contact, tenant: tenant) |> forget(:category)
       assert Contacts.get_contact!(tenant, contact.id) == contact
     end
 
-    test "create_contact/1 with valid data creates a contact", %{tenant: tenant} do
+    test "create_contact/2 with valid data creates a contact", %{tenant: tenant} do
       contact_params = params_for(:contact)
       assert {:ok, %Contact{} = contact} = Contacts.create_contact(tenant, contact_params)
       assert contact.customer == contact_params.customer
@@ -100,7 +126,7 @@ defmodule Cashtray.ContactsTest do
       tax_id: nil,
       type: nil
     }
-    test "create_contact/1 with invalid data returns error changeset", %{tenant: tenant} do
+    test "create_contact/2 with invalid data returns error changeset", %{tenant: tenant} do
       assert {:error, %Ecto.Changeset{}} = Contacts.create_contact(tenant, @invalid_attrs)
     end
 
