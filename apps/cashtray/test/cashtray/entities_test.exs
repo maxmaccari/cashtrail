@@ -2,26 +2,28 @@ defmodule Cashtray.EntitiesTest do
   use Cashtray.DataCase
 
   alias Cashtray.{Accounts, Entities}
-  alias Cashtray.Paginator.Page
 
   describe "entities" do
     alias Cashtray.Entities.Entity
     alias Cashtray.Entities.EntityMember
 
-    test "list_entities_from/1 returns results paginated by Scrivener" do
-      owner = insert(:user)
-      insert_list(30, :entity, owner: owner)
-      owner_id = owner.id
+    def allow_create_entity_tenants() do
+      Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
+    end
 
-      assert %Page{
-               page_number: 2,
-               page_size: 10,
-               total_pages: 3,
-               total_entries: 30,
-               entries: entries
-             } = Entities.list_entities_from(owner, page: 2, page_size: 10)
+    def cleanup_entity_tenants(entity, owner_id \\ nil) do
+      on_exit(fn ->
+        if entity do
+          Entities.delete_entity(entity)
+        end
 
-      assert [%Entity{owner_id: ^owner_id} | _] = entries
+        owner_id = entity && entity.owner_id || owner_id
+
+        if owner_id do
+          from(Cashtray.Accounts.User, where: [id: ^owner_id])
+          |> Repo.delete_all()
+        end
+      end)
     end
 
     test "list_entities_from/1 returns all entities from an user that is owner" do
@@ -46,9 +48,13 @@ defmodule Cashtray.EntitiesTest do
     end
 
     test "create_entity/1 with valid data creates a entity" do
+      allow_create_entity_tenants()
+
       user = insert(:user)
       entity_params = params_for(:entity)
       assert {:ok, %Entity{} = entity} = Entities.create_entity(user, entity_params)
+
+      cleanup_entity_tenants(entity)
 
       assert entity.name == entity_params.name
       assert entity.status == entity_params.status
@@ -57,19 +63,27 @@ defmodule Cashtray.EntitiesTest do
     end
 
     test "create_entity/1 with valid data creates a prefix with the entity id" do
+      allow_create_entity_tenants()
+
       user = insert(:user)
 
       assert {:ok, %Entity{} = entity} = Entities.create_entity(user, params_for(:entity))
+      cleanup_entity_tenants(entity)
+
       assert Triplex.exists?(entity.id)
     end
 
     @invalid_attrs %{name: nil, status: nil, type: nil, owner_id: nil}
     test "create_entity/1 with invalid data returns error changeset" do
+      allow_create_entity_tenants()
+
       assert {:error, %Ecto.Changeset{}} =
                Entities.create_entity(%Accounts.User{}, @invalid_attrs)
     end
 
     test "create_entity/1 with invalid user returns error changeset" do
+      allow_create_entity_tenants()
+
       assert {:error, %Ecto.Changeset{}} =
                Entities.create_entity(%Accounts.User{}, params_for(:entity))
 
@@ -107,15 +121,19 @@ defmodule Cashtray.EntitiesTest do
     end
 
     test "delete_entity/1 deletes the entity" do
+      allow_create_entity_tenants()
       {:ok, entity} = insert(:user) |> Entities.create_entity(params_for(:entity))
       assert {:ok, %Entity{}} = Entities.delete_entity(entity)
       assert_raise Ecto.NoResultsError, fn -> Entities.get_entity!(entity.id) end
+      cleanup_entity_tenants(nil, entity.owner_id)
     end
 
     test "delete_entity/1 deletes the entity tenant" do
+      allow_create_entity_tenants()
       {:ok, entity} = insert(:user) |> Entities.create_entity(params_for(:entity))
       assert {:ok, %Entity{}} = Entities.delete_entity(entity)
       refute Triplex.exists?(entity.id)
+      cleanup_entity_tenants(nil, entity.owner_id)
     end
 
     test "change_entity/1 returns a entity changeset" do
@@ -186,22 +204,6 @@ defmodule Cashtray.EntitiesTest do
 
   describe "entity_members" do
     alias Cashtray.Entities.{Entity, EntityMember}
-
-    test "list_members/1 returns results paginated by Scrivener " do
-      entity = insert(:entity)
-      insert_list(30, :entity_member, entity: entity)
-      entity_id = entity.id
-
-      assert %Page{
-               page_number: 2,
-               page_size: 10,
-               total_pages: 3,
-               total_entries: 30,
-               entries: entries
-             } = Entities.list_members(entity, page: 2, page_size: 10)
-
-      assert [%EntityMember{entity_id: ^entity_id} | _] = entries
-    end
 
     test "list_members/1 returns all entity_members from the entity" do
       insert(:entity_member)
