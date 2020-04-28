@@ -26,5 +26,6 @@ defmodule Cashtray.Contacts.Category do
     |> cast(attrs, [:description])
     |> validate_required([:description])
     |> validate_length(:description, min: 1)
+    |> unique_constraint(:description)
   end
 end

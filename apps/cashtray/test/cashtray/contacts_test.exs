@@ -14,16 +14,17 @@ defmodule Cashtray.ContactsTest do
     end
 
     test "list_categories/2 works with pagination", %{tenant: tenant} do
-      categories = insert_list(25, :contact_category, tenant: tenant)
+      categories =
+        insert_list(25, :contact_category, tenant: tenant)
         |> Enum.slice(20, 5)
 
       assert Contacts.list_categories(tenant, page: 2) == %Cashtray.Paginator.Page{
-        entries: categories,
-        page_number: 2,
-        page_size: 20,
-        total_entries: 25,
-        total_pages: 2
-      }
+               entries: categories,
+               page_number: 2,
+               page_size: 20,
+               total_entries: 25,
+               total_pages: 2
+             }
     end
 
     test "list_categories/2 filtering by searching by description", %{tenant: tenant} do
@@ -47,6 +48,12 @@ defmodule Cashtray.ContactsTest do
     @invalid_attrs %{description: nil}
     test "create_category/2 with invalid data returns error changeset", %{tenant: tenant} do
       assert {:error, %Ecto.Changeset{}} = Contacts.create_category(tenant, @invalid_attrs)
+    end
+
+    test "create_category/2 with same name returns error changeset", %{tenant: tenant} do
+      category_params = params_for(:contact_category, tenant: tenant)
+      assert {:ok, %Category{} = category} = Contacts.create_category(tenant, category_params)
+      assert {:error, %Ecto.Changeset{}} = Contacts.create_category(tenant, category_params)
     end
 
     @update_attrs %{description: "some updated description"}
@@ -83,16 +90,18 @@ defmodule Cashtray.ContactsTest do
     end
 
     test "list_contacts/2 works with pagination", %{tenant: tenant} do
-      categories = insert_list(25, :contact, tenant: tenant)
-        |> Enum.slice(20, 5) |> Enum.map(&forget(&1, :category))
+      categories =
+        insert_list(25, :contact, tenant: tenant)
+        |> Enum.slice(20, 5)
+        |> Enum.map(&forget(&1, :category))
 
       assert Contacts.list_contacts(tenant, page: 2) == %Cashtray.Paginator.Page{
-        entries: categories,
-        page_number: 2,
-        page_size: 20,
-        total_entries: 25,
-        total_pages: 2
-      }
+               entries: categories,
+               page_number: 2,
+               page_size: 20,
+               total_entries: 25,
+               total_pages: 2
+             }
     end
 
     test "list_contacts/2 filtering by type", %{tenant: tenant} do

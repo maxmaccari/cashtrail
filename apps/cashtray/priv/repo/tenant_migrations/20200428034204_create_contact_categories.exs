@@ -9,5 +9,6 @@ defmodule Cashtray.Repo.Migrations.CreateContactCategories do
       timestamps()
     end
 
+    create unique_index(:contact_categories, :description)
   end
 end
