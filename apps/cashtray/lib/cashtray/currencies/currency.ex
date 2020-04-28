@@ -13,7 +13,8 @@ defmodule Cashtray.Currencies.Currency do
           format: String.t() | nil,
           iso_code: String.t() | nil,
           iso_code: String.t() | nil,
-          type: String.t() | nil
+          type: String.t() | nil,
+          precision: integer | nil
         }
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -21,10 +22,11 @@ defmodule Cashtray.Currencies.Currency do
   schema "currencies" do
     field :active, :boolean, default: true
     field :description, :string
-    field :format, :string, default: "#0.00"
+    field :format, :string, default: "0"
     field :iso_code, :string
     field :symbol, :string, default: ""
     field :type, :string, default: "cash"
+    field :precision, :integer, default: 0
 
     timestamps()
   end
@@ -33,8 +35,9 @@ defmodule Cashtray.Currencies.Currency do
   @spec changeset(t | Ecto.Changeset.t(t), map) :: Ecto.Changeset.t()
   def changeset(currency, attrs) do
     currency
-    |> cast(attrs, [:description, :iso_code, :symbol, :format, :type, :active])
+    |> cast(attrs, [:description, :iso_code, :symbol, :format, :type, :active, :precision])
     |> validate_required([:description])
     |> validate_inclusion(:type, ["cash", "digital_currency", "miles", "cryptocurrency", "other"])
+    |> validate_number(:precision, greater_than_or_equal_to: 0)
   end
 end

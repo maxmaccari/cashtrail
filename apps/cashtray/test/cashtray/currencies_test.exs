@@ -60,6 +60,7 @@ defmodule Cashtray.CurrenciesTest do
       assert currency.iso_code == currency_params.iso_code
       assert currency.symbol == currency_params.symbol
       assert currency.type == currency_params.type
+      assert currency.precision == currency_params.precision
     end
 
     @invalid_attrs %{
@@ -68,7 +69,8 @@ defmodule Cashtray.CurrenciesTest do
       format: nil,
       iso_code: nil,
       symbol: nil,
-      type: nil
+      type: "abcd",
+      precision: -1
     }
     test "create_currency/2 with invalid data returns error changeset", %{entity: entity} do
       assert {:error, %Ecto.Changeset{}} = Currencies.create_currency(entity, @invalid_attrs)
@@ -80,7 +82,8 @@ defmodule Cashtray.CurrenciesTest do
       format: "some updated format",
       iso_code: "some updated iso_code",
       symbol: "some updated symbol",
-      type: "digital_currency"
+      type: "digital_currency",
+      precision: "3"
     }
     test "update_currency/2 with valid data updates the currency", %{entity: entity} do
       currency = insert(:currency, entity: entity)
@@ -91,6 +94,7 @@ defmodule Cashtray.CurrenciesTest do
       assert currency.iso_code == "some updated iso_code"
       assert currency.symbol == "some updated symbol"
       assert currency.type == "digital_currency"
+      assert currency.precision == 3
     end
 
     test "update_currency/2 with invalid data returns error changeset", %{entity: entity} do

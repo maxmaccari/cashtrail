@@ -14,7 +14,8 @@ defmodule Cashtray.Factory.CurrenciesFactory do
             type: Enum.random(["cash", "digital_currency", "miles", "cryptocurrency", "other"]),
             format: "#0.000,00",
             iso_code: "ABC",
-            symbol: "AB$"
+            symbol: "AB$",
+            precision: Enum.random(0..6)
           }
           |> Ecto.put_meta(prefix: Tenants.to_prefix(entity))
 
