@@ -1,4 +1,6 @@
 defmodule Cashtray.EntitiesTest do
+  @moduledoc false
+
   use Cashtray.DataCase, async: true
 
   alias Cashtray.{Accounts, Entities}

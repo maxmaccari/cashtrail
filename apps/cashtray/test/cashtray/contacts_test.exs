@@ -1,4 +1,6 @@
 defmodule Cashtray.ContactsTest do
+  @moduledoc false
+
   use Cashtray.TenantCase
 
   alias Cashtray.Contacts

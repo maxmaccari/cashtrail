@@ -1,4 +1,6 @@
 defmodule Cashtray.CurrenciesTest do
+  @moduledoc false
+
   use Cashtray.TenantCase
 
   alias Cashtray.Currencies

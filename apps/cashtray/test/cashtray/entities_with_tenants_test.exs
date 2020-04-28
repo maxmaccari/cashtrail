@@ -1,4 +1,6 @@
 defmodule Cashtray.EntitiesWithTenantsTest do
+  @moduledoc false
+
   use Cashtray.DataCase
 
   describe "entity with tenants" do
