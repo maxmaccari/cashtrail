@@ -7,7 +7,7 @@ config :cashtray, Cashtray.Repo,
   username: "postgres",
   password: "postgres",
   database: "cashtray_test",
-  hostname: "localhost",
+  hostname: System.get_env("POSTGRES_HOST", "localhost"),
   pool: Ecto.Adapters.SQL.Sandbox
 
 # We don't run a server during test. If one is required,
