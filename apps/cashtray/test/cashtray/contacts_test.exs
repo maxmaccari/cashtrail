@@ -115,6 +115,17 @@ defmodule Cashtray.ContactsTest do
       assert Contacts.list_contacts(tenant, filter: %{invalid: nil}).entries == [contact]
     end
 
+    test "list_contacts/2 filtering by searching by name", %{tenant: tenant} do
+      insert(:contact, tenant: tenant, name: "abc")
+      contact = insert(:contact, tenant: tenant, name: "defghij") |> forget(:category)
+      assert Contacts.list_contacts(tenant, search: "fgh").entries == [contact]
+    end
+
+    test "list_contacts/2 filtering by searching by legal_name", %{tenant: tenant} do
+      insert(:contact, tenant: tenant, legal_name: "abc")
+      contact = insert(:contact, tenant: tenant, legal_name: "defghij") |> forget(:category)
+      assert Contacts.list_contacts(tenant, search: "fgh").entries == [contact]
+    end
 
     test "get_contact!/2 returns the contact with given id", %{tenant: tenant} do
       contact = insert(:contact, tenant: tenant) |> forget(:category)

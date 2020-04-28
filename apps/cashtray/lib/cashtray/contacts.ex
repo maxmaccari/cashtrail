@@ -124,6 +124,7 @@ defmodule Cashtray.Contacts do
   def list_contacts(entity, options \\ []) do
     Contact
     |> filter(Keyword.get(options, :filter))
+    |> search(Keyword.get(options, :search))
     |> put_prefix(entity)
     |> Paginator.paginate(options)
   end
@@ -141,6 +142,13 @@ defmodule Cashtray.Contacts do
   end
 
   defp filter(query, _), do: query
+
+  defp search(query, term) when is_binary(term) do
+    term = "%#{term}%"
+    from(q in query, where: ilike(q.name, ^term) or ilike(q.legal_name, ^term))
+  end
+
+  defp search(query, _), do: query
 
   @doc """
   Gets a single contact.
