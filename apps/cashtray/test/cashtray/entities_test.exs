@@ -1,5 +1,5 @@
 defmodule Cashtray.EntitiesTest do
-  use Cashtray.DataCase
+  use Cashtray.DataCase, async: true
 
   alias Cashtray.{Accounts, Entities}
 
@@ -7,26 +7,7 @@ defmodule Cashtray.EntitiesTest do
     alias Cashtray.Entities.Entity
     alias Cashtray.Entities.EntityMember
 
-    def allow_create_entity_tenants() do
-      Ecto.Adapters.SQL.Sandbox.mode(Cashtray.Repo, :auto)
-    end
-
-    def cleanup_entity_tenants(entity, owner_id \\ nil) do
-      on_exit(fn ->
-        if entity do
-          Entities.delete_entity(entity)
-        end
-
-        owner_id = (entity && entity.owner_id) || owner_id
-
-        if owner_id do
-          from(Cashtray.Accounts.User, where: [id: ^owner_id])
-          |> Repo.delete_all()
-        end
-      end)
-    end
-
-    test "list_entities_from/1 returns all entities from an user that is owner" do
+    test "list_entities_from/2 returns all entities from an user that is owner" do
       insert(:entity)
       owner = insert(:user)
       entity = insert(:entity, owner: owner) |> forget(:owner)
@@ -34,7 +15,7 @@ defmodule Cashtray.EntitiesTest do
       assert Entities.list_entities_from(owner).entries == [entity]
     end
 
-    test "list_entities_from/1 returns all entities from an user that is member" do
+    test "list_entities_from/2 returns all entities from an user that is member" do
       entity = insert(:entity) |> forget(:owner)
       user = insert(:user)
       insert(:entity_member, entity: entity, user: user)
@@ -42,19 +23,15 @@ defmodule Cashtray.EntitiesTest do
       assert Entities.list_entities_from(user).entries == [entity]
     end
 
-    test "get_entity!/1 returns the entity with given id" do
+    test "get_entity!/2 returns the entity with given id" do
       entity = insert(:entity) |> forget(:owner)
       assert Entities.get_entity!(entity.id) == entity
     end
 
-    test "create_entity/1 with valid data creates a entity" do
-      allow_create_entity_tenants()
-
+    test "create_entity/2 with valid data creates a entity" do
       user = insert(:user)
       entity_params = params_for(:entity)
-      assert {:ok, %Entity{} = entity} = Entities.create_entity(user, entity_params)
-
-      cleanup_entity_tenants(entity)
+      assert {:ok, %Entity{} = entity} = Entities.create_entity(user, entity_params, false)
 
       assert entity.name == entity_params.name
       assert entity.status == entity_params.status
@@ -62,35 +39,21 @@ defmodule Cashtray.EntitiesTest do
       assert entity.owner_id == user.id
     end
 
-    test "create_entity/1 with valid data creates a prefix with the entity id" do
-      allow_create_entity_tenants()
-
-      user = insert(:user)
-
-      assert {:ok, %Entity{} = entity} = Entities.create_entity(user, params_for(:entity))
-      cleanup_entity_tenants(entity)
-
-      assert Triplex.exists?(entity.id)
-    end
-
     @invalid_attrs %{name: nil, status: nil, type: nil, owner_id: nil}
-    test "create_entity/1 with invalid data returns error changeset" do
-      allow_create_entity_tenants()
-
+    test "create_entity/3 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} =
-               Entities.create_entity(%Accounts.User{}, @invalid_attrs)
+               Entities.create_entity(%Accounts.User{}, @invalid_attrs, false)
     end
 
-    test "create_entity/1 with invalid user returns error changeset" do
-      allow_create_entity_tenants()
-
+    test "create_entity/3 with invalid user returns error changeset" do
       assert {:error, %Ecto.Changeset{}} =
-               Entities.create_entity(%Accounts.User{}, params_for(:entity))
+               Entities.create_entity(%Accounts.User{}, params_for(:entity), false)
 
       assert {:error, %Ecto.Changeset{}} =
                Entities.create_entity(
                  %Accounts.User{id: Ecto.UUID.generate()},
-                 params_for(:entity)
+                 params_for(:entity),
+                 false
                )
     end
 
@@ -121,19 +84,9 @@ defmodule Cashtray.EntitiesTest do
     end
 
     test "delete_entity/1 deletes the entity" do
-      allow_create_entity_tenants()
-      {:ok, entity} = insert(:user) |> Entities.create_entity(params_for(:entity))
-      assert {:ok, %Entity{}} = Entities.delete_entity(entity)
+      {:ok, entity} = insert(:user) |> Entities.create_entity(params_for(:entity), false)
+      assert {:ok, %Entity{}} = Entities.delete_entity(entity, false)
       assert_raise Ecto.NoResultsError, fn -> Entities.get_entity!(entity.id) end
-      cleanup_entity_tenants(nil, entity.owner_id)
-    end
-
-    test "delete_entity/1 deletes the entity tenant" do
-      allow_create_entity_tenants()
-      {:ok, entity} = insert(:user) |> Entities.create_entity(params_for(:entity))
-      assert {:ok, %Entity{}} = Entities.delete_entity(entity)
-      refute Triplex.exists?(entity.id)
-      cleanup_entity_tenants(nil, entity.owner_id)
     end
 
     test "change_entity/1 returns a entity changeset" do
@@ -205,7 +158,7 @@ defmodule Cashtray.EntitiesTest do
   describe "entity_members" do
     alias Cashtray.Entities.{Entity, EntityMember}
 
-    test "list_members/1 returns all entity_members from the entity" do
+    test "list_members/2 returns all entity_members from the entity" do
       insert(:entity_member)
       entity = insert(:entity)
 

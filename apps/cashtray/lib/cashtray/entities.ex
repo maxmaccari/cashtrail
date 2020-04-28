@@ -62,25 +62,29 @@ defmodule Cashtray.Entities do
 
   ## Examples
 
-      iex> create_entity(%{field: value})
+      iex> create_entity(user, %{field: value})
       {:ok, %Entity{}}
 
-      iex> create_entity(%{field: bad_value})
+      iex> create_entity(user, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  @spec create_entity(Cashtray.Accounts.User.t(), map) ::
+  @spec create_entity(Cashtray.Accounts.User.t(), map, boolean) ::
           {:ok, entity()} | {:error, Ecto.Changeset.t(entity())}
-  def create_entity(%User{} = user, attrs \\ %{}) do
-    changeset =
-      user
-      |> Ecto.build_assoc(:entities)
-      |> Entity.changeset(attrs)
+  def create_entity(user, attrs \\ %{}, create_tenants \\ true)
 
-    with {:ok, entity} <- Repo.insert(changeset),
+  def create_entity(%User{} = user, attrs, true) do
+    with {:ok, entity} <- create_entity(user, attrs, false),
          {:ok, _tenant} <- Tenants.create(entity) do
       {:ok, entity}
     end
+  end
+
+  def create_entity(%User{} = user, attrs, false) do
+    user
+    |> Ecto.build_assoc(:entities)
+    |> Entity.changeset(attrs)
+    |> Repo.insert()
   end
 
   @doc """
@@ -117,11 +121,17 @@ defmodule Cashtray.Entities do
   @spec delete_entity(entity()) ::
           {:ok, entity()}
           | {:error, Ecto.Changeset.t(entity())}
-  def delete_entity(%Entity{} = entity) do
-    with {:ok, entity} <- Repo.delete(entity),
+  def delete_entity(entity, drop_tenants \\ true)
+
+  def delete_entity(%Entity{} = entity, true) do
+    with {:ok, entity} <- delete_entity(entity, false),
          {:ok, _tenant} <- Tenants.drop(entity) do
       {:ok, entity}
     end
+  end
+
+  def delete_entity(%Entity{} = entity, false) do
+    Repo.delete(entity)
   end
 
   @doc """
