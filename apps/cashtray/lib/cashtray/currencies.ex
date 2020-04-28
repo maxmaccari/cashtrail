@@ -49,8 +49,8 @@ defmodule Cashtray.Currencies do
     Enum.reduce(filters, query, fn
       {"type", value}, query -> from(q in query, where: [type: ^value])
       {:type, value}, query -> from(q in query, where: [type: ^value])
-      {"active", value}, query ->  from(q in query, where: [active: ^value])
-      {:active, value}, query ->  from(q in query, where: [active: ^value])
+      {"active", value}, query -> from(q in query, where: [active: ^value])
+      {:active, value}, query -> from(q in query, where: [active: ^value])
       _, query -> query
     end)
   end
