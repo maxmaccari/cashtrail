@@ -26,6 +26,12 @@ defmodule Cashtray.ContactsTest do
       }
     end
 
+    test "list_categories/2 filtering by searching by description", %{tenant: tenant} do
+      insert(:contact_category, tenant: tenant, description: "abc")
+      category = insert(:contact_category, tenant: tenant, description: "defghij")
+      assert Contacts.list_categories(tenant, search: "fgh").entries == [category]
+    end
+
     test "get_category!/2 returns the category with given id", %{tenant: tenant} do
       category = insert(:contact_category, tenant: tenant)
 

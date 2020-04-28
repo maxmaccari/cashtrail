@@ -25,9 +25,17 @@ defmodule Cashtray.Contacts do
   @spec list_categories(Cashtray.Entities.Entity.t()) :: Cashtray.Paginator.Page.t()
   def list_categories(entity, options \\ []) do
     Cashtray.Contacts.Category
+    |> search_category(Keyword.get(options, :search))
     |> put_prefix(entity)
     |> Paginator.paginate(options)
   end
+
+  defp search_category(query, term) when is_binary(term) do
+    term = "%#{term}%"
+    from(q in query, where: ilike(q.description, ^term))
+  end
+
+  defp search_category(query, _), do: query
 
   @doc """
   Gets a single category.
@@ -123,13 +131,13 @@ defmodule Cashtray.Contacts do
   """
   def list_contacts(entity, options \\ []) do
     Contact
-    |> filter(Keyword.get(options, :filter))
-    |> search(Keyword.get(options, :search))
+    |> filter_contact(Keyword.get(options, :filter))
+    |> search_contact(Keyword.get(options, :search))
     |> put_prefix(entity)
     |> Paginator.paginate(options)
   end
 
-  defp filter(query, filters) when is_map(filters) do
+  defp filter_contact(query, filters) when is_map(filters) do
     Enum.reduce(filters, query, fn
       {"type", value}, query -> from(q in query, where: [type: ^value])
       {:type, value}, query -> from(q in query, where: [type: ^value])
@@ -141,14 +149,14 @@ defmodule Cashtray.Contacts do
     end)
   end
 
-  defp filter(query, _), do: query
+  defp filter_contact(query, _), do: query
 
-  defp search(query, term) when is_binary(term) do
+  defp search_contact(query, term) when is_binary(term) do
     term = "%#{term}%"
     from(q in query, where: ilike(q.name, ^term) or ilike(q.legal_name, ^term))
   end
 
-  defp search(query, _), do: query
+  defp search_contact(query, _), do: query
 
   @doc """
   Gets a single contact.
