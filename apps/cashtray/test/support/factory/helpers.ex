@@ -20,4 +20,16 @@ defmodule Cashtray.Factory.Helpers do
         }
     }
   end
+
+  def put_tenant(struct, %{tenant: tenant}) do
+    Ecto.put_meta(struct, prefix: Cashtray.Entities.Tenants.to_prefix(tenant))
+  end
+
+  def put_tenant(struct, _), do: struct
+
+  def drop_tenant(%{tenant: _} = attrs) do
+    Map.drop(attrs, [:tenant])
+  end
+
+  def drop_tenant(attrs), do: attrs
 end
