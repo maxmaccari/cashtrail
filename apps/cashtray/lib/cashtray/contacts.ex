@@ -9,7 +9,7 @@ defmodule Cashtray.Contacts do
   alias Cashtray.Contacts.Category
   alias Cashtray.Paginator
 
-  import Cashtray.Entities.Tenants, only: [to_prefix: 1]
+  import Cashtray.Entities.Tenants, only: [to_prefix: 1, put_prefix: 2]
 
   @type category :: Category.t()
 
@@ -25,8 +25,7 @@ defmodule Cashtray.Contacts do
   @spec list_categories(Cashtray.Entities.Entity.t()) :: Cashtray.Paginator.Page.t()
   def list_categories(entity, options \\ []) do
     Cashtray.Contacts.Category
-    |> Ecto.Queryable.to_query()
-    |> Map.put(:prefix, to_prefix(entity))
+    |> put_prefix(entity)
     |> Paginator.paginate(options)
   end
 
@@ -109,5 +108,103 @@ defmodule Cashtray.Contacts do
   """
   def change_category(%Category{} = category) do
     Category.changeset(category, %{})
+  end
+
+  alias Cashtray.Contacts.Contact
+
+  @doc """
+  Returns the list of contacts.
+
+  ## Examples
+
+      iex> list_contacts(entity)
+      %Cashtray.Paginator{entries: [%Contact{}, ...]}
+
+  """
+  def list_contacts(entity, options \\ []) do
+    Contact
+    |> put_prefix(entity)
+    |> Paginator.paginate(options)
+  end
+
+  @doc """
+  Gets a single contact.
+
+  Raises `Ecto.NoResultsError` if the Contact does not exist.
+
+  ## Examples
+
+      iex> get_contact!(entity, 123)
+      %Contact{}
+
+      iex> get_contact!(entity, 456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_contact!(entity, id), do: Repo.get!(Contact, id, prefix: to_prefix(entity))
+
+  @doc """
+  Creates a contact.
+
+  ## Examples
+
+      iex> create_contact(%{field: value})
+      {:ok, %Contact{}}
+
+      iex> create_contact(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_contact(entity, attrs \\ %{}) do
+    %Contact{}
+    |> Contact.changeset(attrs)
+    |> Repo.insert(prefix: to_prefix(entity))
+  end
+
+  @doc """
+  Updates a contact.
+
+  ## Examples
+
+      iex> update_contact(contact, %{field: new_value})
+      {:ok, %Contact{}}
+
+      iex> update_contact(contact, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_contact(%Contact{} = contact, attrs) do
+    contact
+    |> Contact.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a contact.
+
+  ## Examples
+
+      iex> delete_contact(contact)
+      {:ok, %Contact{}}
+
+      iex> delete_contact(contact)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_contact(%Contact{} = contact) do
+    Repo.delete(contact)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking contact changes.
+
+  ## Examples
+
+      iex> change_contact(contact)
+      %Ecto.Changeset{source: %Contact{}}
+
+  """
+  def change_contact(%Contact{} = contact) do
+    Contact.changeset(contact, %{})
   end
 end

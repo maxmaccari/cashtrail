@@ -1,4 +1,9 @@
 defmodule Cashtray.TenantCase do
+  @moduledoc """
+  DataCase that creates and pass the tenats context for schemas that are created
+  inside a tenant.
+  """
+
   defmacro __using__(_opts \\ []) do
     quote do
       use Cashtray.DataCase
