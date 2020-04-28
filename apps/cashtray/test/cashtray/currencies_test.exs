@@ -46,6 +46,12 @@ defmodule Cashtray.CurrenciesTest do
       assert Currencies.list_currencies(entity, filter: %{"active" => true}).entries == [currency]
     end
 
+    test "list_currencies/1 filtering by invalid filters show all results", %{entity: entity} do
+      currency = insert(:currency, entity: entity)
+
+      assert Currencies.list_currencies(entity, filter: %{invalid: "123"}).entries == [currency]
+    end
+
     test "get_currency!/2 returns the currency with given id", %{entity: entity} do
       currency = insert(:currency, entity: entity)
       assert Currencies.get_currency!(entity, currency.id) == currency
