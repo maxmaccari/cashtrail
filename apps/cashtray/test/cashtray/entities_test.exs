@@ -72,10 +72,7 @@ defmodule Cashtray.EntitiesTest do
 
     test "list_entities_from/2 works with pagination" do
       owner = insert(:user)
-
       insert_list(25, :entity, owner: owner)
-      |> Enum.slice(20, 5)
-      |> Enum.map(&forget(&1, :owner))
 
       assert %Cashtray.Paginator.Page{
                entries: entities,
@@ -258,6 +255,74 @@ defmodule Cashtray.EntitiesTest do
         |> forget(:entity)
 
       assert Entities.list_members(entity).entries == [entity_member]
+    end
+
+    test "list_members/2 works with pagination" do
+      entity = insert(:entity)
+      insert_list(25, :entity_member, entity: entity)
+
+      assert %Cashtray.Paginator.Page{
+               entries: results,
+               page_number: 2,
+               page_size: 20,
+               total_entries: 25,
+               total_pages: 2
+             } = Entities.list_members(entity, page: 2)
+
+      assert length(results) == 5
+    end
+
+    test "list_members/2 filtering by permission" do
+      entity = insert(:entity)
+
+      insert(:entity_member, entity: entity, permission: "read")
+      |> forget(:user)
+      |> forget(:entity)
+
+      entity_member =
+        insert(:entity_member, entity: entity, permission: "admin")
+        |> forget(:user)
+        |> forget(:entity)
+
+      assert Entities.list_members(entity, filter: %{permission: "admin"}).entries == [
+               entity_member
+             ]
+
+      assert Entities.list_members(entity, filter: %{"permission" => "admin"}).entries == [
+               entity_member
+             ]
+    end
+
+    test "list_members/2 filtering by invalid key" do
+      entity = insert(:entity)
+
+      member =
+        insert(:entity_member, entity: entity)
+        |> forget(:user)
+        |> forget(:entity)
+
+      assert Entities.list_members(entity, filter: %{invalid: nil}).entries == [member]
+    end
+
+    test "list_entities/1 searching by its user name and email" do
+      entity = insert(:entity)
+
+      insert(:entity_member,
+        entity: entity,
+        user: build(:user, %{email: "rst@example.com", first_name: "abc", last_name: "efg"})
+      )
+
+      member =
+        insert(:entity_member,
+          entity: entity,
+          user: build(:user, %{email: "uvw@example.com", first_name: "hijkl", last_name: "mnopq"})
+        )
+        |> forget(:user)
+        |> forget(:entity)
+
+      assert Entities.list_members(entity, search: "ijk").entries == [member]
+      assert Entities.list_members(entity, search: "nop").entries == [member]
+      assert Entities.list_members(entity, search: "vw@e").entries == [member]
     end
 
     test "create_member/2 with valid data creates a entity_member with the user" do

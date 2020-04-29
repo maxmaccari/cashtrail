@@ -33,12 +33,12 @@ defmodule Cashtray.Entities do
   @spec list_entities(keyword) :: page(entity())
   def list_entities(options \\ []) do
     from(e in Entity)
-    |> filter(Keyword.get(options, :filter))
-    |> search(Keyword.get(options, :search))
+    |> filter_entities(Keyword.get(options, :filter))
+    |> search_entities(Keyword.get(options, :search))
     |> Paginator.paginate(options)
   end
 
-  defp filter(query, filters) when is_map(filters) do
+  defp filter_entities(query, filters) when is_map(filters) do
     Enum.reduce(filters, query, fn
       {"type", value}, query -> from(q in query, where: [type: ^value])
       {:type, value}, query -> from(q in query, where: [type: ^value])
@@ -48,14 +48,14 @@ defmodule Cashtray.Entities do
     end)
   end
 
-  defp filter(query, _), do: query
+  defp filter_entities(query, _), do: query
 
-  defp search(query, term) when is_binary(term) do
+  defp search_entities(query, term) when is_binary(term) do
     term = "%#{term}%"
     from(q in query, where: ilike(q.name, ^term))
   end
 
-  defp search(query, _), do: query
+  defp search_entities(query, _), do: query
 
   @doc """
   Returns a %Cashtray.Paginator.Page{} struct with list of entities from the
@@ -255,10 +255,32 @@ defmodule Cashtray.Entities do
 
   """
   @spec list_members(entity, keyword | map) :: page(entity_member)
-  def list_members(%Entity{id: entity_id}, params \\ []) do
+  def list_members(%Entity{id: entity_id}, options \\ []) do
     from(EntityMember, where: [entity_id: ^entity_id])
-    |> Paginator.paginate(params)
+    |> filter_members(Keyword.get(options, :filter))
+    |> search_members(Keyword.get(options, :search))
+    |> Paginator.paginate(options)
   end
+
+  defp filter_members(query, filters) when is_map(filters) do
+    Enum.reduce(filters, query, fn
+      {"permission", value}, query -> from(q in query, where: [permission: ^value])
+      {:permission, value}, query -> from(q in query, where: [permission: ^value])
+      _, query -> query
+    end)
+  end
+
+  defp filter_members(query, _), do: query
+
+  defp search_members(query, term) when is_binary(term) do
+    term = "%#{term}%"
+
+    from q in query,
+      join: u in assoc(q, :user),
+      where: ilike(u.first_name, ^term) or ilike(u.last_name, ^term) or ilike(u.email, ^term)
+  end
+
+  defp search_members(query, _), do: query
 
   @doc """
   Creates a entity_member for the entity.
