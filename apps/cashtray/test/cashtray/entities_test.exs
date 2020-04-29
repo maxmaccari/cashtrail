@@ -29,6 +29,31 @@ defmodule Cashtray.EntitiesTest do
              }
     end
 
+    test "list_entities/1 filtering by type" do
+      insert(:entity, type: "personal") |> forget(:owner)
+      entity = insert(:entity, type: "company") |> forget(:owner)
+      assert Entities.list_entities(filter: %{type: "company"}).entries == [entity]
+      assert Entities.list_entities(filter: %{"type" => "company"}).entries == [entity]
+    end
+
+    test "list_entities/1 filtering by status" do
+      insert(:entity, status: "active")
+      entity = insert(:entity, status: "archived") |> forget(:owner)
+      assert Entities.list_entities(filter: %{status: "archived"}).entries == [entity]
+      assert Entities.list_entities(filter: %{"status" => "archived"}).entries == [entity]
+    end
+
+    test "list_entities/1 filtering by invalid key" do
+      entity = insert(:entity, type: "company") |> forget(:owner)
+      assert Entities.list_entities(filter: %{invalid: nil}).entries == [entity]
+    end
+
+    test "list_entities/1 searching by name" do
+      insert(:entity, name: "abc")
+      entity = insert(:entity, name: "defghij") |> forget(:owner)
+      assert Entities.list_entities(search: "fgh").entries == [entity]
+    end
+
     test "list_entities_from/2 returns all entities from an user that is owner" do
       insert(:entity)
       owner = insert(:user)
@@ -61,6 +86,31 @@ defmodule Cashtray.EntitiesTest do
              } = Entities.list_entities_from(owner, page: 2)
 
       assert length(entities) == 5
+    end
+
+    test "list_entities_from/2 filtering by type" do
+      insert(:entity, type: "personal") |> forget(:owner)
+      entity = insert(:entity, type: "company") |> forget(:owner)
+      assert Entities.list_entities(filter: %{type: "company"}).entries == [entity]
+      assert Entities.list_entities(filter: %{"type" => "company"}).entries == [entity]
+    end
+
+    test "list_entities_from/2 filtering by status" do
+      insert(:entity, status: "active")
+      entity = insert(:entity, status: "archived") |> forget(:owner)
+      assert Entities.list_entities(filter: %{status: "archived"}).entries == [entity]
+      assert Entities.list_entities(filter: %{"status" => "archived"}).entries == [entity]
+    end
+
+    test "list_entities_from/2 filtering by invalid key" do
+      entity = insert(:entity, type: "company") |> forget(:owner)
+      assert Entities.list_entities(filter: %{invalid: nil}).entries == [entity]
+    end
+
+    test "list_entities_from/2 searching by name" do
+      insert(:entity, name: "abc")
+      entity = insert(:entity, name: "defghij") |> forget(:owner)
+      assert Entities.list_entities(search: "fgh").entries == [entity]
     end
 
     test "get_entity!/2 returns the entity with given id" do

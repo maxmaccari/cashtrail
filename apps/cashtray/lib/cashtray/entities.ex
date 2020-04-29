@@ -31,10 +31,31 @@ defmodule Cashtray.Entities do
 
   """
   @spec list_entities(keyword) :: page(entity())
-  def list_entities(params \\ []) do
+  def list_entities(options \\ []) do
     from(e in Entity)
-    |> Paginator.paginate(params)
+    |> filter(Keyword.get(options, :filter))
+    |> search(Keyword.get(options, :search))
+    |> Paginator.paginate(options)
   end
+
+  defp filter(query, filters) when is_map(filters) do
+    Enum.reduce(filters, query, fn
+      {"type", value}, query -> from(q in query, where: [type: ^value])
+      {:type, value}, query -> from(q in query, where: [type: ^value])
+      {"status", value}, query -> from(q in query, where: [status: ^value])
+      {:status, value}, query -> from(q in query, where: [status: ^value])
+      _, query -> query
+    end)
+  end
+
+  defp filter(query, _), do: query
+
+  defp search(query, term) when is_binary(term) do
+    term = "%#{term}%"
+    from(q in query, where: ilike(q.name, ^term))
+  end
+
+  defp search(query, _), do: query
 
   @doc """
   Returns a %Cashtray.Paginator.Page{} struct with list of entities from the
