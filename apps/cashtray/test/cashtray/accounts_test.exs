@@ -8,6 +8,25 @@ defmodule Cashtray.AccountsTest do
   describe "users" do
     alias Cashtray.Accounts.User
 
+    test "list_users/1 returns all users" do
+      user = insert(:user)
+      assert Accounts.list_users().entries == [user]
+    end
+
+    test "list_users/1 works with pagination" do
+      users =
+        insert_list(25, :user)
+        |> Enum.slice(20, 5)
+
+      assert Accounts.list_users(page: 2) == %Cashtray.Paginator.Page{
+               entries: users,
+               page_number: 2,
+               page_size: 20,
+               total_entries: 25,
+               total_pages: 2
+             }
+    end
+
     test "get_user!/1 returns the user with given id" do
       user = insert(:user)
       assert Accounts.get_user!(user.id) == user

@@ -7,8 +7,23 @@ defmodule Cashtray.Accounts do
   alias Cashtray.Repo
 
   alias Cashtray.Accounts.{PasswordHash, User}
+  alias Cashtray.Paginator
 
   @type user() :: Cashtray.Accounts.User.t()
+
+  @doc """
+  Returns the list of users.
+
+  ## Examples
+
+      iex> list_users(entity)
+      %Cashtray.Paginator{entries: [%User{}, ...]}
+
+  """
+  def list_users(options \\ []) do
+    User
+    |> Paginator.paginate(options)
+  end
 
   @doc """
   Gets a single user.
