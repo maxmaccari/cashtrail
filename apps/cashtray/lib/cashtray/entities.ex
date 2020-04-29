@@ -17,6 +17,26 @@ defmodule Cashtray.Entities do
   alias Cashtray.Paginator
 
   @doc """
+  Returns a %Cashtray.Paginator.Page{} struct with list of all entities.
+
+  See `Cashtray.Paginator` docs to see the options related to pagination.
+
+  ## Examples
+
+      iex> list_entities()
+      %Cashtray.Paginator.Page{entries: [%Entity{}, ...]}
+
+      iex> list_entities()
+      %Cashtray.Paginator.Page{entries: [%Entity{}, ...]}
+
+  """
+  @spec list_entities(keyword) :: page(entity())
+  def list_entities(params \\ []) do
+    from(e in Entity)
+    |> Paginator.paginate(params)
+  end
+
+  @doc """
   Returns a %Cashtray.Paginator.Page{} struct with list of entities from the
   given user.
 
@@ -24,14 +44,14 @@ defmodule Cashtray.Entities do
 
   ## Examples
 
-      iex> list_entities(owner)
+      iex> list_entities_from(owner)
       %Cashtray.Paginator.Page{entries: [%Entity{}, ...]}
 
-      iex> list_entities(member)
+      iex> list_entities_from(member)
       %Cashtray.Paginator.Page{entries: [%Entity{}, ...]}
 
   """
-  @spec list_entities_from(Cashtray.Accounts.User.t(), keyword | map) :: page(entity())
+  @spec list_entities_from(Cashtray.Accounts.User.t(), keyword) :: page(entity())
   def list_entities_from(%User{} = user, params \\ []) do
     from(e in Entity)
     |> join(:left, [e], m in assoc(e, :members))

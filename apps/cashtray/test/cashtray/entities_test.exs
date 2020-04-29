@@ -9,6 +9,26 @@ defmodule Cashtray.EntitiesTest do
     alias Cashtray.Entities.Entity
     alias Cashtray.Entities.EntityMember
 
+    test "list_entities/1 returns all entities" do
+      entity = insert(:entity) |> forget(:owner)
+      assert Entities.list_entities().entries == [entity]
+    end
+
+    test "list_entities/1 works with pagination" do
+      entities =
+        insert_list(25, :entity)
+        |> Enum.slice(20, 5)
+        |> Enum.map(&forget(&1, :owner))
+
+      assert Entities.list_entities(page: 2) == %Cashtray.Paginator.Page{
+               entries: entities,
+               page_number: 2,
+               page_size: 20,
+               total_entries: 25,
+               total_pages: 2
+             }
+    end
+
     test "list_entities_from/2 returns all entities from an user that is owner" do
       insert(:entity)
       owner = insert(:user)
@@ -23,6 +43,24 @@ defmodule Cashtray.EntitiesTest do
       insert(:entity_member, entity: entity, user: user)
 
       assert Entities.list_entities_from(user).entries == [entity]
+    end
+
+    test "list_entities_from/2 works with pagination" do
+      owner = insert(:user)
+
+      insert_list(25, :entity, owner: owner)
+      |> Enum.slice(20, 5)
+      |> Enum.map(&forget(&1, :owner))
+
+      assert %Cashtray.Paginator.Page{
+               entries: entities,
+               page_number: 2,
+               page_size: 20,
+               total_entries: 25,
+               total_pages: 2
+             } = Entities.list_entities_from(owner, page: 2)
+
+      assert length(entities) == 5
     end
 
     test "get_entity!/2 returns the entity with given id" do
