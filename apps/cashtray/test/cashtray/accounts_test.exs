@@ -27,6 +27,14 @@ defmodule Cashtray.AccountsTest do
              }
     end
 
+    test "list_users/1 searching by first_name, last_name and email" do
+      insert(:user, first_name: "abc", last_name: "def", email: "efg@example.com")
+      user = insert(:user, first_name: "ljmn", last_name: "opqr", email: "stuv@example.com")
+      assert Accounts.list_users(search: "jm").entries == [user]
+      assert Accounts.list_users(search: "pq").entries == [user]
+      assert Accounts.list_users(search: "uv@e").entries == [user]
+    end
+
     test "get_user!/1 returns the user with given id" do
       user = insert(:user)
       assert Accounts.get_user!(user.id) == user

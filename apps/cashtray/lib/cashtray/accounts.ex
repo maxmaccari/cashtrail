@@ -16,14 +16,26 @@ defmodule Cashtray.Accounts do
 
   ## Examples
 
-      iex> list_users(entity)
+      iex> list_users()
       %Cashtray.Paginator{entries: [%User{}, ...]}
 
   """
+  @spec list_users(keyword) :: Cashtray.Paginator.Page.t()
   def list_users(options \\ []) do
     User
+    |> search(Keyword.get(options, :search))
     |> Paginator.paginate(options)
   end
+
+  def search(query, term) when is_binary(term) do
+    term = "%#{term}%"
+
+    from(q in query,
+      where: ilike(q.first_name, ^term) or ilike(q.last_name, ^term) or ilike(q.email, ^term)
+    )
+  end
+
+  def search(query, _), do: query
 
   @doc """
   Gets a single user.
