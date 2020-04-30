@@ -29,7 +29,8 @@ defmodule Cashtray.Umbrella.MixProject do
   defp deps do
     [
       {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:excoveralls, "~> 0.12.3", only: :test}
+      {:excoveralls, "~> 0.12.3", only: :test},
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
     ]
   end
 
