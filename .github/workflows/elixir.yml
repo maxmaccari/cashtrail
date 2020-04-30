@@ -7,9 +7,10 @@ on:
     branches: [master]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
+    env:
+      MIX_ENV: test
     services:
       postgres:
         image: postgres:11
@@ -20,7 +21,6 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
         ports:
           - 5432:5432
-
     steps:
       - uses: actions/checkout@v2
       - name: Setup elixir
@@ -28,8 +28,18 @@ jobs:
         with:
           elixir-version: 1.9.4 # Define the elixir version [required]
           otp-version: 22.2 # Define the OTP version [required]
+      - uses: actions/cache@v1
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+          restore-keys: |
+            ${{ runner.os }}-mix-
       - name: Install Dependencies
         run: mix deps.get
+      - name: Compile dependencies
+        run: mix deps.compile
+      - name: Compile application
+        run: mix compile
       - name: Check Code Quality
         run: mix check
       - name: Run Tests
