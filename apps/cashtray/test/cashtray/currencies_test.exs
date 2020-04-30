@@ -52,6 +52,12 @@ defmodule Cashtray.CurrenciesTest do
       assert currency.precision == currency_params.precision
     end
 
+    test "create_currency/2 with downcased iso_code upcases the value", %{tenant: tenant} do
+      currency_params = params_for(:currency, tenant: tenant, iso_code: "abc")
+      assert {:ok, %Currency{} = currency} = Currencies.create_currency(tenant, currency_params)
+      assert currency.iso_code == "ABC"
+    end
+
     @invalid_attrs %{
       active: nil,
       description: nil,
@@ -65,11 +71,70 @@ defmodule Cashtray.CurrenciesTest do
       assert {:error, %Ecto.Changeset{}} = Currencies.create_currency(tenant, @invalid_attrs)
     end
 
+    test "create_currency/2 with invalid type returns error changeset", %{tenant: tenant} do
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  type: {"is invalid", _}
+                ]
+              }} = Currencies.create_currency(tenant, params_for(:currency, type: "invalid"))
+    end
+
+    test "create_currency/2 with invalid precission returns error changeset", %{tenant: tenant} do
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  precision:
+                    {"must be greater than or equal to %{number}",
+                     [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
+                ]
+              }} = Currencies.create_currency(tenant, params_for(:currency, precision: -1))
+    end
+
+    test "create_currency/2 with invalid iso_code returns error changeset", %{tenant: tenant} do
+      {:error,
+       %Ecto.Changeset{
+         errors: [
+           iso_code: {"is not a valid ISO 4217 code", _},
+           iso_code: {"should be %{count} character(s)", _}
+         ]
+       }} = Currencies.create_currency(tenant, params_for(:currency, iso_code: "ab"))
+
+      {:error,
+       %Ecto.Changeset{
+         errors: [
+           iso_code: {"should be %{count} character(s)", _}
+         ]
+       }} = Currencies.create_currency(tenant, params_for(:currency, iso_code: "abcd"))
+
+      {:error,
+       %Ecto.Changeset{
+         errors: [
+           iso_code: {"is not a valid ISO 4217 code", _}
+         ]
+       }} = Currencies.create_currency(tenant, params_for(:currency, iso_code: "a b"))
+
+      {:error,
+       %Ecto.Changeset{
+         errors: [
+           iso_code: {"is not a valid ISO 4217 code", _}
+         ]
+       }} = Currencies.create_currency(tenant, params_for(:currency, iso_code: "a1b"))
+    end
+
+    test "create_currency/2 with same iso_code returns a error changeset", %{tenant: tenant} do
+      currency_params = params_for(:currency, tenant: tenant, iso_code: "ABC")
+      assert {:ok, %Currency{} = currency} = Currencies.create_currency(tenant, currency_params)
+
+      assert {:error, %Ecto.Changeset{errors: [iso_code: _]}} =
+               Currencies.create_currency(tenant, currency_params)
+    end
+
     @update_attrs %{
       active: false,
       description: "some updated description",
       format: "some updated format",
-      iso_code: "some updated iso_code",
+      iso_code: "ABC",
       symbol: "some updated symbol",
       type: "digital_currency",
       precision: "3"
@@ -80,7 +145,7 @@ defmodule Cashtray.CurrenciesTest do
       assert currency.active == false
       assert currency.description == "some updated description"
       assert currency.format == "some updated format"
-      assert currency.iso_code == "some updated iso_code"
+      assert currency.iso_code == "ABC"
       assert currency.symbol == "some updated symbol"
       assert currency.type == "digital_currency"
       assert currency.precision == 3
