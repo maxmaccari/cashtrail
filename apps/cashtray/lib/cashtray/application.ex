@@ -7,7 +7,12 @@ defmodule Cashtray.Application do
 
   def start(_type, _args) do
     children = [
-      Cashtray.Repo
+      # Start the Ecto repository
+      Cashtray.Repo,
+      # Start the PubSub system
+      {Phoenix.PubSub, name: Cashtray.PubSub}
+      # Start a worker by calling: Cashtray.Worker.start_link(arg)
+      # {Cashtray.Worker, arg}
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Cashtray.Supervisor)

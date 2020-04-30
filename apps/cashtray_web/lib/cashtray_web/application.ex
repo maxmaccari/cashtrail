@@ -6,12 +6,13 @@ defmodule CashtrayWeb.Application do
   use Application
 
   def start(_type, _args) do
-    # List all child processes to be supervised
     children = [
-      # Start the endpoint when the application starts
+      # Start the Telemetry supervisor
+      CashtrayWeb.Telemetry,
+      # Start the Endpoint (http/https)
       CashtrayWeb.Endpoint
-      # Starts a worker by calling: CashtrayWeb.Worker.start_link(arg)
-      # {CashtrayWeb.Worker, arg},
+      # Start a worker by calling: CashtrayWeb.Worker.start_link(arg)
+      # {CashtrayWeb.Worker, arg}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
