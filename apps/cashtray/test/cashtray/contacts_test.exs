@@ -50,10 +50,10 @@ defmodule Cashtray.ContactsTest do
       assert {:error, %Ecto.Changeset{}} = Contacts.create_category(tenant, @invalid_attrs)
     end
 
-    test "create_category/2 with same name returns error changeset", %{tenant: tenant} do
+    test "create_category/2 with same description returns error changeset", %{tenant: tenant} do
       category_params = params_for(:contact_category, tenant: tenant)
       assert {:ok, %Category{} = category} = Contacts.create_category(tenant, category_params)
-      assert {:error, %Ecto.Changeset{}} = Contacts.create_category(tenant, category_params)
+      assert {:error, %Ecto.Changeset{errors: [description: _]}} = Contacts.create_category(tenant, category_params)
     end
 
     @update_attrs %{description: "some updated description"}
