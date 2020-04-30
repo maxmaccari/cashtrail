@@ -1,6 +1,6 @@
 defmodule Cashtray.Accounts do
   @moduledoc """
-  The Accounts context.
+  The Accounts is responsible for deal with user accounts and authentication rules.
   """
 
   import Ecto.Query, warn: false
@@ -14,10 +14,17 @@ defmodule Cashtray.Accounts do
   @doc """
   Returns the list of users.
 
+  Options:
+    * `:search` => search accounts by `:first_name`, `:last_name` or `:email`
+    * See `Cashtray.Paginator.paginate/2` to see paginations options
+
   ## Examples
 
       iex> list_users()
       %Cashtray.Paginator{entries: [%User{}, ...]}
+
+      iex> list_users(search: "my")
+      %Cashtray.Paginator{entries: [%User{first_name: "My name"}, ...]}
 
   """
   @spec list_users(keyword) :: Cashtray.Paginator.Page.t()
@@ -27,7 +34,7 @@ defmodule Cashtray.Accounts do
     |> Paginator.paginate(options)
   end
 
-  def search(query, term) when is_binary(term) do
+  defp search(query, term) when is_binary(term) do
     term = "%#{term}%"
 
     from(q in query,
@@ -35,7 +42,7 @@ defmodule Cashtray.Accounts do
     )
   end
 
-  def search(query, _), do: query
+  defp search(query, _), do: query
 
   @doc """
   Gets a single user.

@@ -1,6 +1,6 @@
 defmodule Cashtray.Paginator.Page do
   @moduledoc """
-  It's a struct that represents a result of Paginator.paginate call
+  It's a struct that represents a result of Paginator.paginate
   """
 
   @type t() :: %Cashtray.Paginator.Page{

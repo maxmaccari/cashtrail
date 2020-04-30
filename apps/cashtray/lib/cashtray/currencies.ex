@@ -1,6 +1,7 @@
 defmodule Cashtray.Currencies do
   @moduledoc """
-  The Currencies context.
+  The Currencies context manage the currencies data that are linked to Banking
+  Accounts.
   """
 
   @type currency :: Cashtray.Currencies.Currency.t()
@@ -19,10 +20,12 @@ defmodule Cashtray.Currencies do
 
   You must pass the entity to find the currency correctely.
 
-  See `Cashtray.Paginator` docs to see the options related to pagination.
-
-  You can also a map to :filters as params to filter the results:
-    * `:type` or `"type" to filter by type
+  Options:
+    * `:filter` => filters by following attributes:
+      * `:type` or `"type"`
+      * `:active` or `"active"`
+    * `:search` => search accounts by `:first_name`, `:last_name` and `:email`
+    * See `Cashtray.Paginator.paginate/2` to see paginations options
 
   ## Examples
 
@@ -34,6 +37,9 @@ defmodule Cashtray.Currencies do
 
       iex> list_currencies(entity, filter: %{type: "cash"})
       %Cashtray.Paginator.Page{entries: [%Currency{type: "cash"}, ...]}
+
+      iex> list_currencies(entity, filter: %{search: "my"})
+      %Cashtray.Paginator.Page{entries: [%Currency{description: "my cash"}, ...]}
 
   """
   @spec list_currencies(Cashtray.Entities.Entity.t(), keyword) :: Paginator.Page.t()
@@ -60,7 +66,10 @@ defmodule Cashtray.Currencies do
 
   defp search(query, term) when is_binary(term) do
     term = "%#{term}%"
-    from(q in query, where: ilike(q.description, ^term) or ilike(q.iso_code, ^term) or ilike(q.symbol, ^term))
+
+    from(q in query,
+      where: ilike(q.description, ^term) or ilike(q.iso_code, ^term) or ilike(q.symbol, ^term)
+    )
   end
 
   defp search(query, _), do: query

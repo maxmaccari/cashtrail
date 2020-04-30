@@ -2,7 +2,7 @@ defmodule Cashtray.Entities.Entity do
   @moduledoc """
   It represents a division to which all data belongs to. So you can separate your
   personal finances from the company finances. Or have Personal Finances and
-  Family finances separated.
+  Family finances separated. Or control finances of some organization.
 
   Each Entity generates a prefix in Ecto.
   """

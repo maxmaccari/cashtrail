@@ -18,11 +18,11 @@ defmodule Cashtray.Paginator do
 
     ## Example
 
-      iex> Cashtray.Paginator.paginate(Entity, page_size: 10)
+      iex> paginate(Entity, page_size: 10)
       %Cashtray.Paginator.Page{page_size: 10, page: 1, entries: []}
 
-      iex> Cashtray.Paginator.paginate(Entity, page_size: :all)
-      %Cashtray.Paginator.Page{page_size: 32, page: 1, entries: []}
+      iex> paginate(Entity, page_size: :all)
+      %Cashtray.Paginator.Page{page_size: 22, page: 1, entries: []}
   """
   @spec paginate(Ecto.Queryable.t(), keyword) :: Page.t()
   def paginate(queriable, options \\ []) do

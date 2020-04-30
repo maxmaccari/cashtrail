@@ -51,7 +51,9 @@ defmodule Cashtray.CurrenciesTest do
 
     test "list_currencies/1 searching by iso_code, symbol and description", %{tenant: tenant} do
       insert(:currency, tenant: tenant, description: "abc", iso_code: "cde", symbol: "ef$")
-      currency = insert(:currency, tenant: tenant, description: "ghijk", iso_code: "lmn", symbol: "op$")
+
+      currency =
+        insert(:currency, tenant: tenant, description: "ghijk", iso_code: "lmn", symbol: "op$")
 
       assert Currencies.list_currencies(tenant, search: "hij").entries == [currency]
       assert Currencies.list_currencies(tenant, search: "lm").entries == [currency]

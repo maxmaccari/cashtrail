@@ -1,6 +1,10 @@
 defmodule Cashtray.Entities do
   @moduledoc """
-  The Entities context.
+  The Entities context manages data related to entities. An Entity keeps all
+  financial data of something, that can be a company, financial finances,
+  organization, church, event, etc.
+
+  They can have one owner or other members.
   """
 
   @type entity :: Cashtray.Entities.Entity.t()
@@ -17,17 +21,25 @@ defmodule Cashtray.Entities do
   alias Cashtray.Paginator
 
   @doc """
-  Returns a %Cashtray.Paginator.Page{} struct with list of all entities.
+  Returns a list of all entities.
 
-  See `Cashtray.Paginator` docs to see the options related to pagination.
+  Options:
+    * `:filter` => filters by following attributes:
+      * `:type` or `"type"`
+      * `:status` or `"status"`
+    * `:search` => search accounts by `:name`
+    * See `Cashtray.Paginator.paginate/2` to see paginations options
 
   ## Examples
 
       iex> list_entities()
       %Cashtray.Paginator.Page{entries: [%Entity{}, ...]}
 
-      iex> list_entities()
-      %Cashtray.Paginator.Page{entries: [%Entity{}, ...]}
+      iex> list_entities(filter: %{type: "company"})
+      %Cashtray.Paginator.Page{entries: [%Entity{type: "company"}, ...]}
+
+      iex> list_entities(search: "my")
+      %Cashtray.Paginator.Page{entries: [%Entity{name: "My company"}, ...]}
 
   """
   @spec list_entities(keyword) :: page(entity())
@@ -58,10 +70,14 @@ defmodule Cashtray.Entities do
   defp search_entities(query, _), do: query
 
   @doc """
-  Returns a %Cashtray.Paginator.Page{} struct with list of entities from the
-  given user.
+  Returns a list of entities from the given user.
 
-  See `Cashtray.Paginator` docs to see the options related to pagination.
+  Options:
+    * `:filter` => filters by following attributes:
+      * `:type` or `"type"`
+      * `:status` or `"status"`
+    * `:search` => search accounts by `:name`
+    * See `Cashtray.Paginator.paginate/2` to see paginations options
 
   ## Examples
 
@@ -244,14 +260,23 @@ defmodule Cashtray.Entities do
   alias Cashtray.Accounts
 
   @doc """
-  Returns a %Cashtray.Paginator.Page{} struct of the list of entity_members.
+  Returns a list of entity_members from the given entity.
 
-  See `Cashtray.Paginator` docs to see the options related to pagination.
-
+  Options:
+    * `:filter` => filters by following attributes:
+      * `:permission` or `"permission"`
+    * `:search` => search accounts by its user `:name`
+    * See `Cashtray.Paginator.paginate/2` to see paginations options
   ## Examples
 
       iex> list_entity_members(entity)
       %Cashtray.Paginator.Page{entries: [%EntityMember{}, ...]}
+
+      iex> list_entity_members(entity, filter: %{permission: "read"})
+      %Cashtray.Paginator.Page{entries: [%EntityMember{permission: "read"}, ...]}
+
+      iex> list_entity_members(entity, search: "my")
+      %Cashtray.Paginator.Page{entries: [%EntityMember{user: %Accounts.User{name: "My Name"}}, ...]}
 
   """
   @spec list_members(entity, keyword | map) :: page(entity_member)

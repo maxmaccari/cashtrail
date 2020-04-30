@@ -3,7 +3,7 @@ defmodule Cashtray.Entities.EntityMember do
   Represents a member of an Entity that links authorized users to the Entity,
   except the owner.
 
-  The owner is not a member of the Entity.
+  The owner cannot be a member of the Entity.
   """
 
   @type t() :: %Cashtray.Entities.EntityMember{

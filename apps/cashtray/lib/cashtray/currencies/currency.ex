@@ -1,6 +1,6 @@
 defmodule Cashtray.Currencies.Currency do
   @moduledoc """
-  It represents a currency of accounts of the application.
+  It represents a currency of banking accounts of the application.
   """
 
   use Ecto.Schema

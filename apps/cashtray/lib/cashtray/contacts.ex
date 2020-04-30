@@ -1,6 +1,6 @@
 defmodule Cashtray.Contacts do
   @moduledoc """
-  The Contacts context.
+  The Contacts context is responsible to manage the contacts linked to transactions.
   """
 
   import Ecto.Query, warn: false
@@ -14,12 +14,21 @@ defmodule Cashtray.Contacts do
   @type category :: Category.t()
 
   @doc """
-  Returns the list of contact_categories.
+  Returns the list of contact categories.
+
+  You must pass the entity to find the contacts categories correctely.
+
+  Options:
+    * `:search` => search accounts by `:description`
+    * See `Cashtray.Paginator.paginate/2` to see paginations options
 
   ## Examples
 
       iex> list_categories(entity)
-      %Cashtray.Paginator{entries: [%Category{}, ...]}
+      %Cashtray.Paginator{entries: [%Contacts.Category{}, ...]}
+
+      iex> list_categories(entity, search: "My desc")
+      %Cashtray.Paginator{entries: [%Contacts.Category{description: "My Description"}, ...]}
 
   """
   @spec list_categories(Cashtray.Entities.Entity.t()) :: Cashtray.Paginator.Page.t()
@@ -40,6 +49,8 @@ defmodule Cashtray.Contacts do
   @doc """
   Gets a single category.
 
+  You must pass the entity to get the contact category correctely.
+
   Raises `Ecto.NoResultsError` if the Category does not exist.
 
   ## Examples
@@ -55,6 +66,8 @@ defmodule Cashtray.Contacts do
 
   @doc """
   Creates a category.
+
+  You must pass the entity to create the contact category correctely.
 
   ## Examples
 
@@ -123,10 +136,26 @@ defmodule Cashtray.Contacts do
   @doc """
   Returns the list of contacts.
 
+  You must pass the entity to find the contacts correctely.
+
+  Options:
+    * `:filter` => filters by following attributes:
+      * `:type` or `"type"`
+      * `:customer` or `"customer"`
+      * `:supplier` or `"supplier"`
+    * `:search` => search accounts by `:name` or `:legal_name`
+    * See `Cashtray.Paginator.paginate/2` to see paginations options
+
   ## Examples
 
       iex> list_contacts(entity)
       %Cashtray.Paginator{entries: [%Contact{}, ...]}
+
+      iex> list_contacts(entity, filter: %{type: "company"})
+      %Cashtray.Paginator{entries: [%Contact{type: "company"}, ...]}
+
+      iex> list_contacts(entity, search: "my")
+      %Cashtray.Paginator{entries: [%Contact{name: "My name"}, ...]}
 
   """
   def list_contacts(entity, options \\ []) do
@@ -161,6 +190,8 @@ defmodule Cashtray.Contacts do
   @doc """
   Gets a single contact.
 
+  You must pass the entity to get the contact correctely.
+
   Raises `Ecto.NoResultsError` if the Contact does not exist.
 
   ## Examples
@@ -177,12 +208,14 @@ defmodule Cashtray.Contacts do
   @doc """
   Creates a contact.
 
+  You must pass the entity to create the contact correctely.
+
   ## Examples
 
-      iex> create_contact(%{field: value})
+      iex> create_contact(entity, %{field: value})
       {:ok, %Contact{}}
 
-      iex> create_contact(%{field: bad_value})
+      iex> create_contact(entity, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
