@@ -9,9 +9,6 @@ defmodule Cashtray.Entities do
 
   @type entity :: Cashtray.Entities.Entity.t()
   @type entity_member :: Cashtray.Entities.EntityMember.t()
-  @type page(type) :: %Cashtray.Paginator.Page{
-          entries: list(type)
-        }
 
   import Ecto.Query, warn: false
   alias Cashtray.Repo
@@ -42,7 +39,7 @@ defmodule Cashtray.Entities do
       %Cashtray.Paginator.Page{entries: [%Entity{name: "My company"}, ...]}
 
   """
-  @spec list_entities(keyword) :: page(entity())
+  @spec list_entities(keyword) :: Paginator.Page.t(entity())
   def list_entities(options \\ []) do
     from(e in Entity)
     |> filter_entities(Keyword.get(options, :filter))
@@ -88,7 +85,7 @@ defmodule Cashtray.Entities do
       %Cashtray.Paginator.Page{entries: [%Entity{}, ...]}
 
   """
-  @spec list_entities_from(Cashtray.Accounts.User.t(), keyword) :: page(entity())
+  @spec list_entities_from(Cashtray.Accounts.User.t(), keyword) :: Paginator.Page.t(entity())
   def list_entities_from(%User{} = user, params \\ []) do
     from(e in Entity)
     |> join(:left, [e], m in assoc(e, :members))
@@ -279,7 +276,7 @@ defmodule Cashtray.Entities do
       %Cashtray.Paginator.Page{entries: [%EntityMember{user: %Accounts.User{name: "My Name"}}, ...]}
 
   """
-  @spec list_members(entity, keyword | map) :: page(entity_member)
+  @spec list_members(entity, keyword | map) :: Paginator.Page.t(entity_member)
   def list_members(%Entity{id: entity_id}, options \\ []) do
     from(EntityMember, where: [entity_id: ^entity_id])
     |> filter_members(Keyword.get(options, :filter))

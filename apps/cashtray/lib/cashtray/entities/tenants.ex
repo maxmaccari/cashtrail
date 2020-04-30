@@ -49,7 +49,7 @@ defmodule Cashtray.Entities.Tenants do
 
   See `Triplex.to_prefix/1` docs for more information.
   """
-  @spec put_prefix(Ecto.Queryable.t(), Cashtray.Entities.t()) :: Ecto.Query.t()
+  @spec put_prefix(Ecto.Queryable.t(), Cashtray.Entities.Entity.t()) :: Ecto.Query.t()
   def put_prefix(queryable, %Entity{} = entity) do
     queryable
     |> Ecto.Queryable.to_query()

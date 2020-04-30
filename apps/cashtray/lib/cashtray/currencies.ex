@@ -42,7 +42,7 @@ defmodule Cashtray.Currencies do
       %Cashtray.Paginator.Page{entries: [%Currency{description: "my cash"}, ...]}
 
   """
-  @spec list_currencies(Cashtray.Entities.Entity.t(), keyword) :: Paginator.Page.t()
+  @spec list_currencies(Entity.t(), keyword) :: Paginator.Page.t()
   def list_currencies(%Entity{} = entity, options \\ []) do
     Currency
     |> filter(Keyword.get(options, :filter))
@@ -90,7 +90,7 @@ defmodule Cashtray.Currencies do
       ** (Ecto.NoResultsError)
 
   """
-  @spec get_currency!(Cashtray.Entities.Entity.t(), integer) :: currency
+  @spec get_currency!(Entity.t(), integer) :: currency
   def get_currency!(%Entity{} = entity, id) do
     Repo.get!(Currency, id, prefix: to_prefix(entity))
   end
@@ -109,7 +109,7 @@ defmodule Cashtray.Currencies do
       {:error, %Ecto.Changeset{}}
 
   """
-  @spec create_currency(Cashtray.Entities.Entity.t(), map) ::
+  @spec create_currency(Entity.t(), map) ::
           {:ok, currency} | {:error, Ecto.Changeset.t(currency)}
   def create_currency(%Entity{} = entity, attrs \\ %{}) do
     %Currency{}

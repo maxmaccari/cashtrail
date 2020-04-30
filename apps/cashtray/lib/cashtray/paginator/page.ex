@@ -3,13 +3,14 @@ defmodule Cashtray.Paginator.Page do
   It's a struct that represents a result of Paginator.paginate
   """
 
-  @type t() :: %Cashtray.Paginator.Page{
-          entries: list,
+  @type t(type) :: %Cashtray.Paginator.Page{
+          entries: list(type),
           page_number: integer,
           page_size: integer,
           total_entries: integer,
           total_pages: integer
         }
+  @type t() :: t(any)
 
   defstruct entries: nil,
             page_number: nil,

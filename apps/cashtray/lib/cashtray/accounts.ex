@@ -27,7 +27,7 @@ defmodule Cashtray.Accounts do
       %Cashtray.Paginator{entries: [%User{first_name: "My name"}, ...]}
 
   """
-  @spec list_users(keyword) :: Cashtray.Paginator.Page.t()
+  @spec list_users(keyword) :: Cashtray.Paginator.Page.t(user)
   def list_users(options \\ []) do
     User
     |> search(Keyword.get(options, :search))

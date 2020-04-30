@@ -7,6 +7,7 @@ defmodule Cashtray.Contacts.Address do
   import Ecto.Changeset
 
   @type t :: %Cashtray.Contacts.Address{
+          id: Ecto.UUID.t() | nil,
           street: String.t() | nil,
           number: String.t() | nil,
           line_1: String.t() | nil,
