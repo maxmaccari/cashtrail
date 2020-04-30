@@ -9,7 +9,8 @@ defmodule Cashtray.Accounts.User do
           first_name: String.t() | nil,
           last_name: String.t() | nil,
           password: String.t() | nil,
-          password_hash: String.t() | nil
+          password_hash: String.t() | nil,
+          avatar_url: String.t() | nil
         }
 
   use Ecto.Schema
@@ -24,6 +25,7 @@ defmodule Cashtray.Accounts.User do
     field :email, :string
     field :first_name, :string
     field :last_name, :string
+    field :avatar_url, :string
     field :password_hash, :string
     field :password, :string, virtual: true
 
@@ -32,20 +34,23 @@ defmodule Cashtray.Accounts.User do
     timestamps()
   end
 
+  @email_regex ~r/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/
+  @password_regex ~r/^(?=.*\d)(?=.*[a-z])(?=.*[!@#\$%\^&\*\_\=]).*/
+  @url_regex ~r/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*)/
+
   @spec changeset(t() | Ecto.Changeset.t(t()), map) :: Ecto.Changeset.t(t())
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:first_name, :last_name, :email, :password])
+    |> cast(attrs, [:first_name, :last_name, :email, :password, :avatar_url])
     |> validate_required([:first_name, :last_name, :email, :password])
-    |> validate_format(:email, ~r/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/,
-      message: "is an invalid email"
-    )
+    |> validate_format(:email, @email_regex, message: "is not a valid email")
     |> unique_constraint(:email)
     |> validate_length(:password, min: 8, max: 20)
-    |> validate_format(:password, ~r/^(?=.*\d)(?=.*[a-z])(?=.*[!@#\$%\^&\*\_\=]).*/,
+    |> validate_format(:password, @password_regex,
       message: "should have at least one special character, one number and one letter"
     )
+    |> validate_format(:avatar_url, @url_regex, message: "is not a valid url")
     |> validate_confirmation(:password)
     |> change_password()
   end
