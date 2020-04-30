@@ -40,6 +40,7 @@ defmodule Cashtray.Currencies do
   def list_currencies(%Entity{} = entity, options \\ []) do
     Currency
     |> filter(Keyword.get(options, :filter))
+    |> search(Keyword.get(options, :search))
     |> Ecto.Queryable.to_query()
     |> Map.put(:prefix, to_prefix(entity))
     |> Paginator.paginate(options)
@@ -56,6 +57,13 @@ defmodule Cashtray.Currencies do
   end
 
   defp filter(query, _), do: query
+
+  defp search(query, term) when is_binary(term) do
+    term = "%#{term}%"
+    from(q in query, where: ilike(q.description, ^term) or ilike(q.iso_code, ^term) or ilike(q.symbol, ^term))
+  end
+
+  defp search(query, _), do: query
 
   @doc """
   Gets a single currency.

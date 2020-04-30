@@ -13,6 +13,20 @@ defmodule Cashtray.CurrenciesTest do
       assert Currencies.list_currencies(tenant).entries == [currency]
     end
 
+    test "list_currencies/1 works with pagination", %{tenant: tenant} do
+      currencies =
+        insert_list(25, :currency, tenant: tenant)
+        |> Enum.slice(20, 5)
+
+      assert Currencies.list_currencies(tenant, page: 2) == %Cashtray.Paginator.Page{
+               entries: currencies,
+               page_number: 2,
+               page_size: 20,
+               total_entries: 25,
+               total_pages: 2
+             }
+    end
+
     test "list_currencies/1 filtering by type", %{tenant: tenant} do
       insert(:currency, tenant: tenant, type: "digital_currency")
       currency = insert(:currency, tenant: tenant, type: "cash")
@@ -33,6 +47,15 @@ defmodule Cashtray.CurrenciesTest do
       currency = insert(:currency, tenant: tenant)
 
       assert Currencies.list_currencies(tenant, filter: %{invalid: "123"}).entries == [currency]
+    end
+
+    test "list_currencies/1 searching by iso_code, symbol and description", %{tenant: tenant} do
+      insert(:currency, tenant: tenant, description: "abc", iso_code: "cde", symbol: "ef$")
+      currency = insert(:currency, tenant: tenant, description: "ghijk", iso_code: "lmn", symbol: "op$")
+
+      assert Currencies.list_currencies(tenant, search: "hij").entries == [currency]
+      assert Currencies.list_currencies(tenant, search: "lm").entries == [currency]
+      assert Currencies.list_currencies(tenant, search: "p$").entries == [currency]
     end
 
     test "get_currency!/2 returns the currency with given id", %{tenant: tenant} do
