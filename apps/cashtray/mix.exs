@@ -38,7 +38,8 @@ defmodule Cashtray.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:ecto_sql, "~> 3.1"},
+      {:phoenix_pubsub, "~> 2.0"},
+      {:ecto_sql, "~> 3.4"},
       {:postgrex, ">= 0.0.0"},
       {:jason, "~> 1.0"},
       {:argon2_elixir, "~> 2.3"},
@@ -57,6 +58,7 @@ defmodule Cashtray.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
+      setup: ["deps.get", "ecto.setup"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate", "test"]

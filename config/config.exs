@@ -23,10 +23,10 @@ config :cashtray_web,
 # Configures the endpoint
 config :cashtray_web, CashtrayWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "jydE81XIaJHivGGMzMWS9kfti9I+32DZr1iu6c7hUyLXJcMSpiAdIC/qlQNtfFhI",
-  render_errors: [view: CashtrayWeb.ErrorView, accepts: ~w(json)],
-  pubsub: [name: CashtrayWeb.PubSub, adapter: Phoenix.PubSub.PG2],
-  live_view: [signing_salt: "ACa82eR2"]
+  secret_key_base: "cpkAN7FBHyu+QSgtMgPeeB4e/VeAOtr9z/J9qynhOmbGoL9r+k1mpgJxMupdb95J",
+  render_errors: [view: CashtrayWeb.ErrorView, accepts: ~w(json), layout: false],
+  pubsub_server: Cashtray.PubSub,
+  live_view: [signing_salt: "xsy+inIv"]
 
 # Configures Elixir's Logger
 config :logger, :console,

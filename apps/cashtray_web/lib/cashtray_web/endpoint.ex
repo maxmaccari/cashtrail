@@ -7,12 +7,14 @@ defmodule CashtrayWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_cashtray_web_key",
-    signing_salt: "XuFGbIig"
+    signing_salt: "/IPLKMVZ"
   ]
 
   socket "/socket", CashtrayWeb.UserSocket,
     websocket: true,
     longpoll: false
+
+  socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -28,7 +30,12 @@ defmodule CashtrayWeb.Endpoint do
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
     plug Phoenix.CodeReloader
+    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :cashtray_web
   end
+
+  plug Phoenix.LiveDashboard.RequestLogger,
+    param_key: "request_logger",
+    cookie_key: "request_logger"
 
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]

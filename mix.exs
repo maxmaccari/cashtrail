@@ -1,4 +1,6 @@
 defmodule Cashtray.Umbrella.MixProject do
+  @moduledoc false
+
   use Mix.Project
 
   def project do
@@ -33,7 +35,8 @@ defmodule Cashtray.Umbrella.MixProject do
 
   def aliases do
     [
-      check: ["format --check-formatted", "credo"]
+      check: ["format --check-formatted", "credo"],
+      setup: ["cmd mix setup"]
     ]
   end
 end
