@@ -14,7 +14,10 @@ defmodule Cashtray.Currencies.Currency do
           iso_code: String.t() | nil,
           iso_code: String.t() | nil,
           type: String.t() | nil,
-          precision: integer | nil
+          precision: integer | nil,
+          inserted_at: NaiveDateTime.t() | nil,
+          updated_at: NaiveDateTime.t() | nil,
+          __meta__: Ecto.Schema.Metadata.t()
         }
 
   @primary_key {:id, :binary_id, autogenerate: true}

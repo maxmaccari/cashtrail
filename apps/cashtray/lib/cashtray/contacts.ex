@@ -19,9 +19,9 @@ defmodule Cashtray.Contacts do
 
   You must pass the entity to find the contacts categories correctely.
 
-  Options:
-    * `:search` => search accounts by `:description`
-    * See `Cashtray.Paginator.paginate/2` to see paginations options
+  ## Options
+    * `:search` - search accounts by `:description`
+    * See `Cashtray.Paginator.paginate/2` to see the paginations options
 
   ## Examples
 
@@ -72,6 +72,9 @@ defmodule Cashtray.Contacts do
 
   You must pass the entity to create the contact category correctely.
 
+  ## Params
+    * `:description` (required)
+
   ## Examples
 
       iex> create_category(entity, %{field: value})
@@ -91,6 +94,8 @@ defmodule Cashtray.Contacts do
 
   @doc """
   Updates a category.
+
+  See `create_category/2` docs to know more about the accepted params.
 
   ## Examples
 
@@ -148,13 +153,13 @@ defmodule Cashtray.Contacts do
 
   You must pass the entity to find the contacts correctely.
 
-  Options:
-    * `:filter` => filters by following attributes:
+  ## Options
+    * `:filter` - filters by following attributes:
       * `:type` or `"type"`
       * `:customer` or `"customer"`
       * `:supplier` or `"supplier"`
-    * `:search` => search accounts by `:name` or `:legal_name`
-    * See `Cashtray.Paginator.paginate/2` to see paginations options
+    * `:search` - search accounts by `:name` or `:legal_name`.
+    * See `Cashtray.Paginator.paginate/2` to see paginations options.
 
   ## Examples
 
@@ -222,6 +227,15 @@ defmodule Cashtray.Contacts do
 
   You must pass the entity to create the contact correctely.
 
+  ## Params
+    * `:name` (required)
+    * `:legal_name`
+    * `:type` (required) - can be `"company"` or `"person"`, defaults to `"company"`.
+    * `:customer` - `boolean`, defaults to false.
+    * `:supplier` - `boolean`, defaults to false.
+    * `:phone`
+    * `:email`
+
   ## Examples
 
       iex> create_contact(entity, %{field: value})
@@ -241,6 +255,8 @@ defmodule Cashtray.Contacts do
 
   @doc """
   Updates a contact.
+
+  See `create_contact/2` docs to know more about the accepted params.
 
   ## Examples
 

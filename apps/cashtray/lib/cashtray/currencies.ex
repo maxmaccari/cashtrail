@@ -21,11 +21,11 @@ defmodule Cashtray.Currencies do
   You must pass the entity to find the currency correctely.
 
   Options:
-    * `:filter` => filters by following attributes:
+    * `:filter` - filters by following attributes:
       * `:type` or `"type"`
       * `:active` or `"active"`
-    * `:search` => search accounts by `:first_name`, `:last_name` and `:email`
-    * See `Cashtray.Paginator.paginate/2` to see paginations options
+    * `:search` - search accounts by `:first_name`, `:last_name` and `:email`.
+    * See `Cashtray.Paginator.paginate/2` to see paginations options.
 
   ## Examples
 
@@ -100,6 +100,17 @@ defmodule Cashtray.Currencies do
 
   You must pass the entity to create the currency correctely.
 
+  ## Params
+    * `:description` (required)
+    * `:type` - can be `"cash"`, `"digital_currency"`, `"miles"`,
+    `"cryptocurrency"` or `"other"`.
+    * `:iso_code` - The [ISO 4217](https://pt.wikipedia.org/wiki/ISO_4217) code
+    of the currency.
+    * `:symbol`
+    * `:format` - `string`, defaults to `"0"`.
+    * `:precision` - `integer`, defaults to 0.
+    * `:active` - `boolean`, defaults to true.
+
   ## Examples
 
       iex> create_currency(entity, %{field: value})
@@ -119,6 +130,8 @@ defmodule Cashtray.Currencies do
 
   @doc """
   Updates a currency.
+
+  See `create_currency/2` docs to know more about the accepted params.
 
   ## Examples
 

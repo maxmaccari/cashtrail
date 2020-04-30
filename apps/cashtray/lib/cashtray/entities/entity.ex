@@ -4,7 +4,8 @@ defmodule Cashtray.Entities.Entity do
   personal finances from the company finances. Or have Personal Finances and
   Family finances separated. Or control finances of some organization.
 
-  Each Entity generates a prefix in Ecto.
+  Each Entity generates a tenant. You can manually generate tenats using the
+  `Cashtray.Entities.Tenants` module.
   """
 
   @type t() :: %Cashtray.Entities.Entity{
@@ -14,7 +15,10 @@ defmodule Cashtray.Entities.Entity do
           type: String.t() | nil,
           owner_id: Ecto.UUID.t() | nil,
           owner: Ecto.Association.NotLoaded.t() | Cashtray.Accounts.User.t() | nil,
-          members: Ecto.Association.NotLoaded.t() | list(Cashtray.Entities.EntityMember.t()) | []
+          members: Ecto.Association.NotLoaded.t() | list(Cashtray.Entities.EntityMember.t()),
+          inserted_at: NaiveDateTime.t() | nil,
+          updated_at: NaiveDateTime.t() | nil,
+          __meta__: Ecto.Schema.Metadata.t()
         }
 
   use Ecto.Schema
@@ -40,7 +44,7 @@ defmodule Cashtray.Entities.Entity do
   def changeset(entity, attrs) do
     entity
     |> cast(attrs, [:name, :type, :status])
-    |> validate_required([:name, :type, :status, :owner_id])
+    |> validate_required([:name, :owner_id])
     |> validate_inclusion(:type, ["personal", "company", "other"])
     |> validate_inclusion(:status, ["active", "archived"])
     |> foreign_key_constraint(:owner_id)

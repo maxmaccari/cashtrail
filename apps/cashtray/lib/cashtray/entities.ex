@@ -24,8 +24,8 @@ defmodule Cashtray.Entities do
     * `:filter` => filters by following attributes:
       * `:type` or `"type"`
       * `:status` or `"status"`
-    * `:search` => search accounts by `:name`
-    * See `Cashtray.Paginator.paginate/2` to see paginations options
+    * `:search` => search accounts by `:name`.
+    * See `Cashtray.Paginator.paginate/2` to see paginations options.
 
   ## Examples
 
@@ -73,8 +73,8 @@ defmodule Cashtray.Entities do
     * `:filter` => filters by following attributes:
       * `:type` or `"type"`
       * `:status` or `"status"`
-    * `:search` => search accounts by `:name`
-    * See `Cashtray.Paginator.paginate/2` to see paginations options
+    * `:search` => search accounts by `:name`.
+    * See `Cashtray.Paginator.paginate/2` to see paginations options.
 
   ## Examples
 
@@ -114,6 +114,13 @@ defmodule Cashtray.Entities do
   @doc """
   Creates a entity.
 
+  ## Params
+    * `:name` (required)
+    * `:type` - can be `"personal"`, `"company"` or `"other"`. Defaults to
+    `"personal"`.
+    * `:status` - can be `"active"` or `"archived"`. Defaults to `"active"`.
+    * `:owner_id` - a reference to `Cashtray.Accounts.User`
+
   ## Examples
 
       iex> create_entity(user, %{field: value})
@@ -143,6 +150,8 @@ defmodule Cashtray.Entities do
 
   @doc """
   Updates a entity.
+
+  See `create_currency/1` docs to know more about the accepted params.
 
   ## Examples
 
@@ -262,8 +271,8 @@ defmodule Cashtray.Entities do
   Options:
     * `:filter` => filters by following attributes:
       * `:permission` or `"permission"`
-    * `:search` => search accounts by its user `:name`
-    * See `Cashtray.Paginator.paginate/2` to see paginations options
+    * `:search` => search accounts by its user `:name`.
+    * See `Cashtray.Paginator.paginate/2` to see paginations options.
   ## Examples
 
       iex> list_entity_members(entity)
@@ -307,6 +316,14 @@ defmodule Cashtray.Entities do
   @doc """
   Creates a entity_member for the entity.
 
+  ## Params
+  * `:permission` (required) - can be `"read"`, `"write"` or `"admin"`.
+    * `:user_id` - a reference to `Cashtray.Accounts.User`
+    * `:user` - a map of the `Cashtray.Accounts.User` that should be created. See
+    `Cashtray.Accounts.create_user/1` docs to know more about the accepted
+    params.
+
+
   ## Examples
 
       iex> create_member(entity, %{field: value})
@@ -339,8 +356,9 @@ defmodule Cashtray.Entities do
   @doc """
   Creates a entity_member for the entity, the user and the permission.
 
-  Returns %Ecto.Changeset{} if the given user is invalid or is already added
-  Returns :invalid if the given user is the owner of the entity
+  Returns:
+    * `%Ecto.Changeset{}` if the given user is invalid or is already added.
+    * `:invalid` if the given user is the owner of the entity.
 
   ## Examples
 
@@ -395,17 +413,17 @@ defmodule Cashtray.Entities do
 
   ## Examples
 
-    iex> update_member_permission(entity, user, "write")
-    {:ok, %EntityMember{}}
+      iex> update_member_permission(entity, user, "write")
+      {:ok, %EntityMember{}}
 
-    iex> update_member_permission(entity, user, "invalid")
-    {:error, %Ecto.Changeset{}}
+      iex> update_member_permission(entity, user, "invalid")
+      {:error, %Ecto.Changeset{}}
 
-    iex> update_member_permission(entity, owner, "write")
-    {:error, :invalid}
+      iex> update_member_permission(entity, owner, "write")
+      {:error, :invalid}
 
-    iex> update_member_permission(entity, another_user, "write)
-    {:error, :not_found}
+      iex> update_member_permission(entity, another_user, "write)
+      {:error, :not_found}
   """
   @spec update_member_permission(entity, Cashtray.Accounts.User.t(), String.t()) ::
           {:ok, entity_member} | {:error, Ecto.Changeset.t(entity_member) | :invalid | :not_found}

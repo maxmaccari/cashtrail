@@ -7,16 +7,16 @@ defmodule Cashtray.Paginator do
   """
 
   @doc """
-    Returns a %Cashtray.Paginator.Page{} with the entries fetched from a queriable
-    and its page metadata.
+  Returns a `%Cashtray.Paginator.Page{}` with the entries fetched from a queriable
+  and its page metadata.
 
-    The allowed options are:
-      * `:page` => the number of page you want to get;
-      * `:page_size` => the size of the page you want to get. It can be:
-        * `:all` to fetch all entries or;
-        * any integer value get the provided count.
+  The allowed options are:
+    * `:page` - the number of page you want to get;
+    * `:page_size` - the size of the page you want to get. It can be:
+      * `:all` to fetch all entries or;
+      * any integer value get the provided count.
 
-    ## Example
+  ## Example
 
       iex> paginate(Entity, page_size: 10)
       %Cashtray.Paginator.Page{page_size: 10, page: 1, entries: []}

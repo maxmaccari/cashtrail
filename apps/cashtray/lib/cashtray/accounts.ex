@@ -14,9 +14,9 @@ defmodule Cashtray.Accounts do
   @doc """
   Returns the list of users.
 
-  Options:
-    * `:search` => search accounts by `:first_name`, `:last_name` or `:email`
-    * See `Cashtray.Paginator.paginate/2` to see paginations options
+  ## Options:
+    * `:search` - search accounts by `:first_name`, `:last_name` or `:email`.
+    * See `Cashtray.Paginator.paginate/2` to see the paginations options.
 
   ## Examples
 
@@ -79,12 +79,12 @@ defmodule Cashtray.Accounts do
   def get_user_by(params \\ []), do: Repo.get_by(User, params)
 
   @doc """
-  Authenticates a user.
+  Authenticates an user with its email and password.
 
-  Returns:
-    * {:ok, user} if user is found and the passwords match.
-    * {:error, :unauthorized} if passwords does not match.
-    * {:error, :not_found} if user email is not found.
+  ## Returns
+    * `{:ok, user}` if user is found and the passwords match.
+    * `{:error, :unauthorized}` if passwords does not match.
+    * `{:error, :not_found}` if user email is not found.
 
   ## Examples
 
@@ -116,7 +116,14 @@ defmodule Cashtray.Accounts do
   end
 
   @doc """
-  Creates a user.
+  Creates an user.
+
+  ## Params
+    * `:email` (required)
+    * `:first_name` (required)
+    * `:last_name`
+    * `:password` (required)
+    * `:password_confirmation` (required)
 
   ## Examples
 
@@ -136,7 +143,9 @@ defmodule Cashtray.Accounts do
   end
 
   @doc """
-  Updates a user.
+  Updates an user.
+
+  See `create_user/1` docs to know more about the accepted params.
 
   ## Examples
 
@@ -155,7 +164,7 @@ defmodule Cashtray.Accounts do
   end
 
   @doc """
-  Deletes a user.
+  Deletes an user.
 
   ## Examples
 

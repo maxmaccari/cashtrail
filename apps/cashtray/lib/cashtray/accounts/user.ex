@@ -10,7 +10,11 @@ defmodule Cashtray.Accounts.User do
           last_name: String.t() | nil,
           password: String.t() | nil,
           password_hash: String.t() | nil,
-          avatar_url: String.t() | nil
+          avatar_url: String.t() | nil,
+          entities: Ecto.Association.NotLoaded.t() | list(Cashtray.Entities.Entity.t()),
+          inserted_at: NaiveDateTime.t() | nil,
+          updated_at: NaiveDateTime.t() | nil,
+          __meta__: Ecto.Schema.Metadata.t()
         }
 
   use Ecto.Schema
