@@ -132,6 +132,24 @@ defmodule Cashtray.EntitiesTest do
                Entities.create_entity(%Accounts.User{}, @invalid_attrs, false)
     end
 
+    test "create_entity/3 with invalid type and status returns error changeset" do
+      owner = insert(:user)
+
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  type: {"is invalid", _}
+                ]
+              }} = Entities.create_entity(owner, params_for(:entity, type: "invalid"), false)
+
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  status: {"is invalid", _}
+                ]
+              }} = Entities.create_entity(owner, params_for(:entity, status: "invalid"), false)
+    end
+
     test "create_entity/3 with invalid user returns error changeset" do
       assert {:error, %Ecto.Changeset{}} =
                Entities.create_entity(%Accounts.User{}, params_for(:entity), false)
@@ -360,6 +378,24 @@ defmodule Cashtray.EntitiesTest do
     test "create_member/2 with invalid data returns error changeset" do
       entity = insert(:entity)
       assert {:error, %Ecto.Changeset{}} = Entities.create_member(entity, @invalid_attrs)
+    end
+
+    test "create_entity/3 with invalid permission returns error changeset" do
+      user = insert(:user)
+      entity = insert(:entity)
+
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  permission: {"is invalid", _}
+                ]
+              }} =
+               Entities.create_member(entity, %{
+                 user: %{
+                   email: user.email
+                 },
+                 permission: "invalid"
+               })
     end
 
     test "create_member/2 with same user returns error changeset" do
