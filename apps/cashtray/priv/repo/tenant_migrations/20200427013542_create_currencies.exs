@@ -5,7 +5,7 @@ defmodule Cashtray.Repo.Migrations.CreateCurrencies do
     create table(:currencies, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :description, :string, null: false
-      add :iso_code, :string
+      add :iso_code, :string, size: 3
       add :symbol, :string, null: false, default: ""
       add :format, :string, null: false, default: "0"
       add :type, :string, null: false, default: "cash"
@@ -14,5 +14,7 @@ defmodule Cashtray.Repo.Migrations.CreateCurrencies do
 
       timestamps()
     end
+
+    create unique_index(:currencies, :iso_code)
   end
 end

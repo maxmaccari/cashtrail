@@ -9,6 +9,51 @@ defmodule Cashtray.EntitiesTest do
     alias Cashtray.Entities.Entity
     alias Cashtray.Entities.EntityMember
 
+    test "list_entities/1 returns all entities" do
+      entity = insert(:entity) |> forget(:owner)
+      assert Entities.list_entities().entries == [entity]
+    end
+
+    test "list_entities/1 works with pagination" do
+      entities =
+        insert_list(25, :entity)
+        |> Enum.slice(20, 5)
+        |> Enum.map(&forget(&1, :owner))
+
+      assert Entities.list_entities(page: 2) == %Cashtray.Paginator.Page{
+               entries: entities,
+               page_number: 2,
+               page_size: 20,
+               total_entries: 25,
+               total_pages: 2
+             }
+    end
+
+    test "list_entities/1 filtering by type" do
+      insert(:entity, type: "personal") |> forget(:owner)
+      entity = insert(:entity, type: "company") |> forget(:owner)
+      assert Entities.list_entities(filter: %{type: "company"}).entries == [entity]
+      assert Entities.list_entities(filter: %{"type" => "company"}).entries == [entity]
+    end
+
+    test "list_entities/1 filtering by status" do
+      insert(:entity, status: "active")
+      entity = insert(:entity, status: "archived") |> forget(:owner)
+      assert Entities.list_entities(filter: %{status: "archived"}).entries == [entity]
+      assert Entities.list_entities(filter: %{"status" => "archived"}).entries == [entity]
+    end
+
+    test "list_entities/1 filtering by invalid key" do
+      entity = insert(:entity, type: "company") |> forget(:owner)
+      assert Entities.list_entities(filter: %{invalid: nil}).entries == [entity]
+    end
+
+    test "list_entities/1 searching by name" do
+      insert(:entity, name: "abc")
+      entity = insert(:entity, name: "defghij") |> forget(:owner)
+      assert Entities.list_entities(search: "fgh").entries == [entity]
+    end
+
     test "list_entities_from/2 returns all entities from an user that is owner" do
       insert(:entity)
       owner = insert(:user)
@@ -23,6 +68,46 @@ defmodule Cashtray.EntitiesTest do
       insert(:entity_member, entity: entity, user: user)
 
       assert Entities.list_entities_from(user).entries == [entity]
+    end
+
+    test "list_entities_from/2 works with pagination" do
+      owner = insert(:user)
+      insert_list(25, :entity, owner: owner)
+
+      assert %Cashtray.Paginator.Page{
+               entries: entities,
+               page_number: 2,
+               page_size: 20,
+               total_entries: 25,
+               total_pages: 2
+             } = Entities.list_entities_from(owner, page: 2)
+
+      assert length(entities) == 5
+    end
+
+    test "list_entities_from/2 filtering by type" do
+      insert(:entity, type: "personal") |> forget(:owner)
+      entity = insert(:entity, type: "company") |> forget(:owner)
+      assert Entities.list_entities(filter: %{type: "company"}).entries == [entity]
+      assert Entities.list_entities(filter: %{"type" => "company"}).entries == [entity]
+    end
+
+    test "list_entities_from/2 filtering by status" do
+      insert(:entity, status: "active")
+      entity = insert(:entity, status: "archived") |> forget(:owner)
+      assert Entities.list_entities(filter: %{status: "archived"}).entries == [entity]
+      assert Entities.list_entities(filter: %{"status" => "archived"}).entries == [entity]
+    end
+
+    test "list_entities_from/2 filtering by invalid key" do
+      entity = insert(:entity, type: "company") |> forget(:owner)
+      assert Entities.list_entities(filter: %{invalid: nil}).entries == [entity]
+    end
+
+    test "list_entities_from/2 searching by name" do
+      insert(:entity, name: "abc")
+      entity = insert(:entity, name: "defghij") |> forget(:owner)
+      assert Entities.list_entities(search: "fgh").entries == [entity]
     end
 
     test "get_entity!/2 returns the entity with given id" do
@@ -45,6 +130,24 @@ defmodule Cashtray.EntitiesTest do
     test "create_entity/3 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} =
                Entities.create_entity(%Accounts.User{}, @invalid_attrs, false)
+    end
+
+    test "create_entity/3 with invalid type and status returns error changeset" do
+      owner = insert(:user)
+
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  type: {"is invalid", _}
+                ]
+              }} = Entities.create_entity(owner, params_for(:entity, type: "invalid"), false)
+
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  status: {"is invalid", _}
+                ]
+              }} = Entities.create_entity(owner, params_for(:entity, status: "invalid"), false)
     end
 
     test "create_entity/3 with invalid user returns error changeset" do
@@ -172,6 +275,74 @@ defmodule Cashtray.EntitiesTest do
       assert Entities.list_members(entity).entries == [entity_member]
     end
 
+    test "list_members/2 works with pagination" do
+      entity = insert(:entity)
+      insert_list(25, :entity_member, entity: entity)
+
+      assert %Cashtray.Paginator.Page{
+               entries: results,
+               page_number: 2,
+               page_size: 20,
+               total_entries: 25,
+               total_pages: 2
+             } = Entities.list_members(entity, page: 2)
+
+      assert length(results) == 5
+    end
+
+    test "list_members/2 filtering by permission" do
+      entity = insert(:entity)
+
+      insert(:entity_member, entity: entity, permission: "read")
+      |> forget(:user)
+      |> forget(:entity)
+
+      entity_member =
+        insert(:entity_member, entity: entity, permission: "admin")
+        |> forget(:user)
+        |> forget(:entity)
+
+      assert Entities.list_members(entity, filter: %{permission: "admin"}).entries == [
+               entity_member
+             ]
+
+      assert Entities.list_members(entity, filter: %{"permission" => "admin"}).entries == [
+               entity_member
+             ]
+    end
+
+    test "list_members/2 filtering by invalid key" do
+      entity = insert(:entity)
+
+      member =
+        insert(:entity_member, entity: entity)
+        |> forget(:user)
+        |> forget(:entity)
+
+      assert Entities.list_members(entity, filter: %{invalid: nil}).entries == [member]
+    end
+
+    test "list_entities/1 searching by its user name and email" do
+      entity = insert(:entity)
+
+      insert(:entity_member,
+        entity: entity,
+        user: build(:user, %{email: "rst@example.com", first_name: "abc", last_name: "efg"})
+      )
+
+      member =
+        insert(:entity_member,
+          entity: entity,
+          user: build(:user, %{email: "uvw@example.com", first_name: "hijkl", last_name: "mnopq"})
+        )
+        |> forget(:user)
+        |> forget(:entity)
+
+      assert Entities.list_members(entity, search: "ijk").entries == [member]
+      assert Entities.list_members(entity, search: "nop").entries == [member]
+      assert Entities.list_members(entity, search: "vw@e").entries == [member]
+    end
+
     test "create_member/2 with valid data creates a entity_member with the user" do
       entity = insert(:entity)
 
@@ -207,6 +378,24 @@ defmodule Cashtray.EntitiesTest do
     test "create_member/2 with invalid data returns error changeset" do
       entity = insert(:entity)
       assert {:error, %Ecto.Changeset{}} = Entities.create_member(entity, @invalid_attrs)
+    end
+
+    test "create_entity/3 with invalid permission returns error changeset" do
+      user = insert(:user)
+      entity = insert(:entity)
+
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  permission: {"is invalid", _}
+                ]
+              }} =
+               Entities.create_member(entity, %{
+                 user: %{
+                   email: user.email
+                 },
+                 permission: "invalid"
+               })
     end
 
     test "create_member/2 with same user returns error changeset" do

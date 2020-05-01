@@ -14,7 +14,9 @@ defmodule Cashtray.Factory.AccountsFactory do
         user = %User{
           email: Faker.Internet.email(),
           first_name: Faker.Name.first_name(),
-          last_name: Faker.Name.last_name()
+          last_name: Faker.Name.last_name(),
+          avatar_url:
+            "#{Faker.Internet.image_url()}#{Enum.random([".png", ".jpg", ".jpeg", ".gif", ""])}"
         }
 
         merge_attributes(user, attrs)

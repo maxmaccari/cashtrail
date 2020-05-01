@@ -1,9 +1,9 @@
 defmodule Cashtray.Entities.EntityMember do
   @moduledoc """
-  Represents a member of an Entity that links authorized users to the Entity,
-  except the owner.
+  Represents a member of an `Cashtray.Entity` that links authorized users to the
+  `Cashtray.Entity`, except the owner.
 
-  The owner is not a member of the Entity.
+  The owner cannot be a member of the `Cashtray.Entity`.
   """
 
   @type t() :: %Cashtray.Entities.EntityMember{
@@ -12,7 +12,10 @@ defmodule Cashtray.Entities.EntityMember do
           entity_id: Ecto.UUID.t() | nil,
           entity: Ecto.Association.NotLoaded.t() | Cashtray.Entities.Entity.t() | nil,
           user_id: Ecto.UUID.t() | nil,
-          user: Ecto.Association.NotLoaded.t() | Cashtray.Accounts.User.t() | nil
+          user: Ecto.Association.NotLoaded.t() | Cashtray.Accounts.User.t() | nil,
+          inserted_at: NaiveDateTime.t() | nil,
+          updated_at: NaiveDateTime.t() | nil,
+          __meta__: Ecto.Schema.Metadata.t()
         }
 
   use Ecto.Schema

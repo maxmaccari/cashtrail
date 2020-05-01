@@ -1,14 +1,40 @@
 defmodule Cashtray.Accounts do
   @moduledoc """
-  The Accounts context.
+  The Accounts is responsible for deal with user accounts and authentication rules.
   """
 
   import Ecto.Query, warn: false
   alias Cashtray.Repo
 
   alias Cashtray.Accounts.{PasswordHash, User}
+  alias Cashtray.Paginator
+
+  import Cashtray.QueryBuilder, only: [build_search: 3]
 
   @type user() :: Cashtray.Accounts.User.t()
+
+  @doc """
+  Returns the list of users.
+
+  ## Options:
+    * `:search` - search accounts by `:first_name`, `:last_name` or `:email`.
+    * See `Cashtray.Paginator.paginate/2` to see the paginations options.
+
+  ## Examples
+
+      iex> list_users()
+      %Cashtray.Paginator{entries: [%User{}, ...]}
+
+      iex> list_users(search: "my")
+      %Cashtray.Paginator{entries: [%User{first_name: "My name"}, ...]}
+
+  """
+  @spec list_users(keyword) :: Cashtray.Paginator.Page.t(user)
+  def list_users(options \\ []) do
+    User
+    |> build_search(Keyword.get(options, :search), [:first_name, :last_name, :email])
+    |> Paginator.paginate(options)
+  end
 
   @doc """
   Gets a single user.
@@ -45,12 +71,12 @@ defmodule Cashtray.Accounts do
   def get_user_by(params \\ []), do: Repo.get_by(User, params)
 
   @doc """
-  Authenticates a user.
+  Authenticates an user with its email and password.
 
-  Returns:
-    * {:ok, user} if user is found and the passwords match.
-    * {:error, :unauthorized} if passwords does not match.
-    * {:error, :not_found} if user email is not found.
+  ## Returns
+    * `{:ok, user}` if user is found and the passwords match.
+    * `{:error, :unauthorized}` if passwords does not match.
+    * `{:error, :not_found}` if user email is not found.
 
   ## Examples
 
@@ -82,7 +108,14 @@ defmodule Cashtray.Accounts do
   end
 
   @doc """
-  Creates a user.
+  Creates an user.
+
+  ## Params
+    * `:email` (required)
+    * `:first_name` (required)
+    * `:last_name`
+    * `:password` (required)
+    * `:password_confirmation` (required)
 
   ## Examples
 
@@ -95,14 +128,16 @@ defmodule Cashtray.Accounts do
   """
   @spec create_user(map) ::
           {:ok, user()} | {:error, Ecto.Changeset.t(user())}
-  def create_user(attrs \\ %{}) do
+  def create_user(attrs) do
     %User{}
     |> User.changeset(attrs)
     |> Repo.insert()
   end
 
   @doc """
-  Updates a user.
+  Updates an user.
+
+  See `create_user/1` docs to know more about the accepted params.
 
   ## Examples
 
@@ -121,7 +156,7 @@ defmodule Cashtray.Accounts do
   end
 
   @doc """
-  Deletes a user.
+  Deletes an user.
 
   ## Examples
 

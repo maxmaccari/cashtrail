@@ -1,13 +1,14 @@
 defmodule Cashtray.Entities do
   @moduledoc """
-  The Entities context.
+  The Entities context manages data related to entities. An Entity keeps all
+  financial data of something, that can be a company, financial finances,
+  organization, church, event, etc.
+
+  They can have one owner or other members.
   """
 
   @type entity :: Cashtray.Entities.Entity.t()
   @type entity_member :: Cashtray.Entities.EntityMember.t()
-  @type page(type) :: %Cashtray.Paginator.Page{
-          entries: list(type)
-        }
 
   import Ecto.Query, warn: false
   alias Cashtray.Repo
@@ -16,22 +17,58 @@ defmodule Cashtray.Entities do
   alias Cashtray.Entities.{Entity, EntityMember, Tenants}
   alias Cashtray.Paginator
 
-  @doc """
-  Returns a %Cashtray.Paginator.Page{} struct with list of entities from the
-  given user.
+  import Cashtray.QueryBuilder, only: [build_filter: 3, build_search: 3]
 
-  See `Cashtray.Paginator` docs to see the options related to pagination.
+  @doc """
+  Returns a list of all entities.
+
+  Options:
+    * `:filter` => filters by following attributes:
+      * `:type` or `"type"`
+      * `:status` or `"status"`
+    * `:search` => search accounts by `:name`.
+    * See `Cashtray.Paginator.paginate/2` to see paginations options.
 
   ## Examples
 
-      iex> list_entities(owner)
+      iex> list_entities()
       %Cashtray.Paginator.Page{entries: [%Entity{}, ...]}
 
-      iex> list_entities(member)
+      iex> list_entities(filter: %{type: "company"})
+      %Cashtray.Paginator.Page{entries: [%Entity{type: "company"}, ...]}
+
+      iex> list_entities(search: "my")
+      %Cashtray.Paginator.Page{entries: [%Entity{name: "My company"}, ...]}
+
+  """
+  @spec list_entities(keyword) :: Paginator.Page.t(entity())
+  def list_entities(options \\ []) do
+    from(e in Entity)
+    |> build_filter(Keyword.get(options, :filter), [:type, :status])
+    |> build_search(Keyword.get(options, :search), [:name])
+    |> Paginator.paginate(options)
+  end
+
+  @doc """
+  Returns a list of entities from the given user.
+
+  Options:
+    * `:filter` => filters by following attributes:
+      * `:type` or `"type"`
+      * `:status` or `"status"`
+    * `:search` => search accounts by `:name`.
+    * See `Cashtray.Paginator.paginate/2` to see paginations options.
+
+  ## Examples
+
+      iex> list_entities_from(owner)
+      %Cashtray.Paginator.Page{entries: [%Entity{}, ...]}
+
+      iex> list_entities_from(member)
       %Cashtray.Paginator.Page{entries: [%Entity{}, ...]}
 
   """
-  @spec list_entities_from(Cashtray.Accounts.User.t(), keyword | map) :: page(entity())
+  @spec list_entities_from(Cashtray.Accounts.User.t(), keyword) :: Paginator.Page.t(entity())
   def list_entities_from(%User{} = user, params \\ []) do
     from(e in Entity)
     |> join(:left, [e], m in assoc(e, :members))
@@ -60,6 +97,13 @@ defmodule Cashtray.Entities do
   @doc """
   Creates a entity.
 
+  ## Params
+    * `:name` (required)
+    * `:type` - can be `"personal"`, `"company"` or `"other"`. Defaults to
+    `"personal"`.
+    * `:status` - can be `"active"` or `"archived"`. Defaults to `"active"`.
+    * `:owner_id` - a reference to `Cashtray.Accounts.User`
+
   ## Examples
 
       iex> create_entity(user, %{field: value})
@@ -71,7 +115,7 @@ defmodule Cashtray.Entities do
   """
   @spec create_entity(Cashtray.Accounts.User.t(), map, boolean) ::
           {:ok, entity()} | {:error, Ecto.Changeset.t(entity())}
-  def create_entity(user, attrs \\ %{}, create_tenants \\ true)
+  def create_entity(user, attrs, create_tenants \\ true)
 
   def create_entity(%User{} = user, attrs, true) do
     with {:ok, entity} <- create_entity(user, attrs, false),
@@ -89,6 +133,8 @@ defmodule Cashtray.Entities do
 
   @doc """
   Updates a entity.
+
+  See `create_currency/1` docs to know more about the accepted params.
 
   ## Examples
 
@@ -203,24 +249,53 @@ defmodule Cashtray.Entities do
   alias Cashtray.Accounts
 
   @doc """
-  Returns a %Cashtray.Paginator.Page{} struct of the list of entity_members.
+  Returns a list of entity_members from the given entity.
 
-  See `Cashtray.Paginator` docs to see the options related to pagination.
-
+  Options:
+    * `:filter` => filters by following attributes:
+      * `:permission` or `"permission"`
+    * `:search` => search accounts by its user `:name`.
+    * See `Cashtray.Paginator.paginate/2` to see paginations options.
   ## Examples
 
       iex> list_entity_members(entity)
       %Cashtray.Paginator.Page{entries: [%EntityMember{}, ...]}
 
+      iex> list_entity_members(entity, filter: %{permission: "read"})
+      %Cashtray.Paginator.Page{entries: [%EntityMember{permission: "read"}, ...]}
+
+      iex> list_entity_members(entity, search: "my")
+      %Cashtray.Paginator.Page{entries: [%EntityMember{user: %Accounts.User{name: "My Name"}}, ...]}
+
   """
-  @spec list_members(entity, keyword | map) :: page(entity_member)
-  def list_members(%Entity{id: entity_id}, params \\ []) do
+  @spec list_members(entity, keyword | map) :: Paginator.Page.t(entity_member)
+  def list_members(%Entity{id: entity_id}, options \\ []) do
     from(EntityMember, where: [entity_id: ^entity_id])
-    |> Paginator.paginate(params)
+    |> build_filter(Keyword.get(options, :filter), [:permission])
+    |> search_members(Keyword.get(options, :search))
+    |> Paginator.paginate(options)
   end
+
+  defp search_members(query, term) when is_binary(term) do
+    term = "%#{term}%"
+
+    from q in query,
+      join: u in assoc(q, :user),
+      where: ilike(u.first_name, ^term) or ilike(u.last_name, ^term) or ilike(u.email, ^term)
+  end
+
+  defp search_members(query, _), do: query
 
   @doc """
   Creates a entity_member for the entity.
+
+  ## Params
+  * `:permission` (required) - can be `"read"`, `"write"` or `"admin"`.
+    * `:user_id` - a reference to `Cashtray.Accounts.User`
+    * `:user` - a map of the `Cashtray.Accounts.User` that should be created. See
+    `Cashtray.Accounts.create_user/1` docs to know more about the accepted
+    params.
+
 
   ## Examples
 
@@ -233,7 +308,7 @@ defmodule Cashtray.Entities do
   """
   @spec create_member(entity, map) ::
           {:ok, entity_member} | {:error, Ecto.Changeset.t(entity_member)}
-  def create_member(%Entity{} = entity, attrs \\ %{}) do
+  def create_member(%Entity{} = entity, attrs) do
     email = get_in(attrs, [:user, :email]) || get_in(attrs, ["user", "email"])
 
     attrs =
@@ -254,8 +329,9 @@ defmodule Cashtray.Entities do
   @doc """
   Creates a entity_member for the entity, the user and the permission.
 
-  Returns %Ecto.Changeset{} if the given user is invalid or is already added
-  Returns :invalid if the given user is the owner of the entity
+  Returns:
+    * `%Ecto.Changeset{}` if the given user is invalid or is already added.
+    * `:invalid` if the given user is the owner of the entity.
 
   ## Examples
 
@@ -310,17 +386,17 @@ defmodule Cashtray.Entities do
 
   ## Examples
 
-    iex> update_member_permission(entity, user, "write")
-    {:ok, %EntityMember{}}
+      iex> update_member_permission(entity, user, "write")
+      {:ok, %EntityMember{}}
 
-    iex> update_member_permission(entity, user, "invalid")
-    {:error, %Ecto.Changeset{}}
+      iex> update_member_permission(entity, user, "invalid")
+      {:error, %Ecto.Changeset{}}
 
-    iex> update_member_permission(entity, owner, "write")
-    {:error, :invalid}
+      iex> update_member_permission(entity, owner, "write")
+      {:error, :invalid}
 
-    iex> update_member_permission(entity, another_user, "write)
-    {:error, :not_found}
+      iex> update_member_permission(entity, another_user, "write)
+      {:error, :not_found}
   """
   @spec update_member_permission(entity, Cashtray.Accounts.User.t(), String.t()) ::
           {:ok, entity_member} | {:error, Ecto.Changeset.t(entity_member) | :invalid | :not_found}

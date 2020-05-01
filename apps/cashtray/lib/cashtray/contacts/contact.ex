@@ -18,9 +18,12 @@ defmodule Cashtray.Contacts.Contact do
           supplier: boolean | nil,
           phone: String.t() | nil,
           email: String.t() | nil,
-          category: Cashtray.Contacts.category() | nil,
+          category: Ecto.Association.NotLoaded.t() | Category.t() | nil,
           category_id: Ecto.UUID.t() | nil,
-          address: Cashtray.Contacts.Address.t() | nil
+          address: Address.t() | nil,
+          inserted_at: NaiveDateTime.t() | nil,
+          updated_at: NaiveDateTime.t() | nil,
+          __meta__: Ecto.Schema.Metadata.t()
         }
 
   @primary_key {:id, :binary_id, autogenerate: true}

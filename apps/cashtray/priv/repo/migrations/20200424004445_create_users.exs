@@ -8,6 +8,7 @@ defmodule Cashtray.Repo.Migrations.CreateUsers do
       add :last_name, :string, null: false, default: ""
       add :email, :string, null: false
       add :password_hash, :string, null: false
+      add :avatar_url, :string
 
       timestamps()
     end

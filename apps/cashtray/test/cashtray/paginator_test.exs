@@ -6,6 +6,18 @@ defmodule Cashtray.PaginatorTest do
   alias Cashtray.Entities.Entity
   alias Cashtray.Paginator
 
+  test "paginate/2 with default params returns 20 registers from database" do
+    entries = insert_list(35, :entity) |> Enum.map(&forget(&1, :owner)) |> Enum.take(20)
+
+    assert Paginator.paginate(Entity) == %Cashtray.Paginator.Page{
+             page_number: 1,
+             page_size: 20,
+             total_pages: 2,
+             total_entries: 35,
+             entries: entries
+           }
+  end
+
   test "paginate/2 with page_size: :all returns all registers from database" do
     entries = insert_list(35, :entity) |> Enum.map(&forget(&1, :owner))
 

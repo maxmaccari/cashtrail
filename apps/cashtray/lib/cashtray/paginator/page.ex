@@ -1,15 +1,16 @@
 defmodule Cashtray.Paginator.Page do
   @moduledoc """
-  It's a struct that represents a result of Paginator.paginate call
+  It's a struct that represents a result of `Cashtray.Paginator.paginate/2`
   """
 
-  @type t() :: %Cashtray.Paginator.Page{
-          entries: list,
+  @type t(type) :: %Cashtray.Paginator.Page{
+          entries: list(type),
           page_number: integer,
           page_size: integer,
           total_entries: integer,
           total_pages: integer
         }
+  @type t() :: t(any)
 
   defstruct entries: nil,
             page_number: nil,
@@ -18,7 +19,7 @@ defmodule Cashtray.Paginator.Page do
             total_pages: nil
 
   @doc """
-  Convert the returned data to Cashtray.Paginator.Page struct.
+  Convert the returned data to `%Cashtray.Paginator.Page{}` struct.
 
   The arguments accepted are %Scrivener.Page{} or list.
 
