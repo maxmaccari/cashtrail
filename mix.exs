@@ -1,4 +1,4 @@
-defmodule Cashtray.Umbrella.MixProject do
+defmodule Cashtrail.Umbrella.MixProject do
   @moduledoc false
 
   use Mix.Project
