@@ -3,9 +3,9 @@
 
 ![Elixir CI](https://github.com/maxmaccari/cashtrail/workflows/Elixir%20CI/badge.svg?branch=master)
 
-## Warning!!!
+## !!!Warning!!!
 
-**This is a working in progress application that is in Phase 1 of development.**
+**This is a working in progress project that is in Phase 1 of development.**
 
 The objectives are:
 
@@ -62,7 +62,7 @@ The applications under the umbrella are:
   * CastrailWeb: The web application where the LiveView app, GraphQL Schema and
   the rest endpoints will be mounted.
 
-## Built With
+### Built With
 
 * [Elixir](https://elixir-lang.org/) - The programming language used
 * [Phoenix](http://www.phoenixframework.org/) - The web framework used
@@ -109,7 +109,7 @@ And you can compile the dependencies through the command
 foo@bar:~$ mix deps.compile
 ```
 
-## Running the tests
+### Running the tests
 
 You can change the database configuration on `config/test.exs`. After setting the 
 proper configuration you can run the following command.
@@ -121,7 +121,7 @@ foo@bar:~$ mix test
 You can see the [Ecto Repositories documentation](https://hexdocs.pm/ecto/Ecto.html#module-repositories)
 if you need instructions to configure the database.
 
-## Running for development
+### Running for development
 
 You can change the database configuration for development on `config/dev.exs`. 
 After set the properly configuration you can run the following command.
@@ -143,7 +143,7 @@ TO BE WRITTEN
 
 ## Authors
 
-* **Maxsuel Fernandes Maccari** - *Initial work* - [maxmaccari](https://github.com/maxmaccari) - [Linkedin](https://www.linkedin.com/in/maxmaccari/)
+* **Maxsuel Fernandes Maccari** - [maxmaccari](https://github.com/maxmaccari) - [Linkedin](https://www.linkedin.com/in/maxmaccari/)
 
 ## License
 
