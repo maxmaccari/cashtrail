@@ -9,6 +9,8 @@ defmodule Cashtray.Accounts do
   alias Cashtray.Accounts.{PasswordHash, User}
   alias Cashtray.Paginator
 
+  import Cashtray.QueryBuilder, only: [build_search: 3]
+
   @type user() :: Cashtray.Accounts.User.t()
 
   @doc """
@@ -30,19 +32,9 @@ defmodule Cashtray.Accounts do
   @spec list_users(keyword) :: Cashtray.Paginator.Page.t(user)
   def list_users(options \\ []) do
     User
-    |> search(Keyword.get(options, :search))
+    |> build_search(Keyword.get(options, :search), [:first_name, :last_name, :email])
     |> Paginator.paginate(options)
   end
-
-  defp search(query, term) when is_binary(term) do
-    term = "%#{term}%"
-
-    from(q in query,
-      where: ilike(q.first_name, ^term) or ilike(q.last_name, ^term) or ilike(q.email, ^term)
-    )
-  end
-
-  defp search(query, _), do: query
 
   @doc """
   Gets a single user.
@@ -136,7 +128,7 @@ defmodule Cashtray.Accounts do
   """
   @spec create_user(map) ::
           {:ok, user()} | {:error, Ecto.Changeset.t(user())}
-  def create_user(attrs \\ %{}) do
+  def create_user(attrs) do
     %User{}
     |> User.changeset(attrs)
     |> Repo.insert()

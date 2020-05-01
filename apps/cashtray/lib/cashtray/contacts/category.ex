@@ -11,7 +11,7 @@ defmodule Cashtray.Contacts.Category do
   @type t :: %Cashtray.Contacts.Category{
           id: Ecto.UUID.t() | nil,
           description: String.t() | nil,
-          contacts: Ecto.Association.NotLoaded.t() | list(Contact.t()) ,
+          contacts: Ecto.Association.NotLoaded.t() | list(Contact.t()),
           inserted_at: NaiveDateTime.t() | nil,
           updated_at: NaiveDateTime.t() | nil,
           __meta__: Ecto.Schema.Metadata.t()

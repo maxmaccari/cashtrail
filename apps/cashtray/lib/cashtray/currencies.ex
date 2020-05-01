@@ -14,6 +14,7 @@ defmodule Cashtray.Currencies do
   alias Cashtray.Paginator
 
   import Cashtray.Entities.Tenants, only: [to_prefix: 1]
+  import Cashtray.QueryBuilder, only: [build_filter: 3, build_search: 3]
 
   @doc """
   Returns the list of currencies paginated.
@@ -45,34 +46,12 @@ defmodule Cashtray.Currencies do
   @spec list_currencies(Entity.t(), keyword) :: Paginator.Page.t()
   def list_currencies(%Entity{} = entity, options \\ []) do
     Currency
-    |> filter(Keyword.get(options, :filter))
-    |> search(Keyword.get(options, :search))
+    |> build_filter(Keyword.get(options, :filter), [:type, :active])
+    |> build_search(Keyword.get(options, :search), [:description, :iso_code, :symbol])
     |> Ecto.Queryable.to_query()
     |> Map.put(:prefix, to_prefix(entity))
     |> Paginator.paginate(options)
   end
-
-  defp filter(query, filters) when is_map(filters) do
-    Enum.reduce(filters, query, fn
-      {"type", value}, query -> from(q in query, where: [type: ^value])
-      {:type, value}, query -> from(q in query, where: [type: ^value])
-      {"active", value}, query -> from(q in query, where: [active: ^value])
-      {:active, value}, query -> from(q in query, where: [active: ^value])
-      _, query -> query
-    end)
-  end
-
-  defp filter(query, _), do: query
-
-  defp search(query, term) when is_binary(term) do
-    term = "%#{term}%"
-
-    from(q in query,
-      where: ilike(q.description, ^term) or ilike(q.iso_code, ^term) or ilike(q.symbol, ^term)
-    )
-  end
-
-  defp search(query, _), do: query
 
   @doc """
   Gets a single currency.
@@ -122,7 +101,7 @@ defmodule Cashtray.Currencies do
   """
   @spec create_currency(Entity.t(), map) ::
           {:ok, currency} | {:error, Ecto.Changeset.t(currency)}
-  def create_currency(%Entity{} = entity, attrs \\ %{}) do
+  def create_currency(%Entity{} = entity, attrs) do
     %Currency{}
     |> Currency.changeset(attrs)
     |> Repo.insert(prefix: to_prefix(entity))

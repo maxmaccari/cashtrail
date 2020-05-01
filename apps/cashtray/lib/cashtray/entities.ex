@@ -17,6 +17,8 @@ defmodule Cashtray.Entities do
   alias Cashtray.Entities.{Entity, EntityMember, Tenants}
   alias Cashtray.Paginator
 
+  import Cashtray.QueryBuilder, only: [build_filter: 3, build_search: 3]
+
   @doc """
   Returns a list of all entities.
 
@@ -42,29 +44,10 @@ defmodule Cashtray.Entities do
   @spec list_entities(keyword) :: Paginator.Page.t(entity())
   def list_entities(options \\ []) do
     from(e in Entity)
-    |> filter_entities(Keyword.get(options, :filter))
-    |> search_entities(Keyword.get(options, :search))
+    |> build_filter(Keyword.get(options, :filter), [:type, :status])
+    |> build_search(Keyword.get(options, :search), [:name])
     |> Paginator.paginate(options)
   end
-
-  defp filter_entities(query, filters) when is_map(filters) do
-    Enum.reduce(filters, query, fn
-      {"type", value}, query -> from(q in query, where: [type: ^value])
-      {:type, value}, query -> from(q in query, where: [type: ^value])
-      {"status", value}, query -> from(q in query, where: [status: ^value])
-      {:status, value}, query -> from(q in query, where: [status: ^value])
-      _, query -> query
-    end)
-  end
-
-  defp filter_entities(query, _), do: query
-
-  defp search_entities(query, term) when is_binary(term) do
-    term = "%#{term}%"
-    from(q in query, where: ilike(q.name, ^term))
-  end
-
-  defp search_entities(query, _), do: query
 
   @doc """
   Returns a list of entities from the given user.
@@ -132,7 +115,7 @@ defmodule Cashtray.Entities do
   """
   @spec create_entity(Cashtray.Accounts.User.t(), map, boolean) ::
           {:ok, entity()} | {:error, Ecto.Changeset.t(entity())}
-  def create_entity(user, attrs \\ %{}, create_tenants \\ true)
+  def create_entity(user, attrs, create_tenants \\ true)
 
   def create_entity(%User{} = user, attrs, true) do
     with {:ok, entity} <- create_entity(user, attrs, false),
@@ -288,20 +271,10 @@ defmodule Cashtray.Entities do
   @spec list_members(entity, keyword | map) :: Paginator.Page.t(entity_member)
   def list_members(%Entity{id: entity_id}, options \\ []) do
     from(EntityMember, where: [entity_id: ^entity_id])
-    |> filter_members(Keyword.get(options, :filter))
+    |> build_filter(Keyword.get(options, :filter), [:permission])
     |> search_members(Keyword.get(options, :search))
     |> Paginator.paginate(options)
   end
-
-  defp filter_members(query, filters) when is_map(filters) do
-    Enum.reduce(filters, query, fn
-      {"permission", value}, query -> from(q in query, where: [permission: ^value])
-      {:permission, value}, query -> from(q in query, where: [permission: ^value])
-      _, query -> query
-    end)
-  end
-
-  defp filter_members(query, _), do: query
 
   defp search_members(query, term) when is_binary(term) do
     term = "%#{term}%"
@@ -335,7 +308,7 @@ defmodule Cashtray.Entities do
   """
   @spec create_member(entity, map) ::
           {:ok, entity_member} | {:error, Ecto.Changeset.t(entity_member)}
-  def create_member(%Entity{} = entity, attrs \\ %{}) do
+  def create_member(%Entity{} = entity, attrs) do
     email = get_in(attrs, [:user, :email]) || get_in(attrs, ["user", "email"])
 
     attrs =

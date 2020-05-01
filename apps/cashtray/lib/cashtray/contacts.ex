@@ -11,6 +11,7 @@ defmodule Cashtray.Contacts do
   alias Cashtray.Paginator
 
   import Cashtray.Entities.Tenants, only: [to_prefix: 1, put_prefix: 2]
+  import Cashtray.QueryBuilder, only: [build_filter: 3, build_search: 3]
 
   @type category :: Category.t()
 
@@ -35,17 +36,10 @@ defmodule Cashtray.Contacts do
   @spec list_categories(Cashtray.Entities.Entity.t()) :: Cashtray.Paginator.Page.t(category)
   def list_categories(entity, options \\ []) do
     Cashtray.Contacts.Category
-    |> search_category(Keyword.get(options, :search))
+    |> build_search(Keyword.get(options, :search), [:description])
     |> put_prefix(entity)
     |> Paginator.paginate(options)
   end
-
-  defp search_category(query, term) when is_binary(term) do
-    term = "%#{term}%"
-    from(q in query, where: ilike(q.description, ^term))
-  end
-
-  defp search_category(query, _), do: query
 
   @doc """
   Gets a single category.
@@ -86,7 +80,7 @@ defmodule Cashtray.Contacts do
   """
   @spec create_category(Entity.t(), map) ::
           {:ok, category} | {:error, Ecto.Changeset.t(category)}
-  def create_category(%Entity{} = entity, attrs \\ %{}) do
+  def create_category(%Entity{} = entity, attrs) do
     %Category{}
     |> Category.changeset(attrs)
     |> Repo.insert(prefix: to_prefix(entity))
@@ -176,32 +170,11 @@ defmodule Cashtray.Contacts do
   @spec list_contacts(Entity.t(), keyword) :: Paginator.Page.t(contact)
   def list_contacts(%Entity{} = entity, options \\ []) do
     Contact
-    |> filter_contact(Keyword.get(options, :filter))
-    |> search_contact(Keyword.get(options, :search))
+    |> build_filter(Keyword.get(options, :filter), [:type, :customer, :supplier])
+    |> build_search(Keyword.get(options, :search), [:name, :legal_name])
     |> put_prefix(entity)
     |> Paginator.paginate(options)
   end
-
-  defp filter_contact(query, filters) when is_map(filters) do
-    Enum.reduce(filters, query, fn
-      {"type", value}, query -> from(q in query, where: [type: ^value])
-      {:type, value}, query -> from(q in query, where: [type: ^value])
-      {"customer", value}, query -> from(q in query, where: [customer: ^value])
-      {:customer, value}, query -> from(q in query, where: [customer: ^value])
-      {"supplier", value}, query -> from(q in query, where: [supplier: ^value])
-      {:supplier, value}, query -> from(q in query, where: [supplier: ^value])
-      _, query -> query
-    end)
-  end
-
-  defp filter_contact(query, _), do: query
-
-  defp search_contact(query, term) when is_binary(term) do
-    term = "%#{term}%"
-    from(q in query, where: ilike(q.name, ^term) or ilike(q.legal_name, ^term))
-  end
-
-  defp search_contact(query, _), do: query
 
   @doc """
   Gets a single contact.
@@ -247,7 +220,7 @@ defmodule Cashtray.Contacts do
   """
   @spec create_contact(Entity.t(), map) ::
           {:ok, contact} | {:error, Ecto.Changeset.t(contact)}
-  def create_contact(%Entity{} = entity, attrs \\ %{}) do
+  def create_contact(%Entity{} = entity, attrs) do
     %Contact{}
     |> Contact.changeset(attrs)
     |> Repo.insert(prefix: to_prefix(entity))
