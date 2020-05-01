@@ -10,22 +10,22 @@
 use Mix.Config
 
 # Configure Mix tasks and generators
-config :cashtray,
-  ecto_repos: [Cashtray.Repo],
+config :cashtrail,
+  ecto_repos: [Cashtrail.Repo],
   comeonin_hash_module: Argon2
 
-config :triplex, repo: Cashtray.Repo
+config :triplex, repo: Cashtrail.Repo
 
-config :cashtray_web,
-  ecto_repos: [Cashtray.Repo],
-  generators: [context_app: :cashtray, binary_id: true]
+config :cashtrail_web,
+  ecto_repos: [Cashtrail.Repo],
+  generators: [context_app: :cashtrail, binary_id: true]
 
 # Configures the endpoint
-config :cashtray_web, CashtrayWeb.Endpoint,
+config :cashtrail_web, CashtrailWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "cpkAN7FBHyu+QSgtMgPeeB4e/VeAOtr9z/J9qynhOmbGoL9r+k1mpgJxMupdb95J",
-  render_errors: [view: CashtrayWeb.ErrorView, accepts: ~w(json), layout: false],
-  pubsub_server: Cashtray.PubSub,
+  render_errors: [view: CashtrailWeb.ErrorView, accepts: ~w(json), layout: false],
+  pubsub_server: Cashtrail.PubSub,
   live_view: [signing_salt: "xsy+inIv"]
 
 # Configures Elixir's Logger

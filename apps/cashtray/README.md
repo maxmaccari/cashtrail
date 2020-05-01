@@ -1,3 +1,0 @@
-# Cashtray
-
-**TODO: Add description**

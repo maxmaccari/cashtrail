@@ -1,10 +1,10 @@
 use Mix.Config
 
 # Configure your database
-config :cashtray, Cashtray.Repo,
+config :cashtrail, Cashtrail.Repo,
   username: "postgres",
   password: "postgres",
-  database: "cashtray_dev",
+  database: "cashtrail_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -15,7 +15,7 @@ config :cashtray, Cashtray.Repo,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.
-config :cashtray_web, CashtrayWeb.Endpoint,
+config :cashtrail_web, CashtrailWeb.Endpoint,
   http: [port: 4000],
   debug_errors: true,
   code_reloader: true,
