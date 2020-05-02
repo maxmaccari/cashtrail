@@ -43,7 +43,7 @@ So you can host the application, and use this to control in the same instance:
   * Some organization that you take care of the treasury finances;
   * Finances of any member of your family.
 
-There are implemented some permission control implemented. So, each user can create how many entities they want and add other users as a member of their entity.
+There are some permission control implemented. So, each user can create how many entities they want and add other users as a member of their entity.
 
 When an entity is created, this generates a schema in the Postgres database. 
 This is not very scalable in enterprise terms, but it makes it easier to keep data 
@@ -79,7 +79,7 @@ You can learn the technologies that this project is built in the following links
 ### Prerequisites
 
 You will need to have Erlang 21.0+ and Elixir 1.7+ installed to continue. You can have
-the installation instructions on the [official elixir](https://elixir-lang.org/install.html).
+the installation instructions on the [official elixir website](https://elixir-lang.org/install.html).
 
 After install elixir, you can enter the following command to check the version:
 
@@ -91,7 +91,7 @@ Elixir 1.10.2 (compiled with Erlang/OTP 21)
 ```
 
 You should have access to a [Postgres 9.6+](https://www.postgresql.org/) database to run the application
-and the tests. You can have the installation instructions on the [official website](https://www.postgresql.org/docs/9.6/tutorial-install.html).
+and the tests. You can have the installation instructions on the [official postgres website](https://www.postgresql.org/docs/9.6/tutorial-install.html).
 
 ### Building and running the application
 
