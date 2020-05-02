@@ -3,11 +3,12 @@ defmodule Cashtrail.EntitiesTest do
 
   use Cashtrail.DataCase, async: true
 
-  alias Cashtrail.{Accounts, Entities}
+  alias Cashtrail.{Entities, Users}
 
   describe "entities" do
     alias Cashtrail.Entities.Entity
     alias Cashtrail.Entities.EntityMember
+    alias Cashtrail.Users.User
 
     test "list_entities/1 returns all entities" do
       entity = insert(:entity) |> forget(:owner)
@@ -128,8 +129,7 @@ defmodule Cashtrail.EntitiesTest do
 
     @invalid_attrs %{name: nil, status: nil, type: nil, owner_id: nil}
     test "create_entity/3 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} =
-               Entities.create_entity(%Accounts.User{}, @invalid_attrs, false)
+      assert {:error, %Ecto.Changeset{}} = Entities.create_entity(%User{}, @invalid_attrs, false)
     end
 
     test "create_entity/3 with invalid type and status returns error changeset" do
@@ -152,11 +152,11 @@ defmodule Cashtrail.EntitiesTest do
 
     test "create_entity/3 with invalid user returns error changeset" do
       assert {:error, %Ecto.Changeset{}} =
-               Entities.create_entity(%Accounts.User{}, params_for(:entity), false)
+               Entities.create_entity(%User{}, params_for(:entity), false)
 
       assert {:error, %Ecto.Changeset{}} =
                Entities.create_entity(
-                 %Accounts.User{id: Ecto.UUID.generate()},
+                 %User{id: Ecto.UUID.generate()},
                  params_for(:entity),
                  false
                )
@@ -219,13 +219,13 @@ defmodule Cashtrail.EntitiesTest do
       entity = insert(:entity)
 
       assert {:error, %Ecto.Changeset{}} =
-               Entities.transfer_ownership(entity, entity.owner, %Accounts.User{})
+               Entities.transfer_ownership(entity, entity.owner, %User{})
 
       assert {:error, %Ecto.Changeset{}} =
                Entities.transfer_ownership(
                  entity,
                  entity.owner,
-                 %Accounts.User{id: Ecto.UUID.generate()}
+                 %User{id: Ecto.UUID.generate()}
                )
     end
 
@@ -445,7 +445,7 @@ defmodule Cashtrail.EntitiesTest do
       assert {:ok, %EntityMember{}} = Entities.remove_member(member.entity, member.user)
 
       refute Repo.get_by(EntityMember, entity_id: member.entity_id, user_id: member.user_id)
-      assert Cashtrail.Accounts.get_user!(member.user_id)
+      assert Users.get_user!(member.user_id)
     end
 
     test "remove_member/2 with a non member user returns error" do

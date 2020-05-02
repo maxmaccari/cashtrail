@@ -1,9 +1,15 @@
-defmodule Cashtrail.Accounts.User do
+defmodule Cashtrail.Users.User do
   @moduledoc """
   It represents a user of the application.
   """
 
-  @type t() :: %Cashtrail.Accounts.User{
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  alias Cashtrail.Users.PasswordHash
+  alias Cashtrail.Entities.Entity
+
+  @type t() :: %Cashtrail.Users.User{
           id: Ecto.UUID.t() | nil,
           email: String.t() | nil,
           first_name: String.t() | nil,
@@ -11,17 +17,11 @@ defmodule Cashtrail.Accounts.User do
           password: String.t() | nil,
           password_hash: String.t() | nil,
           avatar_url: String.t() | nil,
-          entities: Ecto.Association.NotLoaded.t() | list(Cashtrail.Entities.Entity.t()),
+          entities: Ecto.Association.NotLoaded.t() | list(Entity.t()),
           inserted_at: NaiveDateTime.t() | nil,
           updated_at: NaiveDateTime.t() | nil,
           __meta__: Ecto.Schema.Metadata.t()
         }
-
-  use Ecto.Schema
-  import Ecto.Changeset
-
-  alias Cashtrail.Accounts.PasswordHash
-  alias Cashtrail.Entities.Entity
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id

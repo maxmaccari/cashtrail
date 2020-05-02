@@ -1,4 +1,4 @@
-defmodule Cashtrail.Accounts.PasswordHash do
+defmodule Cashtrail.Users.PasswordHash do
   use Comeonin
 
   @moduledoc """

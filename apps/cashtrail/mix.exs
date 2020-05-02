@@ -1,4 +1,6 @@
 defmodule Cashtrail.MixProject do
+  @moduledoc false
+
   use Mix.Project
 
   def project do
@@ -46,7 +48,8 @@ defmodule Cashtrail.MixProject do
       {:triplex, "~> 1.3.0"},
       {:ex_machina, "~> 2.4", only: :test},
       {:faker, "~> 0.13.0", only: :test},
-      {:scrivener_ecto, "~> 2.3"}
+      {:scrivener_ecto, "~> 2.3"},
+      {:credo, "~> 1.4", only: [:dev, :test], runtime: false}
     ]
   end
 

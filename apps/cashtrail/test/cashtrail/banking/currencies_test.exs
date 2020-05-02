@@ -1,12 +1,12 @@
-defmodule Cashtrail.CurrenciesTest do
+defmodule Cashtrail.Banking.CurrenciesTest do
   @moduledoc false
 
   use Cashtrail.TenantCase
 
-  alias Cashtrail.Currencies
+  alias Cashtrail.Banking.Currencies
 
   describe "currencies" do
-    alias Cashtrail.Currencies.Currency
+    alias Cashtrail.Banking.Currencies.Currency
 
     test "list_currencies/1 returns all currencies", %{tenant: tenant} do
       currency = insert(:currency, tenant: tenant)

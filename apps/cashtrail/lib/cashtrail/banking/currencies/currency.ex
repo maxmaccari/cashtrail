@@ -1,4 +1,4 @@
-defmodule Cashtrail.Currencies.Currency do
+defmodule Cashtrail.Banking.Currencies.Currency do
   @moduledoc """
   It represents a currency of banking accounts of the application.
   """
@@ -6,7 +6,7 @@ defmodule Cashtrail.Currencies.Currency do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @type t :: %Cashtrail.Currencies.Currency{
+  @type t :: %Cashtrail.Banking.Currencies.Currency{
           id: Ecto.UUID.t() | nil,
           active: boolean | nil,
           description: String.t() | nil,

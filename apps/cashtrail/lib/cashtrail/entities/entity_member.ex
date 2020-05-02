@@ -6,23 +6,23 @@ defmodule Cashtrail.Entities.EntityMember do
   The owner cannot be a member of the `Cashtrail.Entity`.
   """
 
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  alias Cashtrail.Users.User
+  alias Cashtrail.Entities.Entity
+
   @type t() :: %Cashtrail.Entities.EntityMember{
           id: Ecto.UUID.t() | nil,
           permission: String.t() | nil,
           entity_id: Ecto.UUID.t() | nil,
-          entity: Ecto.Association.NotLoaded.t() | Cashtrail.Entities.Entity.t() | nil,
+          entity: Ecto.Association.NotLoaded.t() | Entity.t() | nil,
           user_id: Ecto.UUID.t() | nil,
-          user: Ecto.Association.NotLoaded.t() | Cashtrail.Accounts.User.t() | nil,
+          user: Ecto.Association.NotLoaded.t() | User.t() | nil,
           inserted_at: NaiveDateTime.t() | nil,
           updated_at: NaiveDateTime.t() | nil,
           __meta__: Ecto.Schema.Metadata.t()
         }
-
-  use Ecto.Schema
-  import Ecto.Changeset
-
-  alias Cashtrail.Accounts.User
-  alias Cashtrail.Entities.Entity
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id

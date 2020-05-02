@@ -6,6 +6,7 @@ defmodule Cashtrail.EntitiesWithTenantsTest do
   describe "entity with tenants" do
     alias Cashtrail.Entities
     alias Cashtrail.Entities.Entity
+    alias Cashtrail.Users.User
 
     setup do
       Ecto.Adapters.SQL.Sandbox.mode(Cashtrail.Repo, :auto)
@@ -26,7 +27,7 @@ defmodule Cashtrail.EntitiesWithTenantsTest do
         owner_id = (entity && entity.owner_id) || owner_id
 
         if owner_id do
-          from(Cashtrail.Accounts.User, where: [id: ^owner_id])
+          from(User, where: [id: ^owner_id])
           |> Repo.delete_all()
         end
       end)
