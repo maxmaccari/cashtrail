@@ -1,20 +1,20 @@
-defmodule Cashtrail.Currencies do
+defmodule Cashtrail.Banking.Currencies do
   @moduledoc """
   The Currencies context manage the currencies data that are linked to
   Banking.Accounts.
   """
 
-  @type currency :: Cashtrail.Currencies.Currency.t()
-
   import Ecto.Query, warn: false
   alias Cashtrail.Repo
 
-  alias Cashtrail.Currencies.Currency
+  alias Cashtrail.Banking.Currencies.Currency
   alias Cashtrail.Entities.Entity
   alias Cashtrail.Paginator
 
   import Cashtrail.Entities.Tenants, only: [to_prefix: 1]
   import Cashtrail.QueryBuilder, only: [build_filter: 3, build_search: 3]
+
+  @type currency :: Currency.t()
 
   @doc """
   Returns the list of currencies paginated.

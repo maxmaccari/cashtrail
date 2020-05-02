@@ -1,7 +1,7 @@
 defmodule Cashtrail.Factory.CurrenciesFactory do
   @moduledoc false
 
-  alias Cashtrail.Currencies.Currency
+  alias Cashtrail.Banking.Currencies.Currency
   alias Cashtrail.Factory.Helpers
 
   defmacro __using__(_opts) do
