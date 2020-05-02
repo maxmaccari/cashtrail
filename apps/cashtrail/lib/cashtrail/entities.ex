@@ -13,9 +13,9 @@ defmodule Cashtrail.Entities do
   import Ecto.Query, warn: false
   alias Cashtrail.Repo
 
-  alias Cashtrail.Accounts.User
   alias Cashtrail.Entities.{Entity, EntityMember, Tenants}
   alias Cashtrail.Paginator
+  alias Cashtrail.Users.User
 
   import Cashtrail.QueryBuilder, only: [build_filter: 3, build_search: 3]
 
@@ -26,7 +26,7 @@ defmodule Cashtrail.Entities do
     * `:filter` => filters by following attributes:
       * `:type` or `"type"`
       * `:status` or `"status"`
-    * `:search` => search accounts by `:name`.
+    * `:search` => search entities by `:name`.
     * See `Cashtrail.Paginator.paginate/2` to see paginations options.
 
   ## Examples
@@ -56,7 +56,7 @@ defmodule Cashtrail.Entities do
     * `:filter` => filters by following attributes:
       * `:type` or `"type"`
       * `:status` or `"status"`
-    * `:search` => search accounts by `:name`.
+    * `:search` => search entities by `:name`.
     * See `Cashtrail.Paginator.paginate/2` to see paginations options.
 
   ## Examples
@@ -68,7 +68,7 @@ defmodule Cashtrail.Entities do
       %Cashtrail.Paginator.Page{entries: [%Entity{}, ...]}
 
   """
-  @spec list_entities_from(Cashtrail.Accounts.User.t(), keyword) :: Paginator.Page.t(entity())
+  @spec list_entities_from(User.t(), keyword) :: Paginator.Page.t(entity())
   def list_entities_from(%User{} = user, params \\ []) do
     from(e in Entity)
     |> join(:left, [e], m in assoc(e, :members))
@@ -102,7 +102,7 @@ defmodule Cashtrail.Entities do
     * `:type` - can be `"personal"`, `"company"` or `"other"`. Defaults to
     `"personal"`.
     * `:status` - can be `"active"` or `"archived"`. Defaults to `"active"`.
-    * `:owner_id` - a reference to `Cashtrail.Accounts.User`
+    * `:owner_id` - a reference to `Cashtrail.Users.User`
 
   ## Examples
 
@@ -113,7 +113,7 @@ defmodule Cashtrail.Entities do
       {:error, %Ecto.Changeset{}}
 
   """
-  @spec create_entity(Cashtrail.Accounts.User.t(), map, boolean) ::
+  @spec create_entity(User.t(), map, boolean) ::
           {:ok, entity()} | {:error, Ecto.Changeset.t(entity())}
   def create_entity(user, attrs, create_tenants \\ true)
 
@@ -213,7 +213,7 @@ defmodule Cashtrail.Entities do
       iex> transfer_ownership(entity, invalid_from, to)
       {:error, :unauthorized}
   """
-  @spec transfer_ownership(entity(), Cashtrail.Accounts.User.t(), Cashtrail.Accounts.User.t()) ::
+  @spec transfer_ownership(entity(), User.t(), User.t()) ::
           {:error, :unauthorized} | {:ok, entity()}
   def transfer_ownership(%Entity{} = entity, %User{} = from, %User{} = to) do
     if entity.owner_id == from.id do
@@ -241,12 +241,12 @@ defmodule Cashtrail.Entities do
     iex> belongs_to?(%Entity{owner_id: "bbb"}, %User{id: "aaa"})
     false
   """
-  @spec belongs_to?(entity(), Cashtrail.Accounts.User.t()) :: boolean
+  @spec belongs_to?(entity(), User.t()) :: boolean
   def belongs_to?(%Entity{owner_id: owner_id}, %User{id: user_id}) do
     owner_id == user_id
   end
 
-  alias Cashtrail.Accounts
+  alias Cashtrail.Users
 
   @doc """
   Returns a list of entity_members from the given entity.
@@ -254,7 +254,7 @@ defmodule Cashtrail.Entities do
   Options:
     * `:filter` => filters by following attributes:
       * `:permission` or `"permission"`
-    * `:search` => search accounts by its user `:name`.
+    * `:search` => search users by its user `:name`.
     * See `Cashtrail.Paginator.paginate/2` to see paginations options.
   ## Examples
 
@@ -265,7 +265,7 @@ defmodule Cashtrail.Entities do
       %Cashtrail.Paginator.Page{entries: [%EntityMember{permission: "read"}, ...]}
 
       iex> list_entity_members(entity, search: "my")
-      %Cashtrail.Paginator.Page{entries: [%EntityMember{user: %Accounts.User{name: "My Name"}}, ...]}
+      %Cashtrail.Paginator.Page{entries: [%EntityMember{user: %User{name: "My Name"}}, ...]}
 
   """
   @spec list_members(entity, keyword | map) :: Paginator.Page.t(entity_member)
@@ -291,9 +291,9 @@ defmodule Cashtrail.Entities do
 
   ## Params
   * `:permission` (required) - can be `"read"`, `"write"` or `"admin"`.
-    * `:user_id` - a reference to `Cashtrail.Accounts.User`
-    * `:user` - a map of the `Cashtrail.Accounts.User` that should be created. See
-    `Cashtrail.Accounts.create_user/1` docs to know more about the accepted
+    * `:user_id` - a reference to `Cashtrail.Users.User`
+    * `:user` - a map of the `Cashtrail.Users.User` that should be created. See
+    `Cashtrail.Users.create_user/1` docs to know more about the accepted
     params.
 
 
@@ -312,7 +312,7 @@ defmodule Cashtrail.Entities do
     email = get_in(attrs, [:user, :email]) || get_in(attrs, ["user", "email"])
 
     attrs =
-      case Accounts.get_user_by(email: email) do
+      case Users.get_user_by(email: email) do
         %User{} = user ->
           attrs |> Map.delete(:user) |> Map.delete("user") |> Map.put(:user_id, user.id)
 
@@ -342,7 +342,7 @@ defmodule Cashtrail.Entities do
       {:error, %Ecto.Changeset{}}
 
   """
-  @spec add_member(entity, Cashtrail.Accounts.User.t()) ::
+  @spec add_member(entity, User.t()) ::
           {:ok, entity_member} | {:error, :invalid | Ecto.Changeset.t(entity)}
   def add_member(%Entity{owner_id: owner_id}, %User{id: user_id}) when owner_id == user_id do
     {:error, :invalid}
@@ -369,7 +369,7 @@ defmodule Cashtrail.Entities do
       {:error, :not_found}
 
   """
-  @spec remove_member(entity, Cashtrail.Accounts.User.t()) ::
+  @spec remove_member(entity, User.t()) ::
           {:ok, entity_member} | {:error, :not_found}
   def remove_member(entity, user) do
     case member_from_user(entity, user) do
@@ -398,7 +398,7 @@ defmodule Cashtrail.Entities do
       iex> update_member_permission(entity, another_user, "write)
       {:error, :not_found}
   """
-  @spec update_member_permission(entity, Cashtrail.Accounts.User.t(), String.t()) ::
+  @spec update_member_permission(entity, User.t(), String.t()) ::
           {:ok, entity_member} | {:error, Ecto.Changeset.t(entity_member) | :invalid | :not_found}
   def update_member_permission(
         %Entity{owner_id: owner_id} = entity,
@@ -433,7 +433,7 @@ defmodule Cashtrail.Entities do
     iex> get_member_permission(entity, another_user)
     :unauthorized
   """
-  @spec get_member_permission(entity(), Cashtrail.Accounts.User.t()) :: atom()
+  @spec get_member_permission(entity(), User.t()) :: atom()
   def get_member_permission(%Entity{owner_id: owner_id} = entity, %User{id: user_id} = user) do
     case member_from_user(entity, user) do
       %EntityMember{} = entity_member ->
@@ -464,7 +464,7 @@ defmodule Cashtrail.Entities do
     iex> member_from_user(entity, non_member_user)
     nil
   """
-  @spec member_from_user(entity(), Cashtrail.Accounts.User.t()) ::
+  @spec member_from_user(entity(), User.t()) ::
           entity_member | nil
   def member_from_user(%Entity{id: entity_id}, %User{id: user_id}) do
     Repo.get_by(EntityMember, entity_id: entity_id, user_id: user_id)

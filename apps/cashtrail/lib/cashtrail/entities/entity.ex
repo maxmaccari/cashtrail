@@ -8,24 +8,24 @@ defmodule Cashtrail.Entities.Entity do
   `Cashtrail.Entities.Tenants` module.
   """
 
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  alias Cashtrail.Users.User
+  alias Cashtrail.Entities.EntityMember
+
   @type t() :: %Cashtrail.Entities.Entity{
           id: Ecto.UUID.t() | nil,
           name: String.t() | nil,
           status: String.t() | nil,
           type: String.t() | nil,
           owner_id: Ecto.UUID.t() | nil,
-          owner: Ecto.Association.NotLoaded.t() | Cashtrail.Accounts.User.t() | nil,
-          members: Ecto.Association.NotLoaded.t() | list(Cashtrail.Entities.EntityMember.t()),
+          owner: Ecto.Association.NotLoaded.t() | User.t() | nil,
+          members: Ecto.Association.NotLoaded.t() | list(EntityMember.t()),
           inserted_at: NaiveDateTime.t() | nil,
           updated_at: NaiveDateTime.t() | nil,
           __meta__: Ecto.Schema.Metadata.t()
         }
-
-  use Ecto.Schema
-  import Ecto.Changeset
-
-  alias Cashtrail.Accounts.User
-  alias Cashtrail.Entities.EntityMember
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id

@@ -1,23 +1,23 @@
-defmodule Cashtrail.Accounts do
+defmodule Cashtrail.Users do
   @moduledoc """
-  The Accounts is responsible for deal with user accounts and authentication rules.
+  The Users is responsible for deal with user users and authentication rules.
   """
 
   import Ecto.Query, warn: false
   alias Cashtrail.Repo
 
-  alias Cashtrail.Accounts.{PasswordHash, User}
+  alias Cashtrail.Users.{PasswordHash, User}
   alias Cashtrail.Paginator
 
   import Cashtrail.QueryBuilder, only: [build_search: 3]
 
-  @type user() :: Cashtrail.Accounts.User.t()
+  @type user() :: User.t()
 
   @doc """
   Returns the list of users.
 
   ## Options:
-    * `:search` - search accounts by `:first_name`, `:last_name` or `:email`.
+    * `:search` - search users by `:first_name`, `:last_name` or `:email`.
     * See `Cashtrail.Paginator.paginate/2` to see the paginations options.
 
   ## Examples

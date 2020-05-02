@@ -16,14 +16,14 @@ defmodule Cashtrail.QueryBuilder do
 
   ## Examples
 
-    iex> Cashtrail.QueryBuilder.build_filter(Cashtrail.Accounts.User, nil, [])
-    Cashtrail.Accounts.User
+    iex> Cashtrail.QueryBuilder.build_filter(Cashtrail.Users.User, nil, [])
+    Cashtrail.Users.User
 
-    iex> Cashtrail.QueryBuilder.build_filter(Cashtrail.Accounts.User, %{first_name: "my name"}, [:first_name])
-    #Ecto.Query<from u0 in Cashtrail.Accounts.User, where: u0.first_name == ^"my name">
+    iex> Cashtrail.QueryBuilder.build_filter(Cashtrail.Users.User, %{first_name: "my name"}, [:first_name])
+    #Ecto.Query<from u0 in Cashtrail.Users.User, where: u0.first_name == ^"my name">
 
-    iex> Cashtrail.QueryBuilder.build_filter(Cashtrail.Accounts.User, %{first_name: ["my", "name"]}, [:first_name])
-    #Ecto.Query<from u0 in Cashtrail.Accounts.User, where: u0.first_name in ^["my", "name"]>
+    iex> Cashtrail.QueryBuilder.build_filter(Cashtrail.Users.User, %{first_name: ["my", "name"]}, [:first_name])
+    #Ecto.Query<from u0 in Cashtrail.Users.User, where: u0.first_name in ^["my", "name"]>
   """
   @spec build_filter(Ecto.Queryable.t(), nil | map, list(atom)) ::
           Ecto.Query.t() | Ecto.Queryable.t()
@@ -57,11 +57,11 @@ defmodule Cashtrail.QueryBuilder do
 
   ## Examples
 
-    iex> Cashtrail.QueryBuilder.build_search(Cashtrail.Accounts.User, nil, [])
-    Cashtrail.Accounts.User
+    iex> Cashtrail.QueryBuilder.build_search(Cashtrail.Users.User, nil, [])
+    Cashtrail.Users.User
 
-    iex> Cashtrail.QueryBuilder.build_search(Cashtrail.Accounts.User, "my name", [:first_name, :last_name])
-    #Ecto.Query<from u0 in Cashtrail.Accounts.User, or_where: ilike(u0.first_name, ^"%my name%"), or_where: ilike(u0.last_name, ^"%my name%")>
+    iex> Cashtrail.QueryBuilder.build_search(Cashtrail.Users.User, "my name", [:first_name, :last_name])
+    #Ecto.Query<from u0 in Cashtrail.Users.User, or_where: ilike(u0.first_name, ^"%my name%"), or_where: ilike(u0.last_name, ^"%my name%")>
   """
   @spec build_search(Ecto.Queryable.t(), nil | String.t(), list(atom)) ::
           Ecto.Query.t() | Ecto.Queryable.t()

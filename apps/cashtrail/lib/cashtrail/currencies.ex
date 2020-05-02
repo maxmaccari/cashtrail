@@ -1,7 +1,7 @@
 defmodule Cashtrail.Currencies do
   @moduledoc """
-  The Currencies context manage the currencies data that are linked to Banking
-  Accounts.
+  The Currencies context manage the currencies data that are linked to
+  Banking.Accounts.
   """
 
   @type currency :: Cashtrail.Currencies.Currency.t()
@@ -25,7 +25,7 @@ defmodule Cashtrail.Currencies do
     * `:filter` - filters by following attributes:
       * `:type` or `"type"`
       * `:active` or `"active"`
-    * `:search` - search accounts by `:first_name`, `:last_name` and `:email`.
+    * `:search` - search currencies by `:description`, `:iso_code` and `:symbol`.
     * See `Cashtrail.Paginator.paginate/2` to see paginations options.
 
   ## Examples

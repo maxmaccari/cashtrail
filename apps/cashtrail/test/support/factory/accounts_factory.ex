@@ -1,15 +1,15 @@
-defmodule Cashtrail.Factory.AccountsFactory do
+defmodule Cashtrail.Factory.UsersFactory do
   @moduledoc false
 
-  alias Cashtrail.Accounts.{PasswordHash, User}
+  alias Cashtrail.Users.{PasswordHash, User}
 
   defmacro __using__(_opts) do
     quote do
-      alias Cashtrail.Factory.AccountsFactory
+      alias Cashtrail.Factory.UsersFactory
 
       def user_factory(attrs \\ %{}) do
         attrs =
-          Map.put(attrs, :password_hash, AccountsFactory.put_pass_hash(attrs, "my_password_123"))
+          Map.put(attrs, :password_hash, UsersFactory.put_pass_hash(attrs, "my_password_123"))
 
         user = %User{
           email: Faker.Internet.email(),
