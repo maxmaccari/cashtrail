@@ -162,12 +162,14 @@ defmodule Cashtrail.ContactsTest do
       assert contact.type == contact_params.type
       assert contact.address.street == contact_params.address.street
       assert contact.address.number == contact_params.address.number
-      assert contact.address.line_1 == contact_params.address.line_1
-      assert contact.address.line_2 == contact_params.address.line_2
+      assert contact.address.complement == contact_params.address.complement
+      assert contact.address.district == contact_params.address.district
       assert contact.address.city == contact_params.address.city
       assert contact.address.state == contact_params.address.state
       assert contact.address.country == contact_params.address.country
       assert contact.address.zip == contact_params.address.zip
+      assert contact.address.line_1 == contact_params.address.line_1
+      assert contact.address.line_2 == contact_params.address.line_2
     end
 
     @invalid_attrs %{
