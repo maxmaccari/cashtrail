@@ -57,6 +57,7 @@ defmodule Cashtrail.Contacts do
   ## Expected Arguments
 
   * entity - The `%Cashtrail.Entities.Entity{}` that the category references.
+  * id - A `string` that is the unique id of the category to be found.
 
   ## Examples
 
@@ -67,7 +68,7 @@ defmodule Cashtrail.Contacts do
       ** (Ecto.NoResultsError)
 
   """
-  @spec get_category!(Entity.t(), integer) :: category
+  @spec get_category!(Entity.t(), Ecto.UUID.t() | String.t()) :: category
   def get_category!(%Entity{} = entity, id),
     do: Repo.get!(Category, id, prefix: to_prefix(entity))
 
@@ -199,7 +200,7 @@ defmodule Cashtrail.Contacts do
       * `:search` - search contacts by `:name` or `:legal_name`.
     * See `Cashtrail.Paginator.paginate/2` to know about the paginations options.
 
-  See `Cashtrail.Contacts.Contact` to have more detailed info about each field to
+  See `Cashtrail.Contacts.Contact` to have more detailed info about the fields to
   be filtered or searched.
 
   ## Examples
@@ -234,6 +235,7 @@ defmodule Cashtrail.Contacts do
   ## Expected Arguments
 
   * entity - The `%Cashtrail.Entities.Entity{}` that the contact references.
+  * id - A `string` that is the unique id of the contact to be found.
 
   ## Examples
 
@@ -244,7 +246,7 @@ defmodule Cashtrail.Contacts do
       ** (Ecto.NoResultsError)
 
   """
-  @spec get_contact!(Entity.t(), integer) :: contact
+  @spec get_contact!(Entity.t(), Ecto.UUID.t() | String.t()) :: contact
   def get_contact!(%Entity{} = entity, id), do: Repo.get!(Contact, id, prefix: to_prefix(entity))
 
   @doc """

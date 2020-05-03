@@ -72,6 +72,7 @@ defmodule Cashtrail.Banking.Currencies do
   ## Expected Arguments
 
   * entity - The `%Cashtrail.Entities.Entity{}` that the currency references.
+  * id - A `string` that is the unique id of the currency to be found.
 
   ## Examples
 
@@ -82,7 +83,7 @@ defmodule Cashtrail.Banking.Currencies do
       ** (Ecto.NoResultsError)
 
   """
-  @spec get_currency!(Entity.t(), integer) :: currency
+  @spec get_currency!(Entity.t(), Ecto.UUID.t() | String.t()) :: currency
   def get_currency!(%Entity{} = entity, id) do
     Repo.get!(Currency, id, prefix: to_prefix(entity))
   end

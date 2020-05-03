@@ -1,6 +1,9 @@
 defmodule Cashtrail.Users do
   @moduledoc """
-  The Users is responsible for deal with user users and authentication rules.
+  The Users context manages the users data of one entity and perform users
+  authentication.
+
+  See `Cashtrail.Users.User` to have more info about user.
   """
 
   import Ecto.Query, warn: false
@@ -14,11 +17,17 @@ defmodule Cashtrail.Users do
   @type user() :: User.t()
 
   @doc """
-  Returns the list of users.
+  Returns a `%Cashtrail.Paginator.Page{}` struct with a list of users in the
+  `:entries` field.
 
-  ## Options:
+  ## Expected arguments
+
+  * options - A `keyword` list of the following options:
     * `:search` - search users by `:first_name`, `:last_name` or `:email`.
     * See `Cashtrail.Paginator.paginate/2` to see the paginations options.
+
+  See `Cashtrail.Users.User` to have more detailed info about the fields to
+  be filtered or searched.
 
   ## Examples
 
@@ -41,6 +50,14 @@ defmodule Cashtrail.Users do
 
   Raises `Ecto.NoResultsError` if the User does not exist.
 
+  See `Cashtrail.Users.User` to have more detailed info about the returned
+  struct.
+
+  ## Expected Arguments
+
+  * id - A `string` that is the unique id of the user to be found.
+
+
   ## Examples
 
       iex> get_user!(123)
@@ -50,13 +67,20 @@ defmodule Cashtrail.Users do
       ** (Ecto.NoResultsError)
 
   """
-  @spec get_user!(Ecto.UUID.t()) :: user()
+  @spec get_user!(Ecto.UUID.t() | String.t()) :: user()
   def get_user!(id), do: Repo.get!(User, id)
 
   @doc """
   Gets a single user by the given param.
 
   Returns nil the User does not exist.
+
+  See `Cashtrail.Users.User` to have more detailed info about the returned
+  struct and about the params attributes that can be given.
+
+  ## Expected Arguments
+
+  * params - A `keyword` or a `map` with the attributes of the user to be found.
 
   ## Examples
 
@@ -72,6 +96,11 @@ defmodule Cashtrail.Users do
 
   @doc """
   Authenticates an user with its email and password.
+
+  ## Expected Arguments
+
+  * email - A `string` that is the email of the user.
+  * password - A `string` that is the expected password of the user.
 
   ## Returns
     * `{:ok, user}` if user is found and the passwords match.
@@ -110,12 +139,24 @@ defmodule Cashtrail.Users do
   @doc """
   Creates an user.
 
-  ## Params
-    * `:email` (required)
-    * `:first_name` (required)
-    * `:last_name`
-    * `:password` (required)
-    * `:password_confirmation` (required)
+  ## Expected Arguments
+
+  * params - A `map` with the params of the user to be created:
+    * `:email` (required) - A `string` with the email of the user. Must be
+    a valid email and unique in the application.
+    * `:first_name` (required) - A `string` with first name of the user.
+    * `:last_name` - A `string` with first last of the user.
+    * `:password` (required) - A `string` with the password of the user to be created.
+    The password must contain at least one letter, one number and one special character.
+    * `:password_confirmation` (required) - A `string` with password confirmation
+    of the user to be created. Must be the equals the `:password` field.
+
+  See `Cashtrail.Users.User` to have more detailed info about the fields.
+
+  ## Returns
+
+  * `{:ok, %Cashtrail.Users.User{}}` in case of success.
+  * `{:error, %Ecto.Changeset{}}` in case of error.
 
   ## Examples
 
@@ -137,7 +178,16 @@ defmodule Cashtrail.Users do
   @doc """
   Updates an user.
 
-  See `create_user/1` docs to know more about the accepted params.
+  ## Expected Arguments
+
+  * user - The `%Cashtrail.Users.User{}` to be updated.
+  * params - A `map` with the field of the user to be updated. See
+  `create_user/2` to know about the params that can be given.
+
+  ## Returns
+
+  * `{:ok, %Cashtrail.Users.User{}}` in case of success.
+  * `{:error, %Ecto.Changeset{}}` in case of error.
 
   ## Examples
 
@@ -158,6 +208,15 @@ defmodule Cashtrail.Users do
   @doc """
   Deletes an user.
 
+  ## Expected Arguments
+
+  * user - The `%Cashtrail.Users.User{}` to be deleted.
+
+  ## Returns
+
+  * `{:ok, %Cashtrail.Users.User{}}` in case of success.
+  * `{:error, %Ecto.Changeset{}}` in case of error.
+
   ## Examples
 
       iex> delete_user(user)
@@ -174,6 +233,10 @@ defmodule Cashtrail.Users do
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking user changes.
+
+  ## Expected Arguments
+
+  * user - The `%Cashtrail.Users.User{}` to be tracked.
 
   ## Examples
 
