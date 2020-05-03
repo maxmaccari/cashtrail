@@ -1,9 +1,9 @@
 defmodule Cashtrail.Banking.Currencies do
   @moduledoc """
-  The Currencies context manage the currencies data of the entity.
+  The Currencies context manages the currencies data of one entity.
 
   See `Cashtrail.Banking.Currencies.Currency` to have more info about what
-  currencies mean in this application.
+  currencies mean in the application.
   """
 
   import Ecto.Query, warn: false
@@ -19,16 +19,23 @@ defmodule Cashtrail.Banking.Currencies do
   @type currency :: Currency.t()
 
   @doc """
-  Returns the list of currencies paginated.
+  Returns a `%Cashtrail.Paginator.Page{}` struct with a list of currencies in the
+  `:entries` field.
 
-  You must pass the entity to find the currency correctely.
+  If no currencies are found, returns an empty list in the `:entries` field.
 
-  Options:
+  ## Expected arguments
+
+  * entity - The `%Cashtrail.Entities.Entity{}` that the currency references.
+  * options - A `keyword` list of the following options:
     * `:filter` - filters by following attributes:
       * `:type` or `"type"`
       * `:active` or `"active"`
     * `:search` - search currencies by `:description`, `:iso_code` and `:symbol`.
-    * See `Cashtrail.Paginator.paginate/2` to see paginations options.
+    * See `Cashtrail.Paginator.paginate/2` to know about the paginations options.
+
+  See `Cashtrail.Banking.Currencies.Currency` to have more detailed info about
+  each field to be filtered or searched.
 
   ## Examples
 
@@ -43,7 +50,6 @@ defmodule Cashtrail.Banking.Currencies do
 
       iex> list_currencies(entity, filter: %{search: "my"})
       %Cashtrail.Paginator.Page{entries: [%Currency{description: "my money"}, ...]}
-
   """
   @spec list_currencies(Entity.t(), keyword) :: Paginator.Page.t()
   def list_currencies(%Entity{} = entity, options \\ []) do
@@ -58,9 +64,14 @@ defmodule Cashtrail.Banking.Currencies do
   @doc """
   Gets a single currency.
 
-  You must pass the entity to find the currency correctely.
-
   Raises `Ecto.NoResultsError` if the Currency does not exist.
+
+  See `Cashtrail.Banking.Currencies.Currency` to have more detailed info about
+  the returned struct.
+
+  ## Expected Arguments
+
+  * entity - The `%Cashtrail.Entities.Entity{}` that the currency references.
 
   ## Examples
 
@@ -79,18 +90,36 @@ defmodule Cashtrail.Banking.Currencies do
   @doc """
   Creates a currency.
 
-  You must pass the entity to create the currency correctely.
+  ## Expected Arguments
 
-  ## Params
-    * `:description` (required)
-    * `:type` - can be `"money"`, `"digital_currency"`, `"miles"`,
-    `"cryptocurrency"` or `"other"`.
-    * `:iso_code` - The [ISO 4217](https://pt.wikipedia.org/wiki/ISO_4217) code
-    of the currency.
-    * `:symbol`
-    * `:format` - `string`, defaults to `"0"`.
-    * `:precision` - `integer`, defaults to 0.
-    * `:active` - `boolean`, defaults to true.
+  * entity - The `%Cashtrail.Entities.Entity{}` that the currency references.
+  * params - A `map` with the params of the currency to be created:
+    * `:description` (required) - A `string` that is the description of the currency.
+    * `:type` - A `string` that is the type of the currency. It can receive "money",
+    "digital_currency", "miles", "cryptocurrency" or "other". Defaults to
+    "money".
+    * `:iso_code` - A `string` that is the [ISO 4217](https://pt.wikipedia.org/wiki/ISO_4217)
+    code of the currency. Must be unique for the entity and have the exact 3 characters.
+    * `:symbol` - A `string` that is the symbol of the currency.
+    * `:format` - A `string` that represents the format of the currency. The "%s"
+    refers to the `:symbol` field, and the "%n" refers to the number. Defaults to "%s%n".
+    * `:precision` - A `integer` that represents how much decimal places the currency
+    have. Defaults to 0.
+    * `:separator` - A `string` that is used to separate the integer part from the
+    fractional part of the currency. It must have exact one character or be empty.
+    Defaults to ".".
+    * `:delimiter` - A `string` that is used to separate the thousands parts of
+    the currency. Defaults to ".".
+    * `:active` - A `boolean` that says if the currency is active and should be
+    displayed in lists of the application. Defaults to true.
+
+  See `Cashtrail.Banking.Currencies.Currency` to have more detailed info about
+  the fields.
+
+  ## Returns
+
+  * `{:ok, %Cashtrail.Banking.Currencies.Currency{}}` in case of success.
+  * `{:error, %Ecto.Changeset{}}` in case of error.
 
   ## Examples
 
@@ -112,7 +141,16 @@ defmodule Cashtrail.Banking.Currencies do
   @doc """
   Updates a currency.
 
-  See `create_currency/2` docs to know more about the accepted params.
+  ## Expected Arguments
+
+  * currency - The `%Cashtrail.Banking.Currencies.Currency{}` to be updated.
+  * params - A `map` with the field of the currency to be updated. See
+  `create_currency/2` to know about the params that can be given.
+
+  ## Returns
+
+  * `{:ok, %Cashtrail.Banking.Currencies.Currency{}}` in case of success.
+  * `{:error, %Ecto.Changeset{}}` in case of error.
 
   ## Examples
 
@@ -133,6 +171,15 @@ defmodule Cashtrail.Banking.Currencies do
   @doc """
   Deletes a currency.
 
+  ## Expected Arguments
+
+  * currency - The `%Cashtrail.Banking.Currencies.Currency{}` to be deleted.
+
+  ## Returns
+
+  * `{:ok, %Cashtrail.Banking.Currencies.Currency{}}` in case of success.
+  * `{:error, %Ecto.Changeset{}}` in case of error.
+
   ## Examples
 
       iex> delete_currency(currency)
@@ -149,6 +196,11 @@ defmodule Cashtrail.Banking.Currencies do
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking currency changes.
+
+
+  ## Expected Arguments
+
+  * currency - The `%Cashtrail.Banking.Currencies.Currency{}` to be tracked.
 
   ## Examples
 

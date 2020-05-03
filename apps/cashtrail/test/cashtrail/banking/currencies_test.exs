@@ -88,6 +88,17 @@ defmodule Cashtrail.Banking.CurrenciesTest do
       assert currency.iso_code == "ABC"
     end
 
+    test "create_currency/2 with allowed empty values sets defaults values", %{tenant: tenant} do
+      currency_params =
+        params_for(:currency, tenant: tenant, separator: "", format: "", type: "", active: nil)
+
+      assert {:ok, %Currency{} = currency} = Currencies.create_currency(tenant, currency_params)
+      assert currency.type == "money"
+      assert currency.active == true
+      assert currency.separator == "."
+      assert currency.format == "%s%n"
+    end
+
     @invalid_attrs %{
       active: nil,
       description: nil,
@@ -158,6 +169,37 @@ defmodule Cashtrail.Banking.CurrenciesTest do
 
       assert {:error, %Ecto.Changeset{errors: [iso_code: _]}} =
                Currencies.create_currency(tenant, currency_params)
+    end
+
+    test "create_currency/2 with invalid separator returns error changeset", %{tenant: tenant} do
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  separator:
+                    {"should be %{count} character(s)",
+                     [count: 1, validation: :length, kind: :is, type: :string]}
+                ]
+              }} = Currencies.create_currency(tenant, params_for(:currency, separator: ".."))
+    end
+
+    test "create_currency/2 with invalid delimiter returns error changeset", %{tenant: tenant} do
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  delimiter:
+                    {"should be at most %{count} character(s)",
+                     [count: 1, validation: :length, kind: :max, type: :string]}
+                ]
+              }} = Currencies.create_currency(tenant, params_for(:currency, delimiter: ".."))
+    end
+
+    test "create_currency/2 with invalid format returns error changeset", %{tenant: tenant} do
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  format: {"Should have one %n to display the number, or be empty", []}
+                ]
+              }} = Currencies.create_currency(tenant, params_for(:currency, format: "%s"))
     end
 
     @update_attrs %{

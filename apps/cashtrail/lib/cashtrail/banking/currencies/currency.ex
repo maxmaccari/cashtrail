@@ -2,6 +2,11 @@ defmodule Cashtrail.Banking.Currencies.Currency do
   @moduledoc """
   This is an `Ecto.Schema` struct that represents a currency of the entity.
 
+  **Warning**: Don't use the functions of this module. Only use this module as a
+  struct to represent a currency. The functions of this module are internal and
+  can change over time. Only manipulate currencies through the
+  `Cashtrail.Banking.Currencies` that is the context for this.
+
   ## Definition
 
   The definition of currency is any form when in use or circulation as a medium
@@ -26,32 +31,36 @@ defmodule Cashtrail.Banking.Currencies.Currency do
 
   ## Fields
 
+  * `:id` - The unique id of the currency.
   * `:description` - The description of the currency.
   * `:type` - The type of the currency. Can be:
-    *  `"money"` - ordinary currencies like dollars, euro, yens, etc.
-    *  `"cryptocurrency"` - digital currencies that uses cryptographical functions
+    * `"money"` - ordinary currencies like dollars, euro, yens, etc. This is the
+    default value if no type is choosen.
+    * `"cryptocurrency"` - digital currencies that uses cryptographical functions
     to conduct financial transactions.
-    *  `"virtual"` - digital currencies that are unregulated, used and accepted
+    * `"virtual"` - digital currencies that are unregulated, used and accepted
     among the members of a specific virtual community. For example: loyalty points, game points, etc.
-    *  `"other"` - other type of currencies that doesn't match the previous categories.
+    * `"other"` - other type of currencies that doesn't match the previous categories.
   * `:iso_code` - The [ISO 4217](https://pt.wikipedia.org/wiki/ISO_4217) code of the currency.
   * `:active` - Says if the currency is active or not.
   * `:symbol` -  The symbol of the currency, like R$, US$, €, ¥, or £ for example.
   * `:precision` - Every currency can have a different number of decimal places.
   For example, the dinar has three decimal places, dollar two, and yen zero.
-  This field has the purpose to help round and format the amounts for the currency
+  This field can be used to help round and format the amounts for the currency
   correctly.
-  * `:separator` - The symbol used to separate the integer part from the fractional
+  * `:separator` - The field can be used to separate the integer part from the fractional
   part of the currency.
-  * `:delimiter` - The symbol used to separate the thousands parts of the currency.
-  * `:format` - This field serves to tell in what format the symbol and the number
+  * `:delimiter` - The field can be used to separate the thousands parts of the currency.
+  * `:format` - This field can be used to know in what format the symbol and the number
   should be displayed. The "%s" represents the symbol, and the "%n" represents the
   number. So, if you format 100 dollars using `"%s %n"` the expected format will
   be `"US$ 100.00"`. This field, as the `:precision`, `:separator` and `:delimiter`,
   only brings a reference to be used by the libraries that will perform the
   currency formating.
+  * `:inserted_at` - When the currency was inserted at the first time.
+  * `:updated_at` - When the currency was updated at the last time.
 
-  See `Cashtrail.Currencies` to know how to list, get, insert, update, and delete currencies.
+  See `Cashtrail.Banking.Currencies` to know how to list, get, insert, update, and delete currencies.
   """
 
   use Ecto.Schema
@@ -127,15 +136,10 @@ defmodule Cashtrail.Banking.Currencies.Currency do
 
   defp validate_format(%Ecto.Changeset{changes: %{format: format}} = changeset)
        when is_binary(format) do
-    cond do
-      format == "" ->
-        changeset
-
-      String.contains?(format, "%n") ->
-        changeset
-
-      true ->
-        add_error(changeset, :format, "Should have one %n to display the number, or be empty")
+    if String.contains?(format, "%n") do
+      changeset
+    else
+      add_error(changeset, :format, "Should have one %n to display the number, or be empty")
     end
   end
 

@@ -1,5 +1,7 @@
 defmodule Cashtrail do
   @moduledoc """
+  Cashtrail is an application to track and manage money.
+
   Cashtrail keeps the contexts that define your domain
   and business logic.
 
