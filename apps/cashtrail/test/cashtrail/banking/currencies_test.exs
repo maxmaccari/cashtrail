@@ -28,11 +28,14 @@ defmodule Cashtrail.Banking.CurrenciesTest do
     end
 
     test "list_currencies/1 filtering by type", %{tenant: tenant} do
-      insert(:currency, tenant: tenant, type: "digital_currency")
-      currency = insert(:currency, tenant: tenant, type: "cash")
+      insert(:currency, tenant: tenant, type: "virtual")
+      currency = insert(:currency, tenant: tenant, type: "money")
 
-      assert Currencies.list_currencies(tenant, filter: %{type: "cash"}).entries == [currency]
-      assert Currencies.list_currencies(tenant, filter: %{"type" => "cash"}).entries == [currency]
+      assert Currencies.list_currencies(tenant, filter: %{type: "money"}).entries == [currency]
+
+      assert Currencies.list_currencies(tenant, filter: %{"type" => "money"}).entries == [
+               currency
+             ]
     end
 
     test "list_currencies/1 filtering by active", %{tenant: tenant} do
@@ -75,6 +78,8 @@ defmodule Cashtrail.Banking.CurrenciesTest do
       assert currency.symbol == currency_params.symbol
       assert currency.type == currency_params.type
       assert currency.precision == currency_params.precision
+      assert currency.separator == currency_params.separator
+      assert currency.delimiter == currency_params.delimiter
     end
 
     test "create_currency/2 with downcased iso_code upcases the value", %{tenant: tenant} do
@@ -158,22 +163,26 @@ defmodule Cashtrail.Banking.CurrenciesTest do
     @update_attrs %{
       active: false,
       description: "some updated description",
-      format: "some updated format",
+      format: "%n",
       iso_code: "ABC",
-      symbol: "some updated symbol",
-      type: "digital_currency",
-      precision: "3"
+      symbol: "M$",
+      type: "virtual",
+      precision: "3",
+      separator: ",",
+      delimiter: "."
     }
     test "update_currency/2 with valid data updates the currency", %{tenant: tenant} do
       currency = insert(:currency, tenant: tenant)
       assert {:ok, %Currency{} = currency} = Currencies.update_currency(currency, @update_attrs)
       assert currency.active == false
       assert currency.description == "some updated description"
-      assert currency.format == "some updated format"
+      assert currency.format == "%n"
       assert currency.iso_code == "ABC"
-      assert currency.symbol == "some updated symbol"
-      assert currency.type == "digital_currency"
+      assert currency.symbol == "M$"
+      assert currency.type == "virtual"
       assert currency.precision == 3
+      assert currency.separator == ","
+      assert currency.delimiter == "."
     end
 
     test "update_currency/2 with invalid data returns error changeset", %{tenant: tenant} do

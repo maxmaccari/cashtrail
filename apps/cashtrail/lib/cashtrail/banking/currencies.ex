@@ -1,7 +1,9 @@
 defmodule Cashtrail.Banking.Currencies do
   @moduledoc """
-  The Currencies context manage the currencies data that are linked to
-  Banking.Accounts.
+  The Currencies context manage the currencies data of the entity.
+
+  See `Cashtrail.Banking.Currencies.Currency` to have more info about what
+  currencies mean in this application.
   """
 
   import Ecto.Query, warn: false
@@ -36,11 +38,11 @@ defmodule Cashtrail.Banking.Currencies do
       iex> list_currencies(entity, page: 2)
       %Cashtrail.Paginator.Page{entries: [%Currency{}, ...], page: 2}
 
-      iex> list_currencies(entity, filter: %{type: "cash"})
-      %Cashtrail.Paginator.Page{entries: [%Currency{type: "cash"}, ...]}
+      iex> list_currencies(entity, filter: %{type: "money"})
+      %Cashtrail.Paginator.Page{entries: [%Currency{type: "money"}, ...]}
 
       iex> list_currencies(entity, filter: %{search: "my"})
-      %Cashtrail.Paginator.Page{entries: [%Currency{description: "my cash"}, ...]}
+      %Cashtrail.Paginator.Page{entries: [%Currency{description: "my money"}, ...]}
 
   """
   @spec list_currencies(Entity.t(), keyword) :: Paginator.Page.t()
@@ -81,7 +83,7 @@ defmodule Cashtrail.Banking.Currencies do
 
   ## Params
     * `:description` (required)
-    * `:type` - can be `"cash"`, `"digital_currency"`, `"miles"`,
+    * `:type` - can be `"money"`, `"digital_currency"`, `"miles"`,
     `"cryptocurrency"` or `"other"`.
     * `:iso_code` - The [ISO 4217](https://pt.wikipedia.org/wiki/ISO_4217) code
     of the currency.
