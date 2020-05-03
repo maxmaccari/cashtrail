@@ -102,5 +102,6 @@ defmodule Cashtrail.Contacts.Contact do
     ])
     |> validate_required([:name, :type])
     |> cast_embed(:address)
+    |> foreign_key_constraint(:category_id)
   end
 end

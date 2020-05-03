@@ -195,7 +195,8 @@ defmodule Cashtrail.Contacts do
       * `:type` or `"type"`
       * `:customer` or `"customer"`
       * `:supplier` or `"supplier"`
-    * `:search` - search contacts by `:name` or `:legal_name`.
+      * `:category_id` or `"category_id"`
+      * `:search` - search contacts by `:name` or `:legal_name`.
     * See `Cashtrail.Paginator.paginate/2` to know about the paginations options.
 
   See `Cashtrail.Contacts.Contact` to have more detailed info about each field to
@@ -216,7 +217,7 @@ defmodule Cashtrail.Contacts do
   @spec list_contacts(Entity.t(), keyword) :: Paginator.Page.t(contact)
   def list_contacts(%Entity{} = entity, options \\ []) do
     Contact
-    |> build_filter(Keyword.get(options, :filter), [:type, :customer, :supplier])
+    |> build_filter(Keyword.get(options, :filter), [:type, :customer, :supplier, :category_id])
     |> build_search(Keyword.get(options, :search), [:name, :legal_name])
     |> put_prefix(entity)
     |> Paginator.paginate(options)
