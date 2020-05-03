@@ -7,12 +7,21 @@ defmodule Cashtrail.QueryBuilder do
   import Ecto.Query
 
   @doc """
-  Builds a query to fiter the queryable by the given params. The params
-  are a map. The keys can be even `string` or `atom`, and the values must be
-  the same type of the related schema field, and it can be a list of values too.
+  Returns a `Ecto.Query` with the queries based on the given filters and
+  allowed fields, or the given `t:Ecto.Queryable.t` without changes.
 
-  The params used in the filter will be only the one that are put in the
-  allowed_filters params.
+  The query will use only the params that have the key in the allowed_filters param.
+
+  ## Expected arguments
+
+  * query - The `t:Ecto.Queryable.t` that the query will be performed.
+  * params - A `map` keys of the fields and values to be filtered. The keys
+  can be even `string` or `atom`, and the values must be the same type of
+  the data in database, or can receive a list with data in the same type of the
+  data in the database.
+  * allowed_fields - A `list` of `atom` with the fields that will be used to perform
+  the query. The query will be based only in params that have the keys matching
+  this param.
 
   ## Examples
 
@@ -23,6 +32,12 @@ defmodule Cashtrail.QueryBuilder do
     #Ecto.Query<from u0 in Cashtrail.Users.User, where: u0.first_name == ^"my name">
 
     iex> Cashtrail.QueryBuilder.build_filter(Cashtrail.Users.User, %{first_name: ["my", "name"]}, [:first_name])
+    #Ecto.Query<from u0 in Cashtrail.Users.User, where: u0.first_name in ^["my", "name"]>
+
+    iex> Cashtrail.QueryBuilder.build_filter(Cashtrail.Users.User, %{"first_name" => "my name"}, [:first_name])
+    #Ecto.Query<from u0 in Cashtrail.Users.User, where: u0.first_name == ^"my name">
+
+    iex> Cashtrail.QueryBuilder.build_filter(Cashtrail.Users.User, %{"first_name" => ["my", "name"]}, [:first_name])
     #Ecto.Query<from u0 in Cashtrail.Users.User, where: u0.first_name in ^["my", "name"]>
   """
   @spec build_filter(Ecto.Queryable.t(), nil | map, list(atom)) ::
@@ -50,10 +65,19 @@ defmodule Cashtrail.QueryBuilder do
   defp filter_allowed({key, _}, allowed_filters), do: key in allowed_filters
 
   @doc """
-  Builds a query to search the queryable by the given term in the given fields.
+  Returns a `Ecto.Query` with the queries based on the given term and fields,
+  or the given `t:Ecto.Queryable.t` without changes.
 
   The search is implement using `ILIKE` in the fields of the given queryable
   schema. And the term must be a `string`.
+
+  ## Expected arguments
+
+  * query - The `t:Ecto.Queryable.t` that the query will be performed.
+  * term - A `string` with the text that will be searched.
+  * fields - A `list` of `atom` with the fields that will be used to perform
+  the query. The given fields must be string or text, otherwise you will get
+  an error from Ecto.
 
   ## Examples
 

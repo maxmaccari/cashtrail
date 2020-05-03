@@ -2,7 +2,7 @@ defmodule Cashtrail.Entities.Tenants do
   alias Cashtrail.Entities.Entity
 
   @moduledoc """
-  Deal with tenants creation for Entity.
+  Deals with tenants creation for Entity.
 
   Every created Entity should be a tenant and have it's own data. Tenants are
   schemas in the postgres having the data related to Entity.
@@ -10,6 +10,15 @@ defmodule Cashtrail.Entities.Tenants do
 
   @doc """
   Create a tenant for the given Entity.
+
+  ## Expected arguments
+
+  * A `%Cashtray.Entities.Entity{}` struct of the tenant that will be created.
+
+  ## Returns
+
+  * {:ok, entity} - If the tenant creation was successful performed.
+  * {:error, reason} - In case of errors.
 
   See `Triplex.create/2` docs for more information.
   """
@@ -24,6 +33,15 @@ defmodule Cashtrail.Entities.Tenants do
   @doc """
   Drop a tenant for the given Entity.
 
+  ## Expected arguments
+
+  * A `%Cashtray.Entities.Entity{}` struct of the tenant that will be dropped.
+
+  ## Returns
+
+  * {:ok, entity} - If the tenant creation was successful performed.
+  * {:error, reason} - In case of errors.
+
   See `Triplex.create/2` docs for more information.
   """
   @spec drop(%Cashtrail.Entities.Entity{id: Ecto.UUID.t()}) ::
@@ -37,6 +55,10 @@ defmodule Cashtrail.Entities.Tenants do
   @doc """
   Return the prefix from Entity.
 
+  ## Expected arguments
+
+  * A `%Cashtray.Entities.Entity{}` struct of the tenant that want to get the prefix.
+
   See `Triplex.to_prefix/1` docs for more information.
   """
   @spec to_prefix(Cashtrail.Entities.Entity.t()) :: String.t()
@@ -45,7 +67,12 @@ defmodule Cashtrail.Entities.Tenants do
   end
 
   @doc """
-  Put ecto prefix in a queryable.
+  Return the given `t:Ecto.Queryable.t` with the prefix configured.
+
+  ## Expected arguments
+
+  * queryable - The `t:Ecto.Queryable.t` that the the prefix will be configured.
+  * A `%Cashtray.Entities.Entity{}` struct of the tenant that want to configure the prefix.
 
   See `Triplex.to_prefix/1` docs for more information.
   """

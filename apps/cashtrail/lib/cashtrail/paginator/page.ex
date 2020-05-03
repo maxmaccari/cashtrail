@@ -1,7 +1,5 @@
 defmodule Cashtrail.Paginator.Page do
-  @moduledoc """
-  It's a struct that represents a result of `Cashtrail.Paginator.paginate/2`
-  """
+  @moduledoc false
 
   @type t(type) :: %Cashtrail.Paginator.Page{
           entries: list(type),
@@ -19,9 +17,11 @@ defmodule Cashtrail.Paginator.Page do
             total_pages: nil
 
   @doc """
-  Convert the returned data to `%Cashtrail.Paginator.Page{}` struct.
+  Returns a `%Cashtrail.Paginator.Page{}` with the given data.
 
-  The arguments accepted are %Scrivener.Page{} or list.
+  ## Expected arguments
+
+  * page - A `%Scrivener.Page{}` struct or a `list` that should be converted.
 
   ## Example
 
