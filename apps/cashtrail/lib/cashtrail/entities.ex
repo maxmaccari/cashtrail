@@ -129,7 +129,7 @@ defmodule Cashtrail.Entities do
 
   See `Cashtrail.Entities.Entity` to have more detailed info about the fields.
 
-   ## Returns
+  ## Returns
 
   * `{:ok, %Cashtrail.Entities.Entity{}}` in case of success.
   * `{:error, %Ecto.Changeset{}}` in case of error.
@@ -163,8 +163,6 @@ defmodule Cashtrail.Entities do
 
   @doc """
   Updates an entity.
-
-  See `update_entity/1` docs to know more about the accepted params.
 
   ## Expected Arguments
 
@@ -549,7 +547,7 @@ defmodule Cashtrail.Entities do
 
   @doc """
   Returns the member permission as an atom or :unauthorized if the member is not
-  found. If the user is the owner, return the permission as :admin.
+  found. If the user is the owner, return permission as :admin.
 
   ## Expected Arguments
 

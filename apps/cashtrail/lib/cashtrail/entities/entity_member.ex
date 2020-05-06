@@ -1,6 +1,6 @@
 defmodule Cashtrail.Entities.EntityMember do
   @moduledoc """
-  This is an `Ecto.Schema` struct that represents a member of an
+  This is an `Ecto.Schema` struct that represents a member of a
   `Cashtrail.Entity` that links authorized users to the `Cashtrail.Entity`,
   except the owner.
 
@@ -9,8 +9,8 @@ defmodule Cashtrail.Entities.EntityMember do
   can change over time. Only manipulate contacts through the `Cashtrail.Entities`
   that is the context for this.
 
-  The EntityMember is a member of the entity. As a member of entity, the user
-  can have permissions to read, create entity, or even admin the entity.
+  The EntityMember is a member of the entity. As a member of the entity, the user
+  can have permission to read, create and update records, or even admin the entity.
 
   The owner cannot be a member of the `Cashtrail.Entity`.
 
@@ -19,14 +19,14 @@ defmodule Cashtrail.Entities.EntityMember do
   * `:id` - The unique id of the entity member.
   * `:permission` - The permission of the entity member. The permissions can be:
     * `"read"` - With this permission, the member can read the data from the entity.
-    * `"write"` - With this permission, the member can read, create, modify and
+    * `"write"` - With this permission, the member can read, create, modify, and
     delete data from the entity, except change the entity settings or manage the
     members of the entity.
     * `"admin"` - With this permission, the member can have all permissions from write,
     change the settings, and manage the members of the entity.
   * `:entity` - The entity that the member is part of, related to `Cashtrail.Entities.Entity`.
   * `:entity_id` - The id of the entity that the member is part of.
-  * `:user` - The user that is member of the entity, related to `Cashtrail.Users.User`.
+  * `:user` - The user that is a member of the entity, related to `Cashtrail.Users.User`.
   * `:user_id` - The id of the user that is member of the entity.
   * `:inserted_at` - When the entity member was inserted at the first time.
   * `:updated_at` - When the entity member was updated at the last time.

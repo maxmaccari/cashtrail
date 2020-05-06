@@ -1,4 +1,6 @@
 defmodule CashtrailWeb.UserSocket do
+  @moduledoc false
+
   use Phoenix.Socket
 
   ## Channels

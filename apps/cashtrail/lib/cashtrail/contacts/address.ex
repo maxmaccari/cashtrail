@@ -9,10 +9,10 @@ defmodule Cashtrail.Contacts.Address do
 
   The address is stored in a `json` field of the contact, and not in a specific
   table in the database. This struct is used to force the address to a specific
-  schema in this json field.
+  schema in this JSON field.
 
-  Each country has their own type of address. So, no fields are required. You
-  can choose allow only to fill `:line_1` and `:line_2` in your frontend,
+  Each country has its type of address. So, no fields are required. You
+  can choose to allow only to fill `:line_1` and `:line_2` in your frontend,
   or allow fill the other fields instead.
 
   ## Fields
@@ -23,15 +23,15 @@ defmodule Cashtrail.Contacts.Address do
   * `:complement` - complement part of the address, like apartment number for instance.
   * `:district` - district part of the address.
   * `:city` - city part of the address.
-  * `:state` - state or province part of the address. This depends of the country.
+  * `:state` - state or province part of the address. This depends on the country.
   * `:country` - The country of the address.
   * `:zip` - The zip code of the address. This field is not validated, so you can
-  insert whathever the zip code of any country you want.
-  * `:line_1` - The line 1 can have the street and number in some countries (like in the US).
-  * `:line_2` - The line 2 can have the city, state and zip code in some countries (like in the US).
+  insert whatever the zip code of any country you want.
+  * `:line_1` - Line 1 can have the street and number in some countries (like in the US).
+  * `:line_2` - Line 2 can have the city, state, and zip code in some countries (like in the US).
 
   See `Cashtrail.Contacts.create_contact/2` to know how to create a contact with an address, or
-  `Cashtrail.Contacts.create_contact/2` to know how to update an address of a contact, ir
+  `Cashtrail.Contacts.create_contact/2` to know how to update an address of a contact, or
   insert a new one.
   """
 

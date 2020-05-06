@@ -22,7 +22,7 @@ defmodule Cashtrail.Banking.Currencies do
   Returns a `%Cashtrail.Paginator.Page{}` struct with a list of currencies in the
   `:entries` field.
 
-  If no currencies are found, returns an empty list in the `:entries` field.
+  If no currencies are found, return an empty list in the `:entries` field.
 
   ## Expected arguments
 
@@ -32,7 +32,7 @@ defmodule Cashtrail.Banking.Currencies do
       * `:type` or `"type"`
       * `:active` or `"active"`
     * `:search` - search currencies by `:description`, `:iso_code` and `:symbol`.
-    * See `Cashtrail.Paginator.paginate/2` to know about the paginations options.
+    * See `Cashtrail.Paginator.paginate/2` to know about the pagination options.
 
   See `Cashtrail.Banking.Currencies.Currency` to have more detailed info about
   each field to be filtered or searched.
@@ -96,7 +96,7 @@ defmodule Cashtrail.Banking.Currencies do
   * entity - The `%Cashtrail.Entities.Entity{}` that the currency references.
   * params - A `map` with the params of the currency to be created:
     * `:description` (required) - A `string` that is the description of the currency.
-    * `:type` - A `string` that is the type of the currency. It can receive "money",
+    * `:type` - A `string` that is the type of currency. It can receive "money",
     "digital_currency", "miles", "cryptocurrency" or "other". Defaults to
     "money".
     * `:iso_code` - A `string` that is the [ISO 4217](https://pt.wikipedia.org/wiki/ISO_4217)
@@ -105,9 +105,9 @@ defmodule Cashtrail.Banking.Currencies do
     * `:format` - A `string` that represents the format of the currency. The "%s"
     refers to the `:symbol` field, and the "%n" refers to the number. Defaults to "%s%n".
     * `:precision` - A `integer` that represents how much decimal places the currency
-    have. Defaults to 0.
+    has. Defaults to 0.
     * `:separator` - A `string` that is used to separate the integer part from the
-    fractional part of the currency. It must have exact one character or be empty.
+    fractional part of the currency. It must have an exact one character or be empty.
     Defaults to ".".
     * `:delimiter` - A `string` that is used to separate the thousands parts of
     the currency. Defaults to ".".

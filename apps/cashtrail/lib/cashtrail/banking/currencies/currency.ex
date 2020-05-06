@@ -10,7 +10,7 @@ defmodule Cashtrail.Banking.Currencies.Currency do
   ## Definition
 
   According to [Investopedia](https://www.investopedia.com/terms/c/currency.asp),
-  currency is any form when in use or circulation as a medium of exchange. This
+  the currency is any form when in use or circulation as a medium of exchange. This
   can be any system of money in common use by people.
 
   The common examples of currencies are Brazilia, reais (R$), U.S. dollars (US$),
@@ -34,14 +34,14 @@ defmodule Cashtrail.Banking.Currencies.Currency do
 
   * `:id` - The unique id of the currency.
   * `:description` - The description of the currency.
-  * `:type` - The type of the currency. Can be:
-    * `"money"` - ordinary currencies like dollars, euro, yens, etc. This is the
-    default value if no type is choosen.
-    * `"cryptocurrency"` - digital currencies that uses cryptographical functions
+  * `:type` - The type of currency. Can be:
+    * `"money"` - ordinary currencies like dollars, euro, yen, etc. This is the
+    default value if no type is chosen.
+    * `"cryptocurrency"` - digital currencies that use cryptographical functions
     to conduct financial transactions.
-    * `"virtual"` - digital currencies that are unregulated, used and accepted
-    among the members of a specific virtual community. For example: loyalty points, game points, etc.
-    * `"other"` - other type of currencies that doesn't match the previous categories.
+    * `"virtual"` - unregulated digital currencies, used and accepted
+    among the members of a specific virtual community. For example loyalty points, game points, etc.
+    * `"other"` - other types of currencies that don't match the previous categories.
   * `:iso_code` - The [ISO 4217](https://pt.wikipedia.org/wiki/ISO_4217) code of the currency.
   * `:active` - Says if the currency is active or not.
   * `:symbol` -  The symbol of the currency, like R$, US$, €, ¥, or £ for example.

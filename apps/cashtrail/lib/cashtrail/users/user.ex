@@ -8,7 +8,7 @@ defmodule Cashtrail.Users.User do
   that is the context for this.
 
   The user is any individual that uses the application. They can create their
-  own entities or be assigned to an entitie as a member. See `Cashtrail.Entities.Entity`
+  entities or be assigned to an entity as a member. See `Cashtrail.Entities.Entity`
   to know more about what is an Entity.
 
   ## Fields
@@ -26,7 +26,7 @@ defmodule Cashtrail.Users.User do
   * `:inserted_at` - When the user was inserted at the first time.
   * `:updated_at` - When the user was updated at the last time.
 
-  See `Cashtrail.Users` to know how to list, get, insert, update, delete and
+  See `Cashtrail.Users` to know how to list, get, insert, update, delete, and
   authenticate users.
   """
 

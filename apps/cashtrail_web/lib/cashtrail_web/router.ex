@@ -1,4 +1,6 @@
 defmodule CashtrailWeb.Router do
+  @moduledoc false
+
   use CashtrailWeb, :router
 
   pipeline :api do

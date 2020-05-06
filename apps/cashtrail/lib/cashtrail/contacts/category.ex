@@ -11,7 +11,7 @@ defmodule Cashtrail.Contacts.Category do
   The category is a way to divide your contacts that have shared characteristics.
   You may want to divide your contacts into "Friends", "Family", "Store",
   "Restaurant", "Bank" and whatever category you want. This can be used to generate
-  reports or to know how much money your spend in "Restaurants", for instance.
+  reports or to know how much money you are spending on "Restaurants", for instance.
 
   ## Fields
 

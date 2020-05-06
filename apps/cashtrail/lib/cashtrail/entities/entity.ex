@@ -39,7 +39,7 @@ defmodule Cashtrail.Entities.Entity do
   flow to another entity, like one account trying to relate a  currency from another
   entity, for instance.
 
-  In this way, I can mantain the database design inside tenants simpler,
+  In this way, I can maintain the database design inside tenants simpler,
   so I can perform the queries without having to relate two fields, and I can
   ensure the consistency without recurring to things like composite foreign keys.
 
@@ -48,11 +48,11 @@ defmodule Cashtrail.Entities.Entity do
   change the database through new migrations, I have to migrate all schemas, and this
   takes time. This is the same for backups.
 
-  As the porpuse of this application is not to be scalable, but to be safe and
+  As the purpose of this application is not to be scalable, but to be safe and
   flexible, this is not a problem. I recommend you maintain the number of entities
   at a maximum of 100 per instance of this application.
 
-  You can manually generate or drop tenats using the `Cashtrail.Entities.Tenants`
+  You can manually generate or drop tenants using the `Cashtrail.Entities.Tenants`
   module.
 
   ## Fields

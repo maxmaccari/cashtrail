@@ -1,18 +1,12 @@
 defmodule Cashtrail.Users.PasswordHash do
   use Comeonin
 
-  @moduledoc """
-  Elixir wrapper for the configured password hashing library in config.exs like
-  `config :cashtrail, comeonin_hashing_module: Argon2`.
-  """
+  @moduledoc false
 
   @hashing_module Application.get_env(:cashtrail, :comeonin_hash_module)
 
   @doc """
-  Hashes a password with a randomly generated salt.
-
-  See the documentation for `hash_pwd_salt/2` of your configured hashing libary
-  for examples of using this function.
+  Generates a random salt and then hashes the password.
   """
   @impl true
   @spec hash_pwd_salt(String.t(), keyword) :: String.t()
@@ -20,11 +14,10 @@ defmodule Cashtrail.Users.PasswordHash do
     do: @hashing_module.hash_pwd_salt(password, opts)
 
   @doc """
-  Verifies a password by hashing the password and comparing the hashed value
-  with a stored hash.
+  Checks the password by comparing it with a stored hash.
 
-  See the documentation for `verify_pass/2` of your configured hashing libary
-  for examples of using this function.
+  Please note that the first argument to `verify_pass` should be the
+  password, and the second argument should be the password hash.
   """
   @impl true
   @spec verify_pass(String.t(), String.t()) :: boolean

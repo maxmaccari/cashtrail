@@ -1,6 +1,6 @@
 defmodule Cashtrail.Users do
   @moduledoc """
-  The Users context manages the users data of one entity and perform users
+  The Users context manages the users data of one entity and performs user
   authentication.
 
   See `Cashtrail.Users.User` to have more info about user.
@@ -75,7 +75,7 @@ defmodule Cashtrail.Users do
   Returns nil the User does not exist.
 
   See `Cashtrail.Users.User` to have more detailed info about the returned
-  struct and about the params attributes that can be given.
+  struct and the params attributes that can be given.
 
   ## Expected Arguments
 
@@ -94,7 +94,7 @@ defmodule Cashtrail.Users do
   def get_user_by(params \\ []), do: Repo.get_by(User, params)
 
   @doc """
-  Authenticates an user with its email and password.
+  Authenticates a user with its email and password.
 
   ## Expected Arguments
 
@@ -136,17 +136,17 @@ defmodule Cashtrail.Users do
   end
 
   @doc """
-  Creates an user.
+  Creates a user.
 
   ## Expected Arguments
 
   * params - A `map` with the params of the user to be created:
     * `:email` (required) - A `string` with the email of the user. Must be
     a valid email and unique in the application.
-    * `:first_name` (required) - A `string` with first name of the user.
-    * `:last_name` - A `string` with first last of the user.
+    * `:first_name` (required) - A `string` with the first name of the user.
+    * `:last_name` - A `string` with the last name of the user.
     * `:password` (required) - A `string` with the password of the user to be created.
-    The password must contain at least one letter, one number and one special character.
+    The password must contain at least one letter, one number, and one special character.
     * `:password_confirmation` (required) - A `string` with password confirmation
     of the user to be created. Must be the equals the `:password` field.
 
@@ -175,7 +175,7 @@ defmodule Cashtrail.Users do
   end
 
   @doc """
-  Updates an user.
+  Updates a user.
 
   ## Expected Arguments
 
@@ -205,7 +205,7 @@ defmodule Cashtrail.Users do
   end
 
   @doc """
-  Deletes an user.
+  Deletes a user.
 
   ## Expected Arguments
 

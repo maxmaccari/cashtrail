@@ -4,8 +4,8 @@ defmodule Cashtrail.Entities.Tenants do
   @moduledoc """
   Deals with tenants creation for Entity.
 
-  Every created Entity should be a tenant and have it's own data. Tenants are
-  schemas in the postgres having the data related to Entity.
+  Every created Entity should be a tenant and have its data. Tenants are schemas
+  in the Postgres having the data related to the Entity.
   """
 
   @doc """
@@ -17,8 +17,8 @@ defmodule Cashtrail.Entities.Tenants do
 
   ## Returns
 
-  * {:ok, entity} - If the tenant creation was successful performed.
-  * {:error, reason} - In case of errors.
+  * `{:ok, entity}` - If the tenant creation was successful performed.
+  * `{:error, reason}` - In case of errors.
 
   See `Triplex.create/2` docs for more information.
   """
@@ -39,8 +39,8 @@ defmodule Cashtrail.Entities.Tenants do
 
   ## Returns
 
-  * {:ok, entity} - If the tenant creation was successful performed.
-  * {:error, reason} - In case of errors.
+  * `{:ok, entity}` - If the tenant creation was successful performed.
+  * `{:error, reason}` - In case of errors.
 
   See `Triplex.create/2` docs for more information.
   """
@@ -67,11 +67,11 @@ defmodule Cashtrail.Entities.Tenants do
   end
 
   @doc """
-  Return the given `t:Ecto.Queryable.t` with the prefix configured.
+  Return the given `Ecto.Queryable` with the prefix configured.
 
   ## Expected arguments
 
-  * queryable - The `t:Ecto.Queryable.t` that the the prefix will be configured.
+  * queryable - The `Ecto.Queryable` that the the prefix will be configured.
   * A `%Cashtray.Entities.Entity{}` struct of the tenant that want to configure the prefix.
 
   See `Triplex.to_prefix/1` docs for more information.

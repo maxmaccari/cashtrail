@@ -1,6 +1,6 @@
 defmodule Cashtrail.Contacts do
   @moduledoc """
-  The Contacts context manages the contacts data of one entity.
+  The Contacts context manages the contact data of one entity.
 
   See `Cashtrail.Contacts.Contact` to have more info about what contacts mean in
   the application.
@@ -27,7 +27,7 @@ defmodule Cashtrail.Contacts do
   * entity - The `%Cashtrail.Entities.Entity{}` that the category references.
   * options - A `keyword` list of the following options:
     * `:search` - search categories by its `:description`.
-    * See `Cashtrail.Paginator.paginate/2` to know about the paginations options.
+    * See `Cashtrail.Paginator.paginate/2` to know about the pagination options.
 
   ## Examples
 
@@ -198,7 +198,7 @@ defmodule Cashtrail.Contacts do
       * `:supplier` or `"supplier"`
       * `:category_id` or `"category_id"`
       * `:search` - search contacts by `:name` or `:legal_name`.
-    * See `Cashtrail.Paginator.paginate/2` to know about the paginations options.
+    * See `Cashtrail.Paginator.paginate/2` to know about the pagination options.
 
   See `Cashtrail.Contacts.Contact` to have more detailed info about the fields to
   be filtered or searched.
@@ -257,11 +257,11 @@ defmodule Cashtrail.Contacts do
   * entity - The `%Cashtrail.Entities.Entity{}` that the category references.
   * params - A `map` with the params of the contact to be created:
     * `:name` (required) - A `string` with the description of the contact.
-    * `:type` (required) - A `string` with the type of the contact. It can receive
+    * `:type` (required) - A `string` with the type of contact. It can receive
     "company" or "person". Defaults to `"company"`.
     * `:legal_name` - A `string` that is the legal name of the contact.
-    * `:customer` - A `boolean` that says if the contact is customer. Defaults to false.
-    * `:supplier` - A `boolean` that says if the contact is supplier. Defaults to false.
+    * `:customer` - A `boolean` that says if the contact is a customer. Defaults to false.
+    * `:supplier` - A `boolean` that says if the contact is a supplier. Defaults to false.
     * `:phone` - A `string` with the contact phone number. It can receive any phone number format.
     * `:email` - A `string` with the contact email.
     * `:category_id` - A `string` with the id of `Cashtrail.Contacts.Category` that
@@ -275,9 +275,9 @@ defmodule Cashtrail.Contacts do
       * `:state` - A `string` with the state or province of the contact address.
       * `:country` - A `string` with the country of the contact address.
       * `:zip` - A `string` with the zip code of the contact address. You can
-      insert whathever the zip code of any country you want.
-      * `:line_1` - A `string` with the line 1 of the contact address, if preferred.
-      * `:line_2` - A `string` with the line 2 of the contact address, if preferred.
+      insert whatever the zip code of any country you want.
+      * `:line_1` - A `string` with line 1 of the contact address, if preferred.
+      * `:line_2` - A `string` with line 2 of the contact address, if preferred.
 
     See `Cashtrail.Contacts.Contact` to have more detailed info about the fields
     of the contact, and `Cashtrail.Contacts.Address` to have more detailed info
