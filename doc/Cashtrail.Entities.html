@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.21.3">
+    <meta name="project" content=" vdev">
+    <title>Cashtrail.Entities —  vdev</title>
+    <link rel="stylesheet" href="dist/elixir-0ab8a6a80ebaaa287431.css" />
+    <script src="dist/sidebar_items-d8f8a4813e.js"></script>
+      <script src="docs_config.js"></script>
+    <script async src="dist/app-a225d03098e64fef431a.js"></script>
+  </head>
+  <body data-type="modules">
+    <script>try { if(localStorage.getItem('night-mode') === 'true') document.body.className += ' night-mode'; } catch (e) { }</script>
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle">
+  <span class="icon-menu" title="Collapse/expand sidebar"></span>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button">
+      <span class="icon-search" aria-hidden="true"></span>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button">
+      <span class="icon-cross" title="Cancel search"></span>
+    </button>
+    <label class="search-label">
+      <input name="q" type="text" id="search-list" class="search-input" placeholder="Search..." aria-label="Search" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectDetails">
+      <a href="api-reference.html" class="sidebar-projectName">
+      </a>
+      <h2 class="sidebar-projectVersion">
+        vdev
+      </h2>
+    </div>
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+      <h1>
+        <small class="app-vsn"> vdev</small>
+Cashtrail.Entities      </h1>
+
+
+        <section id="moduledoc">
+<p>The Entities context manages the data related to entities. An Entity keeps all
+financial data of something, that can be a company, financial finances,
+organization, church, event, etc. And they can have one owner or other members,
+as well.</p>
+<p>See <a href="Cashtrail.Entities.Entity.html"><code class="inline">Cashtrail.Entities.Entity</code></a> to have more info about entity.</p>
+        </section>
+
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Summary
+          </h1>
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:entity/0">entity()</a>
+  </div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:entity_member/0">entity_member()</a>
+  </div>
+</div>
+  </div>
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#add_member/3">add_member(entity, user, permission \\ &quot;read&quot;)</a>
+  </div>
+    <div class="summary-synopsis"><p>Add a user as an entity_member for the entity giving permission.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#belongs_to?/2">belongs_to?(entity, user)</a>
+  </div>
+    <div class="summary-synopsis"><p>Returns a <code class="inline">boolean</code> that says if the entity belongs to the user.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#change_entity/1">change_entity(entity)</a>
+  </div>
+    <div class="summary-synopsis"><p>Returns an <code class="inline">%Ecto.Changeset{}</code> for tracking entity changes.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#change_member/1">change_member(entity_member)</a>
+  </div>
+    <div class="summary-synopsis"><p>Returns an <code class="inline">%Ecto.Changeset{}</code> for tracking entity_member changes.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#create_entity/3">create_entity(user, attrs, create_tenants \\ true)</a>
+  </div>
+    <div class="summary-synopsis"><p>Creates an entity.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#create_member/2">create_member(entity, attrs)</a>
+  </div>
+    <div class="summary-synopsis"><p>Creates an entity_member for the entity.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#delete_entity/2">delete_entity(entity, drop_tenants \\ true)</a>
+  </div>
+    <div class="summary-synopsis"><p>Deletes an entity.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#get_entity!/1">get_entity!(id)</a>
+  </div>
+    <div class="summary-synopsis"><p>Gets a single entity.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#get_member_permission/2">get_member_permission(entity, user)</a>
+  </div>
+    <div class="summary-synopsis"><p>Returns the member permission as an atom or :unauthorized if the member is not
+found. If the user is the owner, return permission as :admin.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#list_entities/1">list_entities(options \\ [])</a>
+  </div>
+    <div class="summary-synopsis"><p>Returns a <code class="inline">%Cashtrail.Paginator.Page{}</code> struct with a list of entities in the
+<code class="inline">:entries</code> field.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#list_entities_from/2">list_entities_from(user, params \\ [])</a>
+  </div>
+    <div class="summary-synopsis"><p>Returns a <code class="inline">%Cashtrail.Paginator.Page{}</code> struct with a list of entities in the
+<code class="inline">:entries</code> field from the given user.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#list_members/2">list_members(entity, options \\ [])</a>
+  </div>
+    <div class="summary-synopsis"><p>Returns a <code class="inline">%Cashtrail.Paginator.Page{}</code> struct with a list of entity_members in the
+<code class="inline">:entries</code> field.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#member_from_user/2">member_from_user(entity, user)</a>
+  </div>
+    <div class="summary-synopsis"><p>Returns the <code class="inline">%Cashtrail.Entities.EntityMember{}</code> from the user and the entity. Returns
+<code class="inline">nil</code> if the user is not a member of the entity or if it is the owner.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#remove_member/2">remove_member(entity, user)</a>
+  </div>
+    <div class="summary-synopsis"><p>Removes an entity_member from the entity.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#transfer_ownership/3">transfer_ownership(entity, from_user, to_user)</a>
+  </div>
+    <div class="summary-synopsis"><p>Transfer the ownership of an entity from one user to another.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#update_entity/2">update_entity(entity, attrs)</a>
+  </div>
+    <div class="summary-synopsis"><p>Updates an entity.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#update_member_permission/3">update_member_permission(entity, user, permission)</a>
+  </div>
+    <div class="summary-synopsis"><p>Updates the member&#39;s permission.</p></div>
+</div>
+  </div>
+        </section>
+
+        <section id="types" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Types          </h1>
+          <div class="types-list">
+<section class="detail" id="t:entity/0">
+  <div class="detail-header">
+    <a href="#t:entity/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">entity()</h1>
+      <div class="specs">
+          <pre>entity() :: <a href="Cashtrail.Entities.Entity.html#t:t/0">Cashtrail.Entities.Entity.t</a>()</pre>
+      </div>
+  </div>
+  <section class="docstring">
+  </section>
+</section>
+<section class="detail" id="t:entity_member/0">
+  <div class="detail-header">
+    <a href="#t:entity_member/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">entity_member()</h1>
+      <div class="specs">
+          <pre>entity_member() :: <a href="Cashtrail.Entities.EntityMember.html#t:t/0">Cashtrail.Entities.EntityMember.t</a>()</pre>
+      </div>
+  </div>
+  <section class="docstring">
+  </section>
+</section>
+          </div>
+        </section>
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Functions          </h1>
+          <div class="functions-list">
+<section class="detail" id="add_member/3">
+    <span id="add_member/2"></span>
+  <div class="detail-header">
+    <a href="#add_member/3" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">add_member(entity, user, permission \\ &quot;read&quot;)</h1>
+      <div class="specs">
+          <pre>add_member(<a href="#t:entity/0">entity</a>(), <a href="Cashtrail.Users.User.html#t:t/0">Cashtrail.Users.User.t</a>(), <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) ::
+  {:ok, <a href="#t:entity_member/0">entity_member</a>()} | {:error, :invalid | <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Changeset.html#t:t/1">Ecto.Changeset.t</a>(<a href="#t:entity/0">entity</a>())}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Add a user as an entity_member for the entity giving permission.</p>
+<h2 id="add_member/3-expected-arguments" class="section-heading">
+  <a href="#add_member/3-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>entity - The <code class="inline">%Cashtrail.Entities.Entity{}</code> that the member will be added.
+</li>
+<li>user - A <code class="inline">%Cashtrail.Users.User{}</code> that is the user to be added as a member.
+The user cannot be the owner of the entity, otherwise, it will return an error.
+</li>
+<li>permission - A <code class="inline">string</code> with the permission that will be given to the member.
+It can be: <code class="inline">&quot;read&quot;</code>, <code class="inline">&quot;write&quot;</code> or <code class="inline">&quot;admin&quot;</code>.
+</li>
+</ul>
+<p>See <a href="Cashtrail.Entities.EntityMember.html"><code class="inline">Cashtrail.Entities.EntityMember</code></a> to have more detailed info about the
+permissions.</p>
+<h2 id="add_member/3-returns" class="section-heading">
+  <a href="#add_member/3-returns" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Returns
+</h2>
+
+<ul>
+<li><code class="inline">{:ok, %Cashtrail.Entities.EntityMember{}}</code> in case of success.
+</li>
+<li><code class="inline">{:error, :invalid}</code> in case of the user be the owner of the entity.
+</li>
+<li><code class="inline">{:error, %Ecto.Changeset{}}</code> in case of error.
+</li>
+</ul>
+<h2 id="add_member/3-examples" class="section-heading">
+  <a href="#add_member/3-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">add_member</span><span class="p" data-group-id="0383999041-1">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="n">user</span><span class="p" data-group-id="0383999041-1">)</span><span class="w">
+</span><span class="p" data-group-id="0383999041-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0383999041-3">%</span><span class="nc" data-group-id="0383999041-3">EntityMember</span><span class="p" data-group-id="0383999041-3">{</span><span class="p" data-group-id="0383999041-3">}</span><span class="p" data-group-id="0383999041-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">add_member</span><span class="p" data-group-id="0383999041-4">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="n">invalid_user</span><span class="p" data-group-id="0383999041-4">)</span><span class="w">
+</span><span class="p" data-group-id="0383999041-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0383999041-6">%</span><span class="nc" data-group-id="0383999041-6">Ecto.Changeset</span><span class="p" data-group-id="0383999041-6">{</span><span class="p" data-group-id="0383999041-6">}</span><span class="p" data-group-id="0383999041-5">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="belongs_to?/2">
+  <div class="detail-header">
+    <a href="#belongs_to?/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">belongs_to?(entity, user)</h1>
+      <div class="specs">
+          <pre>belongs_to?(<a href="#t:entity/0">entity</a>(), <a href="Cashtrail.Users.User.html#t:t/0">Cashtrail.Users.User.t</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Returns a <code class="inline">boolean</code> that says if the entity belongs to the user.</p>
+<h2 id="belongs_to?/2-expected-arguments" class="section-heading">
+  <a href="#belongs_to?/2-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>user - The <code class="inline">%Cashtrail.Users.User{}</code> to be deleted.
+</li>
+</ul>
+<h2 id="belongs_to?/2-examples" class="section-heading">
+  <a href="#belongs_to?/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">belongs_to?</span><span class="p" data-group-id="3009855935-1">(</span><span class="p" data-group-id="3009855935-2">%</span><span class="nc" data-group-id="3009855935-2">Entity</span><span class="p" data-group-id="3009855935-2">{</span><span class="ss">owner_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;aaa&quot;</span><span class="p" data-group-id="3009855935-2">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3009855935-3">%</span><span class="nc" data-group-id="3009855935-3">User</span><span class="p" data-group-id="3009855935-3">{</span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;aaa&quot;</span><span class="p" data-group-id="3009855935-3">}</span><span class="p" data-group-id="3009855935-1">)</span><span class="w">
+</span><span class="no">true</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">belongs_to?</span><span class="p" data-group-id="3009855935-4">(</span><span class="p" data-group-id="3009855935-5">%</span><span class="nc" data-group-id="3009855935-5">Entity</span><span class="p" data-group-id="3009855935-5">{</span><span class="ss">owner_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;bbb&quot;</span><span class="p" data-group-id="3009855935-5">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3009855935-6">%</span><span class="nc" data-group-id="3009855935-6">User</span><span class="p" data-group-id="3009855935-6">{</span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;aaa&quot;</span><span class="p" data-group-id="3009855935-6">}</span><span class="p" data-group-id="3009855935-4">)</span><span class="w">
+</span><span class="no">false</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="change_entity/1">
+  <div class="detail-header">
+    <a href="#change_entity/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">change_entity(entity)</h1>
+      <div class="specs">
+          <pre>change_entity(<a href="#t:entity/0">entity</a>()) :: <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Changeset.html#t:t/1">Ecto.Changeset.t</a>(<a href="#t:entity/0">entity</a>())</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Returns an <code class="inline">%Ecto.Changeset{}</code> for tracking entity changes.</p>
+<h2 id="change_entity/1-expected-arguments" class="section-heading">
+  <a href="#change_entity/1-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>entity - The <code class="inline">%Cashtrail.Entities.Entity{}</code> to be tracked.
+</li>
+</ul>
+<h2 id="change_entity/1-examples" class="section-heading">
+  <a href="#change_entity/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">change_entity</span><span class="p" data-group-id="9028343028-1">(</span><span class="n">entity</span><span class="p" data-group-id="9028343028-1">)</span><span class="w">
+</span><span class="p" data-group-id="9028343028-2">%</span><span class="nc" data-group-id="9028343028-2">Ecto.Changeset</span><span class="p" data-group-id="9028343028-2">{</span><span class="ss">source</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="9028343028-3">%</span><span class="nc" data-group-id="9028343028-3">Entity</span><span class="p" data-group-id="9028343028-3">{</span><span class="p" data-group-id="9028343028-3">}</span><span class="p" data-group-id="9028343028-2">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="change_member/1">
+  <div class="detail-header">
+    <a href="#change_member/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">change_member(entity_member)</h1>
+      <div class="specs">
+          <pre>change_member(<a href="#t:entity_member/0">entity_member</a>()) :: <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Changeset.html#t:t/1">Ecto.Changeset.t</a>(<a href="#t:entity_member/0">entity_member</a>())</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Returns an <code class="inline">%Ecto.Changeset{}</code> for tracking entity_member changes.</p>
+<h2 id="change_member/1-expected-arguments" class="section-heading">
+  <a href="#change_member/1-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>entity_member - The <code class="inline">%Cashtrail.Entities.EntityMember{}</code> to be tracked.
+</li>
+</ul>
+<h2 id="change_member/1-examples" class="section-heading">
+  <a href="#change_member/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">change_member</span><span class="p" data-group-id="4607833842-1">(</span><span class="n">entity_member</span><span class="p" data-group-id="4607833842-1">)</span><span class="w">
+</span><span class="p" data-group-id="4607833842-2">%</span><span class="nc" data-group-id="4607833842-2">Ecto.Changeset</span><span class="p" data-group-id="4607833842-2">{</span><span class="ss">source</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="4607833842-3">%</span><span class="nc" data-group-id="4607833842-3">EntityMember</span><span class="p" data-group-id="4607833842-3">{</span><span class="p" data-group-id="4607833842-3">}</span><span class="p" data-group-id="4607833842-2">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="create_entity/3">
+    <span id="create_entity/2"></span>
+  <div class="detail-header">
+    <a href="#create_entity/3" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">create_entity(user, attrs, create_tenants \\ true)</h1>
+      <div class="specs">
+          <pre>create_entity(<a href="Cashtrail.Users.User.html#t:t/0">Cashtrail.Users.User.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()) ::
+  {:ok, <a href="#t:entity/0">entity</a>()} | {:error, <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Changeset.html#t:t/1">Ecto.Changeset.t</a>(<a href="#t:entity/0">entity</a>())}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Creates an entity.</p>
+<h2 id="create_entity/3-expected-arguments" class="section-heading">
+  <a href="#create_entity/3-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li><p>params - A <code class="inline">map</code> with the params of the entity to be created:</p>
+<ul>
+<li><code class="inline">:name</code> (required) - A <code class="inline">string</code> with the name or description of the entity.
+</li>
+<li><code class="inline">:type</code> - A <code class="inline">string</code> with the type of the entity. It can be <code class="inline">&quot;personal&quot;</code>,
+<code class="inline">&quot;company&quot;</code> or <code class="inline">&quot;other&quot;</code>. Defaults to <code class="inline">&quot;personal&quot;</code>.
+</li>
+<li><code class="inline">:owner_id</code> - A <code class="inline">string</code> that references to the <a href="Cashtrail.Users.User.html"><code class="inline">Cashtrail.Users.User</code></a> that
+is the owner of the entity.
+</li>
+</ul>
+</li>
+</ul>
+<p>See <a href="Cashtrail.Entities.Entity.html"><code class="inline">Cashtrail.Entities.Entity</code></a> to have more detailed info about the fields.</p>
+<h2 id="create_entity/3-returns" class="section-heading">
+  <a href="#create_entity/3-returns" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Returns
+</h2>
+
+<ul>
+<li><code class="inline">{:ok, %Cashtrail.Entities.Entity{}}</code> in case of success.
+</li>
+<li><code class="inline">{:error, %Ecto.Changeset{}}</code> in case of error.
+</li>
+</ul>
+<h2 id="create_entity/3-examples" class="section-heading">
+  <a href="#create_entity/3-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">create_entity</span><span class="p" data-group-id="9324690856-1">(</span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9324690856-2">%{</span><span class="ss">field</span><span class="p">:</span><span class="w"> </span><span class="n">value</span><span class="p" data-group-id="9324690856-2">}</span><span class="p" data-group-id="9324690856-1">)</span><span class="w">
+</span><span class="p" data-group-id="9324690856-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9324690856-4">%</span><span class="nc" data-group-id="9324690856-4">Entity</span><span class="p" data-group-id="9324690856-4">{</span><span class="p" data-group-id="9324690856-4">}</span><span class="p" data-group-id="9324690856-3">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">create_entity</span><span class="p" data-group-id="9324690856-5">(</span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9324690856-6">%{</span><span class="ss">field</span><span class="p">:</span><span class="w"> </span><span class="n">bad_value</span><span class="p" data-group-id="9324690856-6">}</span><span class="p" data-group-id="9324690856-5">)</span><span class="w">
+</span><span class="p" data-group-id="9324690856-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9324690856-8">%</span><span class="nc" data-group-id="9324690856-8">Ecto.Changeset</span><span class="p" data-group-id="9324690856-8">{</span><span class="p" data-group-id="9324690856-8">}</span><span class="p" data-group-id="9324690856-7">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="create_member/2">
+  <div class="detail-header">
+    <a href="#create_member/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">create_member(entity, attrs)</h1>
+      <div class="specs">
+          <pre>create_member(<a href="#t:entity/0">entity</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
+  {:ok, <a href="#t:entity_member/0">entity_member</a>()} | {:error, <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Changeset.html#t:t/1">Ecto.Changeset.t</a>(<a href="#t:entity_member/0">entity_member</a>())}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Creates an entity_member for the entity.</p>
+<h2 id="create_member/2-expected-arguments" class="section-heading">
+  <a href="#create_member/2-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>entity - The <code class="inline">%Cashtrail.Entities.Entity{}</code> that the member will be created.
+</li>
+<li><p>params - A <code class="inline">map</code> with the params of the user to be created:</p>
+<ul>
+<li><code class="inline">:permission</code> (required) - a <code class="inline">string</code> with the permission that will be given
+to the member. It can be: <code class="inline">&quot;read&quot;</code>, <code class="inline">&quot;write&quot;</code> or <code class="inline">&quot;admin&quot;</code>.
+</li>
+<li><code class="inline">:user_id</code> - A <code class="inline">string</code> with a reference to one <a href="Cashtrail.Users.User.html"><code class="inline">Cashtrail.Users.User</code></a> to
+be added as a member to the entity.
+</li>
+<li><code class="inline">:user</code> - A <code class="inline">map</code> of the <a href="Cashtrail.Users.User.html"><code class="inline">Cashtrail.Users.User</code></a> that should be created as a
+member of the entity. See <a href="Cashtrail.Users.html#create_user/1"><code class="inline">Cashtrail.Users.create_user/1</code></a> docs to know more
+about the accepted params.
+</li>
+</ul>
+</li>
+</ul>
+<p>See <a href="Cashtrail.Entities.EntityMember.html"><code class="inline">Cashtrail.Entities.EntityMember</code></a> to have more detailed info about the fields.</p>
+<h2 id="create_member/2-returns" class="section-heading">
+  <a href="#create_member/2-returns" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Returns
+</h2>
+
+<ul>
+<li><code class="inline">{:ok, %Cashtrail.Entities.EntityMember{}}</code> in case of success.
+</li>
+<li><code class="inline">{:error, %Ecto.Changeset{}}</code> in case of error.
+</li>
+</ul>
+<h2 id="create_member/2-examples" class="section-heading">
+  <a href="#create_member/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">create_member</span><span class="p" data-group-id="9778756128-1">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9778756128-2">%{</span><span class="ss">field</span><span class="p">:</span><span class="w"> </span><span class="n">value</span><span class="p" data-group-id="9778756128-2">}</span><span class="p" data-group-id="9778756128-1">)</span><span class="w">
+</span><span class="p" data-group-id="9778756128-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9778756128-4">%</span><span class="nc" data-group-id="9778756128-4">EntityMember</span><span class="p" data-group-id="9778756128-4">{</span><span class="p" data-group-id="9778756128-4">}</span><span class="p" data-group-id="9778756128-3">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">create_member</span><span class="p" data-group-id="9778756128-5">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9778756128-6">%{</span><span class="ss">field</span><span class="p">:</span><span class="w"> </span><span class="n">bad_value</span><span class="p" data-group-id="9778756128-6">}</span><span class="p" data-group-id="9778756128-5">)</span><span class="w">
+</span><span class="p" data-group-id="9778756128-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9778756128-8">%</span><span class="nc" data-group-id="9778756128-8">Ecto.Changeset</span><span class="p" data-group-id="9778756128-8">{</span><span class="p" data-group-id="9778756128-8">}</span><span class="p" data-group-id="9778756128-7">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="delete_entity/2">
+    <span id="delete_entity/1"></span>
+  <div class="detail-header">
+    <a href="#delete_entity/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">delete_entity(entity, drop_tenants \\ true)</h1>
+  </div>
+  <section class="docstring">
+<p>Deletes an entity.</p>
+<h2 id="delete_entity/2-expected-arguments" class="section-heading">
+  <a href="#delete_entity/2-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>entity - The <code class="inline">%Cashtrail.Entities.Entity{}</code> to be deleted.
+</li>
+</ul>
+<h2 id="delete_entity/2-returns" class="section-heading">
+  <a href="#delete_entity/2-returns" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Returns
+</h2>
+
+<ul>
+<li><code class="inline">{:ok, %Cashtrail.Entities.Entity{}}</code> in case of success.
+</li>
+<li><code class="inline">{:error, %Ecto.Changeset{}}</code> in case of error.
+</li>
+</ul>
+<h2 id="delete_entity/2-examples" class="section-heading">
+  <a href="#delete_entity/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">delete_entity</span><span class="p" data-group-id="1319620055-1">(</span><span class="n">entity</span><span class="p" data-group-id="1319620055-1">)</span><span class="w">
+</span><span class="p" data-group-id="1319620055-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1319620055-3">%</span><span class="nc" data-group-id="1319620055-3">Entity</span><span class="p" data-group-id="1319620055-3">{</span><span class="p" data-group-id="1319620055-3">}</span><span class="p" data-group-id="1319620055-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">delete_entity</span><span class="p" data-group-id="1319620055-4">(</span><span class="n">entity</span><span class="p" data-group-id="1319620055-4">)</span><span class="w">
+</span><span class="p" data-group-id="1319620055-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1319620055-6">%</span><span class="nc" data-group-id="1319620055-6">Ecto.Changeset</span><span class="p" data-group-id="1319620055-6">{</span><span class="p" data-group-id="1319620055-6">}</span><span class="p" data-group-id="1319620055-5">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="get_entity!/1">
+  <div class="detail-header">
+    <a href="#get_entity!/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">get_entity!(id)</h1>
+      <div class="specs">
+          <pre>get_entity!(<a href="https://hexdocs.pm/ecto/3.4.3/Ecto.UUID.html#t:t/0">Ecto.UUID.t</a>()) :: <a href="#t:entity/0">entity</a>()</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Gets a single entity.</p>
+<p>Raises <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.NoResultsError.html"><code class="inline">Ecto.NoResultsError</code></a> if the Entity does not exist.</p>
+<p>See <a href="Cashtrail.Entities.Entity.html"><code class="inline">Cashtrail.Entities.Entity</code></a> to have more detailed info about the returned
+struct.</p>
+<h2 id="get_entity!/1-expected-arguments" class="section-heading">
+  <a href="#get_entity!/1-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>id - A <code class="inline">string</code> that is the unique id of the entity to be found.
+</li>
+</ul>
+<h2 id="get_entity!/1-examples" class="section-heading">
+  <a href="#get_entity!/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">get_entity!</span><span class="p" data-group-id="2220453791-1">(</span><span class="mi">123</span><span class="p" data-group-id="2220453791-1">)</span><span class="w">
+</span><span class="p" data-group-id="2220453791-2">%</span><span class="nc" data-group-id="2220453791-2">Entity</span><span class="p" data-group-id="2220453791-2">{</span><span class="p" data-group-id="2220453791-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">get_entity!</span><span class="p" data-group-id="2220453791-3">(</span><span class="mi">456</span><span class="p" data-group-id="2220453791-3">)</span><span class="w">
+</span><span class="gt">** (Ecto.NoResultsError)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="get_member_permission/2">
+  <div class="detail-header">
+    <a href="#get_member_permission/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">get_member_permission(entity, user)</h1>
+      <div class="specs">
+          <pre>get_member_permission(<a href="#t:entity/0">entity</a>(), <a href="Cashtrail.Users.User.html#t:t/0">Cashtrail.Users.User.t</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Returns the member permission as an atom or :unauthorized if the member is not
+found. If the user is the owner, return permission as :admin.</p>
+<h2 id="get_member_permission/2-expected-arguments" class="section-heading">
+  <a href="#get_member_permission/2-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>entity - The <code class="inline">%Cashtrail.Entities.Entity{}</code> that the member belongs.
+</li>
+<li>user - The <code class="inline">%Cashtrail.Users.User{}</code> to know the permission.
+</li>
+</ul>
+<h2 id="get_member_permission/2-examples" class="section-heading">
+  <a href="#get_member_permission/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">get_member_permission</span><span class="p" data-group-id="1297695217-1">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="n">user</span><span class="p" data-group-id="1297695217-1">)</span><span class="w">
+</span><span class="ss">:admin</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">get_member_permission</span><span class="p" data-group-id="1297695217-2">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="n">another_user</span><span class="p" data-group-id="1297695217-2">)</span><span class="w">
+</span><span class="ss">:unauthorized</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="list_entities/1">
+    <span id="list_entities/0"></span>
+  <div class="detail-header">
+    <a href="#list_entities/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">list_entities(options \\ [])</h1>
+      <div class="specs">
+          <pre>list_entities(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()) :: <a href="https://hexdocs.pm/cashtrail/0.4.0/Cashtrail.Paginator.Page.html#t:t/1">Cashtrail.Paginator.Page.t</a>(<a href="#t:entity/0">entity</a>())</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Returns a <code class="inline">%Cashtrail.Paginator.Page{}</code> struct with a list of entities in the
+<code class="inline">:entries</code> field.</p>
+<h2 id="list_entities/1-expected-arguments" class="section-heading">
+  <a href="#list_entities/1-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected arguments
+</h2>
+
+<ul>
+<li><p>options - A <code class="inline">keyword</code> list of the following options:</p>
+<ul>
+<li><p><code class="inline">:filter</code> =&gt; filters by following attributes:</p>
+<ul>
+<li><code class="inline">:type</code> or <code class="inline">&quot;type&quot;</code>
+</li>
+<li><code class="inline">:status</code> or <code class="inline">&quot;status&quot;</code>
+</li>
+</ul>
+</li>
+<li><code class="inline">:search</code> =&gt; search entities by <code class="inline">:name</code>.
+</li>
+<li>See <a href="Cashtrail.Paginator.html#paginate/2"><code class="inline">Cashtrail.Paginator.paginate/2</code></a> to see paginations options.
+</li>
+</ul>
+</li>
+</ul>
+<p>See <a href="Cashtrail.Entities.Entity.html"><code class="inline">Cashtrail.Entities.Entity</code></a> to have more detailed info about the fields to
+be filtered or searched.</p>
+<h2 id="list_entities/1-examples" class="section-heading">
+  <a href="#list_entities/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">list_entities</span><span class="p" data-group-id="4596941479-1">(</span><span class="p" data-group-id="4596941479-1">)</span><span class="w">
+</span><span class="p" data-group-id="4596941479-2">%</span><span class="nc" data-group-id="4596941479-2">Cashtrail.Paginator.Page</span><span class="p" data-group-id="4596941479-2">{</span><span class="ss">entries</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="4596941479-3">[</span><span class="p" data-group-id="4596941479-4">%</span><span class="nc" data-group-id="4596941479-4">Entity</span><span class="p" data-group-id="4596941479-4">{</span><span class="p" data-group-id="4596941479-4">}</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="4596941479-3">]</span><span class="p" data-group-id="4596941479-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">list_entities</span><span class="p" data-group-id="4596941479-5">(</span><span class="ss">filter</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="4596941479-6">%{</span><span class="ss">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;company&quot;</span><span class="p" data-group-id="4596941479-6">}</span><span class="p" data-group-id="4596941479-5">)</span><span class="w">
+</span><span class="p" data-group-id="4596941479-7">%</span><span class="nc" data-group-id="4596941479-7">Cashtrail.Paginator.Page</span><span class="p" data-group-id="4596941479-7">{</span><span class="ss">entries</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="4596941479-8">[</span><span class="p" data-group-id="4596941479-9">%</span><span class="nc" data-group-id="4596941479-9">Entity</span><span class="p" data-group-id="4596941479-9">{</span><span class="ss">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;company&quot;</span><span class="p" data-group-id="4596941479-9">}</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="4596941479-8">]</span><span class="p" data-group-id="4596941479-7">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">list_entities</span><span class="p" data-group-id="4596941479-10">(</span><span class="ss">search</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my&quot;</span><span class="p" data-group-id="4596941479-10">)</span><span class="w">
+</span><span class="p" data-group-id="4596941479-11">%</span><span class="nc" data-group-id="4596941479-11">Cashtrail.Paginator.Page</span><span class="p" data-group-id="4596941479-11">{</span><span class="ss">entries</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="4596941479-12">[</span><span class="p" data-group-id="4596941479-13">%</span><span class="nc" data-group-id="4596941479-13">Entity</span><span class="p" data-group-id="4596941479-13">{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;My company&quot;</span><span class="p" data-group-id="4596941479-13">}</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="4596941479-12">]</span><span class="p" data-group-id="4596941479-11">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="list_entities_from/2">
+    <span id="list_entities_from/1"></span>
+  <div class="detail-header">
+    <a href="#list_entities_from/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">list_entities_from(user, params \\ [])</h1>
+      <div class="specs">
+          <pre>list_entities_from(<a href="Cashtrail.Users.User.html#t:t/0">Cashtrail.Users.User.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()) ::
+  <a href="https://hexdocs.pm/cashtrail/0.4.0/Cashtrail.Paginator.Page.html#t:t/1">Cashtrail.Paginator.Page.t</a>(<a href="#t:entity/0">entity</a>())</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Returns a <code class="inline">%Cashtrail.Paginator.Page{}</code> struct with a list of entities in the
+<code class="inline">:entries</code> field from the given user.</p>
+<h2 id="list_entities_from/2-expected-arguments" class="section-heading">
+  <a href="#list_entities_from/2-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected arguments
+</h2>
+
+<ul>
+<li>user - A <code class="inline">%Cashtrail.Users.User{}</code> that owns or is member of the entity.
+</li>
+<li><p>options - A <code class="inline">keyword</code> list of the following options:</p>
+<ul>
+<li><p><code class="inline">:filter</code> =&gt; filters by following attributes:</p>
+<ul>
+<li><code class="inline">:type</code> or <code class="inline">&quot;type&quot;</code>
+</li>
+<li><code class="inline">:status</code> or <code class="inline">&quot;status&quot;</code>
+</li>
+</ul>
+</li>
+<li><code class="inline">:search</code> =&gt; search entities by <code class="inline">:name</code>.
+</li>
+<li>See <a href="Cashtrail.Paginator.html#paginate/2"><code class="inline">Cashtrail.Paginator.paginate/2</code></a> to see paginations options.
+</li>
+</ul>
+</li>
+</ul>
+<p>See <a href="Cashtrail.Entities.Entity.html"><code class="inline">Cashtrail.Entities.Entity</code></a> to have more detailed info about the fields to
+be filtered or searched.</p>
+<h2 id="list_entities_from/2-examples" class="section-heading">
+  <a href="#list_entities_from/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">list_entities_from</span><span class="p" data-group-id="3007723170-1">(</span><span class="n">owner</span><span class="p" data-group-id="3007723170-1">)</span><span class="w">
+</span><span class="p" data-group-id="3007723170-2">%</span><span class="nc" data-group-id="3007723170-2">Cashtrail.Paginator.Page</span><span class="p" data-group-id="3007723170-2">{</span><span class="ss">entries</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3007723170-3">[</span><span class="p" data-group-id="3007723170-4">%</span><span class="nc" data-group-id="3007723170-4">Entity</span><span class="p" data-group-id="3007723170-4">{</span><span class="p" data-group-id="3007723170-4">}</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="3007723170-3">]</span><span class="p" data-group-id="3007723170-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">list_entities_from</span><span class="p" data-group-id="3007723170-5">(</span><span class="n">member</span><span class="p" data-group-id="3007723170-5">)</span><span class="w">
+</span><span class="p" data-group-id="3007723170-6">%</span><span class="nc" data-group-id="3007723170-6">Cashtrail.Paginator.Page</span><span class="p" data-group-id="3007723170-6">{</span><span class="ss">entries</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3007723170-7">[</span><span class="p" data-group-id="3007723170-8">%</span><span class="nc" data-group-id="3007723170-8">Entity</span><span class="p" data-group-id="3007723170-8">{</span><span class="p" data-group-id="3007723170-8">}</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="3007723170-7">]</span><span class="p" data-group-id="3007723170-6">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="list_members/2">
+    <span id="list_members/1"></span>
+  <div class="detail-header">
+    <a href="#list_members/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">list_members(entity, options \\ [])</h1>
+      <div class="specs">
+          <pre>list_members(<a href="#t:entity/0">entity</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>() | <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
+  <a href="https://hexdocs.pm/cashtrail/0.4.0/Cashtrail.Paginator.Page.html#t:t/1">Cashtrail.Paginator.Page.t</a>(<a href="#t:entity_member/0">entity_member</a>())</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Returns a <code class="inline">%Cashtrail.Paginator.Page{}</code> struct with a list of entity_members in the
+<code class="inline">:entries</code> field.</p>
+<h2 id="list_members/2-expected-arguments" class="section-heading">
+  <a href="#list_members/2-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected arguments
+</h2>
+
+<ul>
+<li><p>options - A <code class="inline">keyword</code> list of the following options:</p>
+<ul>
+<li><p><code class="inline">:filter</code> =&gt; filters by following attributes:</p>
+<ul>
+<li><code class="inline">:permission</code> or <code class="inline">&quot;permission&quot;</code>
+</li>
+</ul>
+</li>
+<li><code class="inline">:search</code> =&gt; search users by its user <code class="inline">:name</code>.
+</li>
+<li>See <a href="Cashtrail.Paginator.html#paginate/2"><code class="inline">Cashtrail.Paginator.paginate/2</code></a> to see paginations options.
+</li>
+</ul>
+</li>
+</ul>
+<p>See <a href="Cashtrail.Entities.EntityMember.html"><code class="inline">Cashtrail.Entities.EntityMember</code></a> to have more detailed info about the
+fields to be filtered or searched.</p>
+<h2 id="list_members/2-examples" class="section-heading">
+  <a href="#list_members/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">list_entity_members</span><span class="p" data-group-id="0089626710-1">(</span><span class="n">entity</span><span class="p" data-group-id="0089626710-1">)</span><span class="w">
+</span><span class="p" data-group-id="0089626710-2">%</span><span class="nc" data-group-id="0089626710-2">Cashtrail.Paginator.Page</span><span class="p" data-group-id="0089626710-2">{</span><span class="ss">entries</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0089626710-3">[</span><span class="p" data-group-id="0089626710-4">%</span><span class="nc" data-group-id="0089626710-4">EntityMember</span><span class="p" data-group-id="0089626710-4">{</span><span class="p" data-group-id="0089626710-4">}</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="0089626710-3">]</span><span class="p" data-group-id="0089626710-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">list_entity_members</span><span class="p" data-group-id="0089626710-5">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="ss">filter</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0089626710-6">%{</span><span class="ss">permission</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;read&quot;</span><span class="p" data-group-id="0089626710-6">}</span><span class="p" data-group-id="0089626710-5">)</span><span class="w">
+</span><span class="p" data-group-id="0089626710-7">%</span><span class="nc" data-group-id="0089626710-7">Cashtrail.Paginator.Page</span><span class="p" data-group-id="0089626710-7">{</span><span class="ss">entries</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0089626710-8">[</span><span class="p" data-group-id="0089626710-9">%</span><span class="nc" data-group-id="0089626710-9">EntityMember</span><span class="p" data-group-id="0089626710-9">{</span><span class="ss">permission</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;read&quot;</span><span class="p" data-group-id="0089626710-9">}</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="0089626710-8">]</span><span class="p" data-group-id="0089626710-7">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">list_entity_members</span><span class="p" data-group-id="0089626710-10">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="ss">search</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my&quot;</span><span class="p" data-group-id="0089626710-10">)</span><span class="w">
+</span><span class="p" data-group-id="0089626710-11">%</span><span class="nc" data-group-id="0089626710-11">Cashtrail.Paginator.Page</span><span class="p" data-group-id="0089626710-11">{</span><span class="ss">entries</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0089626710-12">[</span><span class="p" data-group-id="0089626710-13">%</span><span class="nc" data-group-id="0089626710-13">EntityMember</span><span class="p" data-group-id="0089626710-13">{</span><span class="ss">user</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0089626710-14">%</span><span class="nc" data-group-id="0089626710-14">User</span><span class="p" data-group-id="0089626710-14">{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;My Name&quot;</span><span class="p" data-group-id="0089626710-14">}</span><span class="p" data-group-id="0089626710-13">}</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="0089626710-12">]</span><span class="p" data-group-id="0089626710-11">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="member_from_user/2">
+  <div class="detail-header">
+    <a href="#member_from_user/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">member_from_user(entity, user)</h1>
+      <div class="specs">
+          <pre>member_from_user(<a href="#t:entity/0">entity</a>(), <a href="Cashtrail.Users.User.html#t:t/0">Cashtrail.Users.User.t</a>()) :: <a href="#t:entity_member/0">entity_member</a>() | nil</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Returns the <code class="inline">%Cashtrail.Entities.EntityMember{}</code> from the user and the entity. Returns
+<code class="inline">nil</code> if the user is not a member of the entity or if it is the owner.</p>
+<h2 id="member_from_user/2-expected-arguments" class="section-heading">
+  <a href="#member_from_user/2-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>entity - The <code class="inline">%Cashtrail.Entities.Entity{}</code> that the member belongs.
+</li>
+<li>user - The <code class="inline">%Cashtrail.Users.User{}</code> to have the entity_member found.
+</li>
+</ul>
+<h2 id="member_from_user/2-examples" class="section-heading">
+  <a href="#member_from_user/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">member_from_user</span><span class="p" data-group-id="1137121251-1">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="n">user</span><span class="p" data-group-id="1137121251-1">)</span><span class="w">
+</span><span class="p" data-group-id="1137121251-2">%</span><span class="nc" data-group-id="1137121251-2">EntityMember</span><span class="p" data-group-id="1137121251-2">{</span><span class="p" data-group-id="1137121251-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">member_from_user</span><span class="p" data-group-id="1137121251-3">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="n">owner</span><span class="p" data-group-id="1137121251-3">)</span><span class="w">
+</span><span class="no">nil</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">member_from_user</span><span class="p" data-group-id="1137121251-4">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="n">non_member_user</span><span class="p" data-group-id="1137121251-4">)</span><span class="w">
+</span><span class="no">nil</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="remove_member/2">
+  <div class="detail-header">
+    <a href="#remove_member/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">remove_member(entity, user)</h1>
+      <div class="specs">
+          <pre>remove_member(<a href="#t:entity/0">entity</a>(), <a href="Cashtrail.Users.User.html#t:t/0">Cashtrail.Users.User.t</a>()) ::
+  {:ok, <a href="#t:entity_member/0">entity_member</a>()} | {:error, :not_found}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Removes an entity_member from the entity.</p>
+<h2 id="remove_member/2-expected-arguments" class="section-heading">
+  <a href="#remove_member/2-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>entity - The <code class="inline">%Cashtrail.Entities.Entity{}</code> that the member will be removed.
+</li>
+<li>user - A <code class="inline">%Cashtrail.Users.User{}</code> that is the user to be removed as a member
+of the given entity.
+</li>
+</ul>
+<h2 id="remove_member/2-returns" class="section-heading">
+  <a href="#remove_member/2-returns" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Returns
+</h2>
+
+<ul>
+<li><code class="inline">{:ok, %Cashtrail.Entities.EntityMember{}}</code> in case of success.
+</li>
+<li><code class="inline">{:error, :not_found}</code> if the user is not a member of the entity.
+</li>
+</ul>
+<h2 id="remove_member/2-examples" class="section-heading">
+  <a href="#remove_member/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">delete_entity_member</span><span class="p" data-group-id="1757046143-1">(</span><span class="n">entity_member</span><span class="p" data-group-id="1757046143-1">)</span><span class="w">
+</span><span class="p" data-group-id="1757046143-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1757046143-3">%</span><span class="nc" data-group-id="1757046143-3">EntityMember</span><span class="p" data-group-id="1757046143-3">{</span><span class="p" data-group-id="1757046143-3">}</span><span class="p" data-group-id="1757046143-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">delete_entity_member</span><span class="p" data-group-id="1757046143-4">(</span><span class="n">entity_member</span><span class="p" data-group-id="1757046143-4">)</span><span class="w">
+</span><span class="p" data-group-id="1757046143-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:not_found</span><span class="p" data-group-id="1757046143-5">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="transfer_ownership/3">
+  <div class="detail-header">
+    <a href="#transfer_ownership/3" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">transfer_ownership(entity, from_user, to_user)</h1>
+      <div class="specs">
+          <pre>transfer_ownership(<a href="#t:entity/0">entity</a>(), <a href="Cashtrail.Users.User.html#t:t/0">Cashtrail.Users.User.t</a>(), <a href="Cashtrail.Users.User.html#t:t/0">Cashtrail.Users.User.t</a>()) ::
+  {:error, :unauthorized} | {:ok, <a href="#t:entity/0">entity</a>()}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Transfer the ownership of an entity from one user to another.</p>
+<h2 id="transfer_ownership/3-expected-arguments" class="section-heading">
+  <a href="#transfer_ownership/3-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>entity - The <code class="inline">%Cashtrail.Entities.Entity{}</code> to be transfered.
+</li>
+<li>from_user - The <code class="inline">%Cashtrail.Users.User{}</code> to be transfered.
+</li>
+<li>to_user - The <code class="inline">%Cashtrail.Users.User{}</code> to be transfered.
+</li>
+</ul>
+<h2 id="transfer_ownership/3-returns" class="section-heading">
+  <a href="#transfer_ownership/3-returns" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Returns
+</h2>
+
+<ul>
+<li><code class="inline">{:ok, %Entity{}}</code> if the entity is transfered successfully.
+</li>
+<li><code class="inline">{:error, changeset}</code> if to_user is invalid or it&#39;s not found.
+</li>
+<li><code class="inline">{:error, :unauthorized}</code> if from_user is not the owner of the entity.
+</li>
+</ul>
+<h2 id="transfer_ownership/3-effects" class="section-heading">
+  <a href="#transfer_ownership/3-effects" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Effects
+</h2>
+
+<p>After the ownership transference, the previous owner (<code class="inline">from_user</code>) becomes a
+member of the entity with <code class="inline">:admin</code> permissions.</p>
+<h2 id="transfer_ownership/3-examples" class="section-heading">
+  <a href="#transfer_ownership/3-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">transfer_ownership</span><span class="p" data-group-id="5684829789-1">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="n">from_user</span><span class="p">,</span><span class="w"> </span><span class="n">to_user</span><span class="p" data-group-id="5684829789-1">)</span><span class="w">
+</span><span class="p" data-group-id="5684829789-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5684829789-3">%</span><span class="nc" data-group-id="5684829789-3">Entity</span><span class="p" data-group-id="5684829789-3">{</span><span class="p" data-group-id="5684829789-3">}</span><span class="p" data-group-id="5684829789-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">transfer_ownership</span><span class="p" data-group-id="5684829789-4">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="n">from_user</span><span class="p">,</span><span class="w"> </span><span class="n">to_user</span><span class="p" data-group-id="5684829789-4">)</span><span class="w">
+</span><span class="p" data-group-id="5684829789-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5684829789-6">%</span><span class="nc" data-group-id="5684829789-6">Ecto.Changeset</span><span class="p" data-group-id="5684829789-6">{</span><span class="ss">source</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="5684829789-7">%</span><span class="nc" data-group-id="5684829789-7">Entity</span><span class="p" data-group-id="5684829789-7">{</span><span class="p" data-group-id="5684829789-7">}</span><span class="p" data-group-id="5684829789-6">}</span><span class="p" data-group-id="5684829789-5">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">transfer_ownership</span><span class="p" data-group-id="5684829789-8">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="n">invalid_from</span><span class="p">,</span><span class="w"> </span><span class="n">to_user</span><span class="p" data-group-id="5684829789-8">)</span><span class="w">
+</span><span class="p" data-group-id="5684829789-9">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:unauthorized</span><span class="p" data-group-id="5684829789-9">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="update_entity/2">
+  <div class="detail-header">
+    <a href="#update_entity/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">update_entity(entity, attrs)</h1>
+      <div class="specs">
+          <pre>update_entity(<a href="#t:entity/0">entity</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
+  {:ok, <a href="#t:entity/0">entity</a>()} | {:error, <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Changeset.html#t:t/1">Ecto.Changeset.t</a>(<a href="#t:entity/0">entity</a>())}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Updates an entity.</p>
+<h2 id="update_entity/2-expected-arguments" class="section-heading">
+  <a href="#update_entity/2-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>user - The <code class="inline">%Cashtrail.Entities.Entity{}</code> to be updated.
+</li>
+<li>params - A <code class="inline">map</code> with the field of the entity to be updated. See
+<a href="#create_entity/2"><code class="inline">create_entity/2</code></a> to know about the params that can be given.
+</li>
+</ul>
+<h2 id="update_entity/2-returns" class="section-heading">
+  <a href="#update_entity/2-returns" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Returns
+</h2>
+
+<ul>
+<li><code class="inline">{:ok, %Cashtrail.Entities.Entity{}}</code> in case of success.
+</li>
+<li><code class="inline">{:error, %Ecto.Changeset{}}</code> in case of error.
+</li>
+</ul>
+<h2 id="update_entity/2-examples" class="section-heading">
+  <a href="#update_entity/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">update_entity</span><span class="p" data-group-id="2394140358-1">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2394140358-2">%{</span><span class="ss">field</span><span class="p">:</span><span class="w"> </span><span class="n">new_value</span><span class="p" data-group-id="2394140358-2">}</span><span class="p" data-group-id="2394140358-1">)</span><span class="w">
+</span><span class="p" data-group-id="2394140358-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2394140358-4">%</span><span class="nc" data-group-id="2394140358-4">Entity</span><span class="p" data-group-id="2394140358-4">{</span><span class="p" data-group-id="2394140358-4">}</span><span class="p" data-group-id="2394140358-3">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">update_entity</span><span class="p" data-group-id="2394140358-5">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2394140358-6">%{</span><span class="ss">field</span><span class="p">:</span><span class="w"> </span><span class="n">bad_value</span><span class="p" data-group-id="2394140358-6">}</span><span class="p" data-group-id="2394140358-5">)</span><span class="w">
+</span><span class="p" data-group-id="2394140358-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2394140358-8">%</span><span class="nc" data-group-id="2394140358-8">Ecto.Changeset</span><span class="p" data-group-id="2394140358-8">{</span><span class="p" data-group-id="2394140358-8">}</span><span class="p" data-group-id="2394140358-7">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="update_member_permission/3">
+  <div class="detail-header">
+    <a href="#update_member_permission/3" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">update_member_permission(entity, user, permission)</h1>
+      <div class="specs">
+          <pre>update_member_permission(<a href="#t:entity/0">entity</a>(), <a href="Cashtrail.Users.User.html#t:t/0">Cashtrail.Users.User.t</a>(), <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) ::
+  {:ok, <a href="#t:entity_member/0">entity_member</a>()}
+  | {:error, <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Changeset.html#t:t/1">Ecto.Changeset.t</a>(<a href="#t:entity_member/0">entity_member</a>()) | :invalid | :not_found}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Updates the member&#39;s permission.</p>
+<p>If the user is not a member or is the owner, it returns an error. The owner will always
+have admin permission.</p>
+<h2 id="update_member_permission/3-expected-arguments" class="section-heading">
+  <a href="#update_member_permission/3-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>entity - The <code class="inline">%Cashtrail.Entities.Entity{}</code> that the member will have the
+permissions updated.
+</li>
+<li>user - A <code class="inline">%Cashtrail.Users.User{}</code> that is the user to have the permissions
+updated.
+</li>
+<li>permission - A <code class="inline">string</code> with the permission that will be given
+to the member. It can be: <code class="inline">&quot;read&quot;</code>, <code class="inline">&quot;write&quot;</code> or <code class="inline">&quot;admin&quot;</code>.
+</li>
+</ul>
+<h2 id="update_member_permission/3-returns" class="section-heading">
+  <a href="#update_member_permission/3-returns" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Returns
+</h2>
+
+<ul>
+<li><code class="inline">{:ok, %Cashtrail.Entities.EntityMember{}}</code> in case of success.
+</li>
+<li><code class="inline">{:error, :invalid}</code> if the user is the owner of the entity.
+</li>
+<li><code class="inline">{:error, :not_found}</code> if the user is not a member of the entity.
+</li>
+<li><code class="inline">{:error, %Ecto.Changeset{}}</code> in case of validation errors.
+</li>
+</ul>
+<h2 id="update_member_permission/3-examples" class="section-heading">
+  <a href="#update_member_permission/3-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">update_member_permission</span><span class="p" data-group-id="4192271667-1">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;write&quot;</span><span class="p" data-group-id="4192271667-1">)</span><span class="w">
+</span><span class="p" data-group-id="4192271667-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="4192271667-3">%</span><span class="nc" data-group-id="4192271667-3">EntityMember</span><span class="p" data-group-id="4192271667-3">{</span><span class="p" data-group-id="4192271667-3">}</span><span class="p" data-group-id="4192271667-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">update_member_permission</span><span class="p" data-group-id="4192271667-4">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;invalid&quot;</span><span class="p" data-group-id="4192271667-4">)</span><span class="w">
+</span><span class="p" data-group-id="4192271667-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="4192271667-6">%</span><span class="nc" data-group-id="4192271667-6">Ecto.Changeset</span><span class="p" data-group-id="4192271667-6">{</span><span class="p" data-group-id="4192271667-6">}</span><span class="p" data-group-id="4192271667-5">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">update_member_permission</span><span class="p" data-group-id="4192271667-7">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="n">owner</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;write&quot;</span><span class="p" data-group-id="4192271667-7">)</span><span class="w">
+</span><span class="p" data-group-id="4192271667-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:invalid</span><span class="p" data-group-id="4192271667-8">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">update_member_permission</span><span class="p" data-group-id="4192271667-9">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="n">another_user</span><span class="p">,</span><span class="w"> </span><span class="err">&quot;</span><span class="n">write</span><span class="p" data-group-id="4192271667-9">)</span><span class="w">
+</span><span class="p" data-group-id="4192271667-10">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:not_found</span><span class="p" data-group-id="4192271667-10">}</span></code></pre>
+  </section>
+</section>
+          </div>
+        </section>
+      <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.21.3),
+          </span>
+          <span class="line">
+            designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
+        </p>
+        <p>
+          <button class="line footer-button display-shortcuts-help">
+            Display keyboard shortcuts
+          </button>
+          <button class="line footer-button night-mode-toggle">
+            Toggle night mode
+          </button>
+          <button class="line footer-button display-quick-switch">
+            Go to a HexDocs package
+          </button>
+          <button class="line footer-button tooltips-toggle">
+            <span class="tooltips-option-disable">Disable tooltips</span>
+            <span class="tooltips-option-enable">Enable tooltips</span>
+          </button>
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+  </body>
+</html>

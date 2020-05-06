@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.21.3">
+    <meta name="project" content=" vdev">
+    <title>Cashtrail.Entities.Entity —  vdev</title>
+    <link rel="stylesheet" href="dist/elixir-0ab8a6a80ebaaa287431.css" />
+    <script src="dist/sidebar_items-d8f8a4813e.js"></script>
+      <script src="docs_config.js"></script>
+    <script async src="dist/app-a225d03098e64fef431a.js"></script>
+  </head>
+  <body data-type="modules">
+    <script>try { if(localStorage.getItem('night-mode') === 'true') document.body.className += ' night-mode'; } catch (e) { }</script>
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle">
+  <span class="icon-menu" title="Collapse/expand sidebar"></span>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button">
+      <span class="icon-search" aria-hidden="true"></span>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button">
+      <span class="icon-cross" title="Cancel search"></span>
+    </button>
+    <label class="search-label">
+      <input name="q" type="text" id="search-list" class="search-input" placeholder="Search..." aria-label="Search" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectDetails">
+      <a href="api-reference.html" class="sidebar-projectName">
+      </a>
+      <h2 class="sidebar-projectVersion">
+        vdev
+      </h2>
+    </div>
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+      <h1>
+        <small class="app-vsn"> vdev</small>
+Cashtrail.Entities.Entity      </h1>
+
+
+        <section id="moduledoc">
+<p>This is an <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Schema.html"><code class="inline">Ecto.Schema</code></a> struct that represents an entity of the application.</p>
+<p><strong>Warning</strong>: Don&#39;t use the functions of this module. Only use this module as a
+struct to represent a contact. The functions of this module are internal and
+can change over time. Only manipulate contacts through the <a href="Cashtrail.Entities.html"><code class="inline">Cashtrail.Entities</code></a>
+that is the context for this.</p>
+<h2 id="module-definition" class="section-heading">
+  <a href="#module-definition" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Definition
+</h2>
+
+<p>According to <a href="https://www.accountingtools.com/articles/what-is-an-entity.html">AccountingTools</a>,
+an entity is something that maintains a separate and distinct existence. In
+business, an entity is an organizational structure that has its own goals,
+processes, and records.</p>
+<p>According to <a href="https://www.techopedia.com/definition/14360/entity-computing">Techopedia</a>,
+an entity is any singular, identifiable, and separate object. It refers to individuals,
+organizations, systems, bits of data, or even distinct system components that are
+considered significant in and of themselves.</p>
+<p>So, in this application, an entity is a division of what the data belongs to. This
+can be an individual, an organization, a department, a church, a group of friends,
+and whatever you want to control the finances.</p>
+<p>So you can separate your finances from the company finances. Or have
+Personal Finances and Family finances separated. Or control the finances of some
+organization by departments.</p>
+<p>Each user can create their entity to control their finances and includes other
+users as a member of the entity. You can see <a href="Cashtrail.Entities.EntityMember.html"><code class="inline">Cashtrail.Entities.EntityMember</code></a>
+to know more about this.</p>
+<h2 id="module-multitenancy" class="section-heading">
+  <a href="#module-multitenancy" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Multitenancy
+</h2>
+
+<p>Each Entity generates a tenant through new schemas in the Postgres database.
+This happens to separate logically the data of entities. This can help to maintain
+data integrity and security, as this makes it harder to one data from one entity
+flow to another entity, like one account trying to relate a  currency from another
+entity, for instance.</p>
+<p>In this way, I can maintain the database design inside tenants simpler,
+so I can perform the queries without having to relate two fields, and I can
+ensure the consistency without recurring to things like composite foreign keys.</p>
+<p>The downside is that this methodology doesn&#39;t scale well if you want to use this
+application as a &quot;big and scalable SASS application&quot;. This happens because if I
+change the database through new migrations, I have to migrate all schemas, and this
+takes time. This is the same for backups.</p>
+<p>As the purpose of this application is not to be scalable, but to be safe and
+flexible, this is not a problem. I recommend you maintain the number of entities
+at a maximum of 100 per instance of this application.</p>
+<p>You can manually generate or drop tenants using the <a href="Cashtrail.Entities.Tenants.html"><code class="inline">Cashtrail.Entities.Tenants</code></a>
+module.</p>
+<h2 id="module-fields" class="section-heading">
+  <a href="#module-fields" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Fields
+</h2>
+
+<ul>
+<li><code class="inline">:id</code> - The unique id of the entity.
+</li>
+<li><code class="inline">:name</code> - The name (or description) of the entity.
+</li>
+<li><p><code class="inline">:status</code> - The status of the entity, that can be:</p>
+<ul>
+<li><code class="inline">&quot;active&quot;</code> - if the entity is used;
+</li>
+<li><code class="inline">&quot;archived&quot;</code> -if the entity is no longer used, but you want to keep the
+data history.
+</li>
+</ul>
+</li>
+<li><p><code class="inline">:type</code> - The type of the entity, that can be:</p>
+<ul>
+<li><code class="inline">&quot;personal&quot;</code> - if the entity is used for personal reasons, like control
+your finances, your family finances, personal project finances,
+or something like that.
+</li>
+<li><code class="inline">&quot;company&quot;</code> - if the entity is used to control the finances of a company.
+</li>
+<li><code class="inline">&quot;other&quot;</code> - if the entity is used to control the finances for other reasons.
+</li>
+<li><code class="inline">:owner</code> - The owner of the entity. The owner is usually who has created the
+entity and has all permissions over an entity, including to delete it. If a
+user is deleted, all his entities are excluded too. The ownership of an entity
+can be transferred as well.
+</li>
+</ul>
+</li>
+<li><code class="inline">:owner_id</code> - The id of the owner of the entity.
+</li>
+<li><code class="inline">:members</code> - The members of the entity. You can read more about this at
+<a href="Cashtrail.Entities.EntityMember.html"><code class="inline">Cashtrail.Entities.EntityMember</code></a>.
+</li>
+<li><code class="inline">:inserted_at</code> - When the entity was inserted at the first time.
+</li>
+<li><code class="inline">:updated_at</code> - When the entity was updated at the last time.
+</li>
+</ul>
+<p>See <a href="Cashtrail.Entities.html"><code class="inline">Cashtrail.Entities</code></a> to know how to list, get, insert, update, delete, and
+transfer the ownership of an entity.</p>
+        </section>
+
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Summary
+          </h1>
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:t/0">t()</a>
+  </div>
+</div>
+  </div>
+        </section>
+
+        <section id="types" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Types          </h1>
+          <div class="types-list">
+<section class="detail" id="t:t/0">
+  <div class="detail-header">
+    <a href="#t:t/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">t()</h1>
+      <div class="specs">
+          <pre>t() :: %Cashtrail.Entities.Entity{
+  __meta__: <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Schema.Metadata.html#t:t/0">Ecto.Schema.Metadata.t</a>(),
+  id: <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.UUID.html#t:t/0">Ecto.UUID.t</a>() | nil,
+  inserted_at: <a href="https://hexdocs.pm/elixir/NaiveDateTime.html#t:t/0">NaiveDateTime.t</a>() | nil,
+  members:
+    <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Association.NotLoaded.html#t:t/0">Ecto.Association.NotLoaded.t</a>() | [<a href="Cashtrail.Entities.EntityMember.html#t:t/0">Cashtrail.Entities.EntityMember.t</a>()],
+  name: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
+  owner: <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Association.NotLoaded.html#t:t/0">Ecto.Association.NotLoaded.t</a>() | <a href="Cashtrail.Users.User.html#t:t/0">Cashtrail.Users.User.t</a>() | nil,
+  owner_id: <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.UUID.html#t:t/0">Ecto.UUID.t</a>() | nil,
+  status: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
+  type: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
+  updated_at: <a href="https://hexdocs.pm/elixir/NaiveDateTime.html#t:t/0">NaiveDateTime.t</a>() | nil
+}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+  </section>
+</section>
+          </div>
+        </section>
+      <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.21.3),
+          </span>
+          <span class="line">
+            designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
+        </p>
+        <p>
+          <button class="line footer-button display-shortcuts-help">
+            Display keyboard shortcuts
+          </button>
+          <button class="line footer-button night-mode-toggle">
+            Toggle night mode
+          </button>
+          <button class="line footer-button display-quick-switch">
+            Go to a HexDocs package
+          </button>
+          <button class="line footer-button tooltips-toggle">
+            <span class="tooltips-option-disable">Disable tooltips</span>
+            <span class="tooltips-option-enable">Enable tooltips</span>
+          </button>
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+  </body>
+</html>

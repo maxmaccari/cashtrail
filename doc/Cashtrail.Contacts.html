@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.21.3">
+    <meta name="project" content=" vdev">
+    <title>Cashtrail.Contacts —  vdev</title>
+    <link rel="stylesheet" href="dist/elixir-0ab8a6a80ebaaa287431.css" />
+    <script src="dist/sidebar_items-d8f8a4813e.js"></script>
+      <script src="docs_config.js"></script>
+    <script async src="dist/app-a225d03098e64fef431a.js"></script>
+  </head>
+  <body data-type="modules">
+    <script>try { if(localStorage.getItem('night-mode') === 'true') document.body.className += ' night-mode'; } catch (e) { }</script>
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle">
+  <span class="icon-menu" title="Collapse/expand sidebar"></span>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button">
+      <span class="icon-search" aria-hidden="true"></span>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button">
+      <span class="icon-cross" title="Cancel search"></span>
+    </button>
+    <label class="search-label">
+      <input name="q" type="text" id="search-list" class="search-input" placeholder="Search..." aria-label="Search" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectDetails">
+      <a href="api-reference.html" class="sidebar-projectName">
+      </a>
+      <h2 class="sidebar-projectVersion">
+        vdev
+      </h2>
+    </div>
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+      <h1>
+        <small class="app-vsn"> vdev</small>
+Cashtrail.Contacts      </h1>
+
+
+        <section id="moduledoc">
+<p>The Contacts context manages the contact data of one entity.</p>
+<p>See <a href="Cashtrail.Contacts.Contact.html"><code class="inline">Cashtrail.Contacts.Contact</code></a> to have more info about what contacts mean in
+the application.</p>
+        </section>
+
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Summary
+          </h1>
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:category/0">category()</a>
+  </div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:contact/0">contact()</a>
+  </div>
+</div>
+  </div>
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#change_category/1">change_category(category)</a>
+  </div>
+    <div class="summary-synopsis"><p>Returns an <code class="inline">%Ecto.Changeset{}</code> for tracking contact category changes.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#change_contact/1">change_contact(contact)</a>
+  </div>
+    <div class="summary-synopsis"><p>Returns an <code class="inline">%Ecto.Changeset{}</code> for tracking contact changes.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#create_category/2">create_category(entity, attrs)</a>
+  </div>
+    <div class="summary-synopsis"><p>Creates a contact category.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#create_contact/2">create_contact(entity, attrs)</a>
+  </div>
+    <div class="summary-synopsis"><p>Creates a contact.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#delete_category/1">delete_category(category)</a>
+  </div>
+    <div class="summary-synopsis"><p>Deletes a contact category.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#delete_contact/1">delete_contact(contact)</a>
+  </div>
+    <div class="summary-synopsis"><p>Deletes a contact.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#get_category!/2">get_category!(entity, id)</a>
+  </div>
+    <div class="summary-synopsis"><p>Gets a single contact category.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#get_contact!/2">get_contact!(entity, id)</a>
+  </div>
+    <div class="summary-synopsis"><p>Gets a single contact.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#list_categories/2">list_categories(entity, options \\ [])</a>
+  </div>
+    <div class="summary-synopsis"><p>Returns a <code class="inline">%Cashtrail.Paginator.Page{}</code> struct with a list of contact categories
+in the <code class="inline">:entries</code> field.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#list_contacts/2">list_contacts(entity, options \\ [])</a>
+  </div>
+    <div class="summary-synopsis"><p>Returns a <code class="inline">%Cashtrail.Paginator.Page{}</code> struct with a list of contacts in the
+<code class="inline">:entries</code> field.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#update_category/2">update_category(category, attrs)</a>
+  </div>
+    <div class="summary-synopsis"><p>Updates a contact category.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#update_contact/2">update_contact(contact, attrs)</a>
+  </div>
+    <div class="summary-synopsis"><p>Updates a contact.</p></div>
+</div>
+  </div>
+        </section>
+
+        <section id="types" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Types          </h1>
+          <div class="types-list">
+<section class="detail" id="t:category/0">
+  <div class="detail-header">
+    <a href="#t:category/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">category()</h1>
+      <div class="specs">
+          <pre>category() :: <a href="Cashtrail.Contacts.Category.html#t:t/0">Cashtrail.Contacts.Category.t</a>()</pre>
+      </div>
+  </div>
+  <section class="docstring">
+  </section>
+</section>
+<section class="detail" id="t:contact/0">
+  <div class="detail-header">
+    <a href="#t:contact/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">contact()</h1>
+      <div class="specs">
+          <pre>contact() :: <a href="Cashtrail.Contacts.Contact.html#t:t/0">Cashtrail.Contacts.Contact.t</a>()</pre>
+      </div>
+  </div>
+  <section class="docstring">
+  </section>
+</section>
+          </div>
+        </section>
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Functions          </h1>
+          <div class="functions-list">
+<section class="detail" id="change_category/1">
+  <div class="detail-header">
+    <a href="#change_category/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">change_category(category)</h1>
+      <div class="specs">
+          <pre>change_category(<a href="#t:category/0">category</a>()) :: <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Changeset.html#t:t/1">Ecto.Changeset.t</a>(<a href="#t:category/0">category</a>())</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Returns an <code class="inline">%Ecto.Changeset{}</code> for tracking contact category changes.</p>
+<h2 id="change_category/1-expected-arguments" class="section-heading">
+  <a href="#change_category/1-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>category - The <code class="inline">%Cashtrail.Contacts.Category{}</code> to be tracked.
+</li>
+</ul>
+<h2 id="change_category/1-examples" class="section-heading">
+  <a href="#change_category/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">change_category</span><span class="p" data-group-id="2519676504-1">(</span><span class="n">category</span><span class="p" data-group-id="2519676504-1">)</span><span class="w">
+</span><span class="p" data-group-id="2519676504-2">%</span><span class="nc" data-group-id="2519676504-2">Ecto.Changeset</span><span class="p" data-group-id="2519676504-2">{</span><span class="ss">source</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="2519676504-3">%</span><span class="nc" data-group-id="2519676504-3">Category</span><span class="p" data-group-id="2519676504-3">{</span><span class="p" data-group-id="2519676504-3">}</span><span class="p" data-group-id="2519676504-2">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="change_contact/1">
+  <div class="detail-header">
+    <a href="#change_contact/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">change_contact(contact)</h1>
+      <div class="specs">
+          <pre>change_contact(<a href="#t:contact/0">contact</a>()) :: <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Changeset.html#t:t/1">Ecto.Changeset.t</a>(<a href="#t:contact/0">contact</a>())</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Returns an <code class="inline">%Ecto.Changeset{}</code> for tracking contact changes.</p>
+<h2 id="change_contact/1-expected-arguments" class="section-heading">
+  <a href="#change_contact/1-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>category - The <code class="inline">%Cashtrail.Contacts.Contact{}</code> to be tracked.
+</li>
+</ul>
+<h2 id="change_contact/1-examples" class="section-heading">
+  <a href="#change_contact/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">change_contact</span><span class="p" data-group-id="6242742629-1">(</span><span class="n">contact</span><span class="p" data-group-id="6242742629-1">)</span><span class="w">
+</span><span class="p" data-group-id="6242742629-2">%</span><span class="nc" data-group-id="6242742629-2">Ecto.Changeset</span><span class="p" data-group-id="6242742629-2">{</span><span class="ss">source</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="6242742629-3">%</span><span class="nc" data-group-id="6242742629-3">Contact</span><span class="p" data-group-id="6242742629-3">{</span><span class="p" data-group-id="6242742629-3">}</span><span class="p" data-group-id="6242742629-2">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="create_category/2">
+  <div class="detail-header">
+    <a href="#create_category/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">create_category(entity, attrs)</h1>
+      <div class="specs">
+          <pre>create_category(<a href="Cashtrail.Entities.Entity.html#t:t/0">Cashtrail.Entities.Entity.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
+  {:ok, <a href="#t:category/0">category</a>()} | {:error, <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Changeset.html#t:t/1">Ecto.Changeset.t</a>(<a href="#t:category/0">category</a>())}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Creates a contact category.</p>
+<h2 id="create_category/2-expected-arguments" class="section-heading">
+  <a href="#create_category/2-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>entity - The <code class="inline">%Cashtrail.Entities.Entity{}</code> that the category references.
+</li>
+<li><p>params - A <code class="inline">map</code> with the params of the category to be created:</p>
+<ul>
+<li><code class="inline">:description</code> (required) - A <code class="inline">string</code> with the description of the category.
+</li>
+</ul>
+</li>
+</ul>
+<p>See <a href="Cashtrail.Contacts.Category.html"><code class="inline">Cashtrail.Contacts.Category</code></a> to have more detailed info about
+the fields.</p>
+<h2 id="create_category/2-returns" class="section-heading">
+  <a href="#create_category/2-returns" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Returns
+</h2>
+
+<ul>
+<li><code class="inline">{:ok, %Cashtrail.Contacts.Category{}}</code> in case of success.
+</li>
+<li><code class="inline">{:error, %Ecto.Changeset{}}</code> in case of error.
+</li>
+</ul>
+<h2 id="create_category/2-examples" class="section-heading">
+  <a href="#create_category/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">create_category</span><span class="p" data-group-id="9279779454-1">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9279779454-2">%{</span><span class="ss">field</span><span class="p">:</span><span class="w"> </span><span class="n">value</span><span class="p" data-group-id="9279779454-2">}</span><span class="p" data-group-id="9279779454-1">)</span><span class="w">
+</span><span class="p" data-group-id="9279779454-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9279779454-4">%</span><span class="nc" data-group-id="9279779454-4">Category</span><span class="p" data-group-id="9279779454-4">{</span><span class="p" data-group-id="9279779454-4">}</span><span class="p" data-group-id="9279779454-3">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">create_category</span><span class="p" data-group-id="9279779454-5">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9279779454-6">%{</span><span class="ss">field</span><span class="p">:</span><span class="w"> </span><span class="n">bad_value</span><span class="p" data-group-id="9279779454-6">}</span><span class="p" data-group-id="9279779454-5">)</span><span class="w">
+</span><span class="p" data-group-id="9279779454-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9279779454-8">%</span><span class="nc" data-group-id="9279779454-8">Ecto.Changeset</span><span class="p" data-group-id="9279779454-8">{</span><span class="p" data-group-id="9279779454-8">}</span><span class="p" data-group-id="9279779454-7">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="create_contact/2">
+  <div class="detail-header">
+    <a href="#create_contact/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">create_contact(entity, attrs)</h1>
+      <div class="specs">
+          <pre>create_contact(<a href="Cashtrail.Entities.Entity.html#t:t/0">Cashtrail.Entities.Entity.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
+  {:ok, <a href="#t:contact/0">contact</a>()} | {:error, <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Changeset.html#t:t/1">Ecto.Changeset.t</a>(<a href="#t:contact/0">contact</a>())}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Creates a contact.</p>
+<h2 id="create_contact/2-expected-arguments" class="section-heading">
+  <a href="#create_contact/2-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>entity - The <code class="inline">%Cashtrail.Entities.Entity{}</code> that the category references.
+</li>
+<li><p>params - A <code class="inline">map</code> with the params of the contact to be created:</p>
+<ul>
+<li><code class="inline">:name</code> (required) - A <code class="inline">string</code> with the description of the contact.
+</li>
+<li><code class="inline">:type</code> (required) - A <code class="inline">string</code> with the type of contact. It can receive
+&quot;company&quot; or &quot;person&quot;. Defaults to <code class="inline">&quot;company&quot;</code>.
+</li>
+<li><code class="inline">:legal_name</code> - A <code class="inline">string</code> that is the legal name of the contact.
+</li>
+<li><code class="inline">:customer</code> - A <code class="inline">boolean</code> that says if the contact is a customer. Defaults to false.
+</li>
+<li><code class="inline">:supplier</code> - A <code class="inline">boolean</code> that says if the contact is a supplier. Defaults to false.
+</li>
+<li><code class="inline">:phone</code> - A <code class="inline">string</code> with the contact phone number. It can receive any phone number format.
+</li>
+<li><code class="inline">:email</code> - A <code class="inline">string</code> with the contact email.
+</li>
+<li><code class="inline">:category_id</code> - A <code class="inline">string</code> with the id of <a href="Cashtrail.Contacts.Category.html"><code class="inline">Cashtrail.Contacts.Category</code></a> that
+relates to the contact.
+</li>
+<li><p><code class="inline">:address</code> - A <code class="inline">map</code> containing the address of the contact:</p>
+<ul>
+<li><code class="inline">:street</code> - A <code class="inline">string</code> with the street of the contact address.
+</li>
+<li><code class="inline">:number</code> - A <code class="inline">string</code> with the number of the contact address.
+</li>
+<li><code class="inline">:complement</code> - A <code class="inline">string</code> with the complement of the contact address.
+</li>
+<li><code class="inline">:district</code> - A <code class="inline">string</code> with the district of the contact address.
+</li>
+<li><code class="inline">:city</code> - A <code class="inline">string</code> with the city of the contact address.
+</li>
+<li><code class="inline">:state</code> - A <code class="inline">string</code> with the state or province of the contact address.
+</li>
+<li><code class="inline">:country</code> - A <code class="inline">string</code> with the country of the contact address.
+</li>
+<li><code class="inline">:zip</code> - A <code class="inline">string</code> with the zip code of the contact address. You can
+insert whatever the zip code of any country you want.
+</li>
+<li><code class="inline">:line_1</code> - A <code class="inline">string</code> with line 1 of the contact address, if preferred.
+</li>
+<li><code class="inline">:line_2</code> - A <code class="inline">string</code> with line 2 of the contact address, if preferred.
+</li>
+</ul>
+</li>
+</ul>
+<p>See <a href="Cashtrail.Contacts.Contact.html"><code class="inline">Cashtrail.Contacts.Contact</code></a> to have more detailed info about the fields
+of the contact, and <a href="Cashtrail.Contacts.Address.html"><code class="inline">Cashtrail.Contacts.Address</code></a> to have more detailed info
+about the field of the address.</p>
+</li>
+</ul>
+<h2 id="create_contact/2-returns" class="section-heading">
+  <a href="#create_contact/2-returns" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Returns
+</h2>
+
+<ul>
+<li><code class="inline">{:ok, %Cashtrail.Contacts.Contact{}}</code> in case of success.
+</li>
+<li><code class="inline">{:error, %Ecto.Changeset{}}</code> in case of error.
+</li>
+</ul>
+<h2 id="create_contact/2-examples" class="section-heading">
+  <a href="#create_contact/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">create_contact</span><span class="p" data-group-id="3494932598-1">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3494932598-2">%{</span><span class="ss">field</span><span class="p">:</span><span class="w"> </span><span class="n">value</span><span class="p" data-group-id="3494932598-2">}</span><span class="p" data-group-id="3494932598-1">)</span><span class="w">
+</span><span class="p" data-group-id="3494932598-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3494932598-4">%</span><span class="nc" data-group-id="3494932598-4">Contact</span><span class="p" data-group-id="3494932598-4">{</span><span class="p" data-group-id="3494932598-4">}</span><span class="p" data-group-id="3494932598-3">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">create_contact</span><span class="p" data-group-id="3494932598-5">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3494932598-6">%{</span><span class="ss">field</span><span class="p">:</span><span class="w"> </span><span class="n">bad_value</span><span class="p" data-group-id="3494932598-6">}</span><span class="p" data-group-id="3494932598-5">)</span><span class="w">
+</span><span class="p" data-group-id="3494932598-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3494932598-8">%</span><span class="nc" data-group-id="3494932598-8">Ecto.Changeset</span><span class="p" data-group-id="3494932598-8">{</span><span class="p" data-group-id="3494932598-8">}</span><span class="p" data-group-id="3494932598-7">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="delete_category/1">
+  <div class="detail-header">
+    <a href="#delete_category/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">delete_category(category)</h1>
+      <div class="specs">
+          <pre>delete_category(<a href="#t:category/0">category</a>()) ::
+  {:ok, <a href="#t:category/0">category</a>()} | {:error, <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Changeset.html#t:t/1">Ecto.Changeset.t</a>(<a href="#t:category/0">category</a>())}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Deletes a contact category.</p>
+<h2 id="delete_category/1-expected-arguments" class="section-heading">
+  <a href="#delete_category/1-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>category - The <code class="inline">%Cashtrail.Contacts.Category{}</code> to be deleted.
+</li>
+</ul>
+<h2 id="delete_category/1-returns" class="section-heading">
+  <a href="#delete_category/1-returns" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Returns
+</h2>
+
+<ul>
+<li><code class="inline">{:ok, %Cashtrail.Contacts.Category{}}</code> in case of success.
+</li>
+<li><code class="inline">{:error, %Ecto.Changeset{}}</code> in case of error.
+</li>
+</ul>
+<h2 id="delete_category/1-examples" class="section-heading">
+  <a href="#delete_category/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">delete_category</span><span class="p" data-group-id="6546784439-1">(</span><span class="n">category</span><span class="p" data-group-id="6546784439-1">)</span><span class="w">
+</span><span class="p" data-group-id="6546784439-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="6546784439-3">%</span><span class="nc" data-group-id="6546784439-3">Category</span><span class="p" data-group-id="6546784439-3">{</span><span class="p" data-group-id="6546784439-3">}</span><span class="p" data-group-id="6546784439-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">delete_category</span><span class="p" data-group-id="6546784439-4">(</span><span class="n">category</span><span class="p" data-group-id="6546784439-4">)</span><span class="w">
+</span><span class="p" data-group-id="6546784439-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="6546784439-6">%</span><span class="nc" data-group-id="6546784439-6">Ecto.Changeset</span><span class="p" data-group-id="6546784439-6">{</span><span class="p" data-group-id="6546784439-6">}</span><span class="p" data-group-id="6546784439-5">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="delete_contact/1">
+  <div class="detail-header">
+    <a href="#delete_contact/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">delete_contact(contact)</h1>
+      <div class="specs">
+          <pre>delete_contact(<a href="#t:contact/0">contact</a>()) ::
+  {:ok, <a href="#t:contact/0">contact</a>()} | {:error, <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Changeset.html#t:t/1">Ecto.Changeset.t</a>(<a href="#t:contact/0">contact</a>())}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Deletes a contact.</p>
+<h2 id="delete_contact/1-expected-arguments" class="section-heading">
+  <a href="#delete_contact/1-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>contact - The <code class="inline">%Cashtrail.Contacts.Contact{}</code> to be deleted.
+</li>
+</ul>
+<h2 id="delete_contact/1-returns" class="section-heading">
+  <a href="#delete_contact/1-returns" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Returns
+</h2>
+
+<ul>
+<li><code class="inline">{:ok, %Cashtrail.Contacts.Contact{}}</code> in case of success.
+</li>
+<li><code class="inline">{:error, %Ecto.Changeset{}}</code> in case of error.
+</li>
+</ul>
+<h2 id="delete_contact/1-examples" class="section-heading">
+  <a href="#delete_contact/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">delete_contact</span><span class="p" data-group-id="9568062971-1">(</span><span class="n">contact</span><span class="p" data-group-id="9568062971-1">)</span><span class="w">
+</span><span class="p" data-group-id="9568062971-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9568062971-3">%</span><span class="nc" data-group-id="9568062971-3">Contact</span><span class="p" data-group-id="9568062971-3">{</span><span class="p" data-group-id="9568062971-3">}</span><span class="p" data-group-id="9568062971-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">delete_contact</span><span class="p" data-group-id="9568062971-4">(</span><span class="n">contact</span><span class="p" data-group-id="9568062971-4">)</span><span class="w">
+</span><span class="p" data-group-id="9568062971-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9568062971-6">%</span><span class="nc" data-group-id="9568062971-6">Ecto.Changeset</span><span class="p" data-group-id="9568062971-6">{</span><span class="p" data-group-id="9568062971-6">}</span><span class="p" data-group-id="9568062971-5">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="get_category!/2">
+  <div class="detail-header">
+    <a href="#get_category!/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">get_category!(entity, id)</h1>
+      <div class="specs">
+          <pre>get_category!(<a href="Cashtrail.Entities.Entity.html#t:t/0">Cashtrail.Entities.Entity.t</a>(), <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.UUID.html#t:t/0">Ecto.UUID.t</a>() | <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) ::
+  <a href="#t:category/0">category</a>()</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Gets a single contact category.</p>
+<p>Raises <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.NoResultsError.html"><code class="inline">Ecto.NoResultsError</code></a> if the Category does not exist.</p>
+<p>See <a href="Cashtrail.Contacts.Category.html"><code class="inline">Cashtrail.Contacts.Category</code></a> to have more detailed info about the returned
+struct.</p>
+<h2 id="get_category!/2-expected-arguments" class="section-heading">
+  <a href="#get_category!/2-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>entity - The <code class="inline">%Cashtrail.Entities.Entity{}</code> that the category references.
+</li>
+<li>id - A <code class="inline">string</code> that is the unique id of the category to be found.
+</li>
+</ul>
+<h2 id="get_category!/2-examples" class="section-heading">
+  <a href="#get_category!/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">get_category!</span><span class="p" data-group-id="7630643829-1">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="mi">123</span><span class="p" data-group-id="7630643829-1">)</span><span class="w">
+</span><span class="p" data-group-id="7630643829-2">%</span><span class="nc" data-group-id="7630643829-2">Category</span><span class="p" data-group-id="7630643829-2">{</span><span class="p" data-group-id="7630643829-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">get_category!</span><span class="p" data-group-id="7630643829-3">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="mi">456</span><span class="p" data-group-id="7630643829-3">)</span><span class="w">
+</span><span class="gt">** (Ecto.NoResultsError)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="get_contact!/2">
+  <div class="detail-header">
+    <a href="#get_contact!/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">get_contact!(entity, id)</h1>
+      <div class="specs">
+          <pre>get_contact!(<a href="Cashtrail.Entities.Entity.html#t:t/0">Cashtrail.Entities.Entity.t</a>(), <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.UUID.html#t:t/0">Ecto.UUID.t</a>() | <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) ::
+  <a href="#t:contact/0">contact</a>()</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Gets a single contact.</p>
+<p>Raises <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.NoResultsError.html"><code class="inline">Ecto.NoResultsError</code></a> if the Contact does not exist.</p>
+<p>See <a href="Cashtrail.Contacts.Contact.html"><code class="inline">Cashtrail.Contacts.Contact</code></a> to have more detailed info about the returned
+struct.</p>
+<h2 id="get_contact!/2-expected-arguments" class="section-heading">
+  <a href="#get_contact!/2-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>entity - The <code class="inline">%Cashtrail.Entities.Entity{}</code> that the contact references.
+</li>
+<li>id - A <code class="inline">string</code> that is the unique id of the contact to be found.
+</li>
+</ul>
+<h2 id="get_contact!/2-examples" class="section-heading">
+  <a href="#get_contact!/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">get_contact!</span><span class="p" data-group-id="8745995700-1">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="mi">123</span><span class="p" data-group-id="8745995700-1">)</span><span class="w">
+</span><span class="p" data-group-id="8745995700-2">%</span><span class="nc" data-group-id="8745995700-2">Contact</span><span class="p" data-group-id="8745995700-2">{</span><span class="p" data-group-id="8745995700-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">get_contact!</span><span class="p" data-group-id="8745995700-3">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="mi">456</span><span class="p" data-group-id="8745995700-3">)</span><span class="w">
+</span><span class="gt">** (Ecto.NoResultsError)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="list_categories/2">
+    <span id="list_categories/1"></span>
+  <div class="detail-header">
+    <a href="#list_categories/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">list_categories(entity, options \\ [])</h1>
+  </div>
+  <section class="docstring">
+<p>Returns a <code class="inline">%Cashtrail.Paginator.Page{}</code> struct with a list of contact categories
+in the <code class="inline">:entries</code> field.</p>
+<h2 id="list_categories/2-expected-arguments" class="section-heading">
+  <a href="#list_categories/2-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected arguments
+</h2>
+
+<ul>
+<li>entity - The <code class="inline">%Cashtrail.Entities.Entity{}</code> that the category references.
+</li>
+<li><p>options - A <code class="inline">keyword</code> list of the following options:</p>
+<ul>
+<li><code class="inline">:search</code> - search categories by its <code class="inline">:description</code>.
+</li>
+<li>See <a href="Cashtrail.Paginator.html#paginate/2"><code class="inline">Cashtrail.Paginator.paginate/2</code></a> to know about the pagination options.
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="list_categories/2-examples" class="section-heading">
+  <a href="#list_categories/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">list_categories</span><span class="p" data-group-id="1578459849-1">(</span><span class="n">entity</span><span class="p" data-group-id="1578459849-1">)</span><span class="w">
+</span><span class="p" data-group-id="1578459849-2">%</span><span class="nc" data-group-id="1578459849-2">Cashtrail.Paginator</span><span class="p" data-group-id="1578459849-2">{</span><span class="ss">entries</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1578459849-3">[</span><span class="p" data-group-id="1578459849-4">%</span><span class="nc" data-group-id="1578459849-4">Contacts.Category</span><span class="p" data-group-id="1578459849-4">{</span><span class="p" data-group-id="1578459849-4">}</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="1578459849-3">]</span><span class="p" data-group-id="1578459849-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">list_categories</span><span class="p" data-group-id="1578459849-5">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="ss">search</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;My desc&quot;</span><span class="p" data-group-id="1578459849-5">)</span><span class="w">
+</span><span class="p" data-group-id="1578459849-6">%</span><span class="nc" data-group-id="1578459849-6">Cashtrail.Paginator</span><span class="p" data-group-id="1578459849-6">{</span><span class="ss">entries</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1578459849-7">[</span><span class="p" data-group-id="1578459849-8">%</span><span class="nc" data-group-id="1578459849-8">Contacts.Category</span><span class="p" data-group-id="1578459849-8">{</span><span class="ss">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;My Description&quot;</span><span class="p" data-group-id="1578459849-8">}</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="1578459849-7">]</span><span class="p" data-group-id="1578459849-6">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="list_contacts/2">
+    <span id="list_contacts/1"></span>
+  <div class="detail-header">
+    <a href="#list_contacts/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">list_contacts(entity, options \\ [])</h1>
+      <div class="specs">
+          <pre>list_contacts(<a href="Cashtrail.Entities.Entity.html#t:t/0">Cashtrail.Entities.Entity.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()) ::
+  <a href="https://hexdocs.pm/cashtrail/0.4.0/Cashtrail.Paginator.Page.html#t:t/1">Cashtrail.Paginator.Page.t</a>(<a href="#t:contact/0">contact</a>())</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Returns a <code class="inline">%Cashtrail.Paginator.Page{}</code> struct with a list of contacts in the
+<code class="inline">:entries</code> field.</p>
+<h2 id="list_contacts/2-expected-arguments" class="section-heading">
+  <a href="#list_contacts/2-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected arguments
+</h2>
+
+<ul>
+<li>entity - The <code class="inline">%Cashtrail.Entities.Entity{}</code> that the contact references.
+</li>
+<li><p>options - A <code class="inline">keyword</code> list of the following options:</p>
+<ul>
+<li><p><code class="inline">:filter</code> - filters by following attributes:</p>
+<ul>
+<li><code class="inline">:type</code> or <code class="inline">&quot;type&quot;</code>
+</li>
+<li><code class="inline">:customer</code> or <code class="inline">&quot;customer&quot;</code>
+</li>
+<li><code class="inline">:supplier</code> or <code class="inline">&quot;supplier&quot;</code>
+</li>
+<li><code class="inline">:category_id</code> or <code class="inline">&quot;category_id&quot;</code>
+</li>
+<li><code class="inline">:search</code> - search contacts by <code class="inline">:name</code> or <code class="inline">:legal_name</code>.
+</li>
+</ul>
+</li>
+<li>See <a href="Cashtrail.Paginator.html#paginate/2"><code class="inline">Cashtrail.Paginator.paginate/2</code></a> to know about the pagination options.
+</li>
+</ul>
+</li>
+</ul>
+<p>See <a href="Cashtrail.Contacts.Contact.html"><code class="inline">Cashtrail.Contacts.Contact</code></a> to have more detailed info about the fields to
+be filtered or searched.</p>
+<h2 id="list_contacts/2-examples" class="section-heading">
+  <a href="#list_contacts/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">list_contacts</span><span class="p" data-group-id="8753992478-1">(</span><span class="n">entity</span><span class="p" data-group-id="8753992478-1">)</span><span class="w">
+</span><span class="p" data-group-id="8753992478-2">%</span><span class="nc" data-group-id="8753992478-2">Cashtrail.Paginator</span><span class="p" data-group-id="8753992478-2">{</span><span class="ss">entries</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8753992478-3">[</span><span class="p" data-group-id="8753992478-4">%</span><span class="nc" data-group-id="8753992478-4">Contact</span><span class="p" data-group-id="8753992478-4">{</span><span class="p" data-group-id="8753992478-4">}</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="8753992478-3">]</span><span class="p" data-group-id="8753992478-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">list_contacts</span><span class="p" data-group-id="8753992478-5">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="ss">filter</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8753992478-6">%{</span><span class="ss">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;company&quot;</span><span class="p" data-group-id="8753992478-6">}</span><span class="p" data-group-id="8753992478-5">)</span><span class="w">
+</span><span class="p" data-group-id="8753992478-7">%</span><span class="nc" data-group-id="8753992478-7">Cashtrail.Paginator</span><span class="p" data-group-id="8753992478-7">{</span><span class="ss">entries</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8753992478-8">[</span><span class="p" data-group-id="8753992478-9">%</span><span class="nc" data-group-id="8753992478-9">Contact</span><span class="p" data-group-id="8753992478-9">{</span><span class="ss">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;company&quot;</span><span class="p" data-group-id="8753992478-9">}</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="8753992478-8">]</span><span class="p" data-group-id="8753992478-7">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">list_contacts</span><span class="p" data-group-id="8753992478-10">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="ss">search</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my&quot;</span><span class="p" data-group-id="8753992478-10">)</span><span class="w">
+</span><span class="p" data-group-id="8753992478-11">%</span><span class="nc" data-group-id="8753992478-11">Cashtrail.Paginator</span><span class="p" data-group-id="8753992478-11">{</span><span class="ss">entries</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8753992478-12">[</span><span class="p" data-group-id="8753992478-13">%</span><span class="nc" data-group-id="8753992478-13">Contact</span><span class="p" data-group-id="8753992478-13">{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;My name&quot;</span><span class="p" data-group-id="8753992478-13">}</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="8753992478-12">]</span><span class="p" data-group-id="8753992478-11">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="update_category/2">
+  <div class="detail-header">
+    <a href="#update_category/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">update_category(category, attrs)</h1>
+      <div class="specs">
+          <pre>update_category(<a href="#t:category/0">category</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
+  {:ok, <a href="#t:category/0">category</a>()} | {:error, <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Changeset.html#t:t/1">Ecto.Changeset.t</a>(<a href="#t:category/0">category</a>())}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Updates a contact category.</p>
+<h2 id="update_category/2-expected-arguments" class="section-heading">
+  <a href="#update_category/2-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>category - The <code class="inline">%Cashtrail.Contacts.Category{}</code> to be updated.
+</li>
+<li>params - A <code class="inline">map</code> with the field of the category to be updated. See
+<a href="#create_category/2"><code class="inline">create_category/2</code></a> to know about the params that can be given.
+</li>
+</ul>
+<h2 id="update_category/2-returns" class="section-heading">
+  <a href="#update_category/2-returns" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Returns
+</h2>
+
+<ul>
+<li><code class="inline">{:ok, %Cashtrail.Contacts.Category{}}</code> in case of success.
+</li>
+<li><code class="inline">{:error, %Ecto.Changeset{}}</code> in case of error.
+</li>
+</ul>
+<h2 id="update_category/2-examples" class="section-heading">
+  <a href="#update_category/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">update_category</span><span class="p" data-group-id="1036831240-1">(</span><span class="n">category</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1036831240-2">%{</span><span class="ss">field</span><span class="p">:</span><span class="w"> </span><span class="n">new_value</span><span class="p" data-group-id="1036831240-2">}</span><span class="p" data-group-id="1036831240-1">)</span><span class="w">
+</span><span class="p" data-group-id="1036831240-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1036831240-4">%</span><span class="nc" data-group-id="1036831240-4">Category</span><span class="p" data-group-id="1036831240-4">{</span><span class="p" data-group-id="1036831240-4">}</span><span class="p" data-group-id="1036831240-3">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">update_category</span><span class="p" data-group-id="1036831240-5">(</span><span class="n">category</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1036831240-6">%{</span><span class="ss">field</span><span class="p">:</span><span class="w"> </span><span class="n">bad_value</span><span class="p" data-group-id="1036831240-6">}</span><span class="p" data-group-id="1036831240-5">)</span><span class="w">
+</span><span class="p" data-group-id="1036831240-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1036831240-8">%</span><span class="nc" data-group-id="1036831240-8">Ecto.Changeset</span><span class="p" data-group-id="1036831240-8">{</span><span class="p" data-group-id="1036831240-8">}</span><span class="p" data-group-id="1036831240-7">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="update_contact/2">
+  <div class="detail-header">
+    <a href="#update_contact/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">update_contact(contact, attrs)</h1>
+      <div class="specs">
+          <pre>update_contact(<a href="#t:contact/0">contact</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
+  {:ok, <a href="#t:contact/0">contact</a>()} | {:error, <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Changeset.html#t:t/1">Ecto.Changeset.t</a>(<a href="#t:contact/0">contact</a>())}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+<p>Updates a contact.</p>
+<h2 id="update_contact/2-expected-arguments" class="section-heading">
+  <a href="#update_contact/2-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Expected Arguments
+</h2>
+
+<ul>
+<li>category - The <code class="inline">%Cashtrail.Contacts.Category{}</code> to be updated.
+</li>
+<li>params - A <code class="inline">map</code> with the field of the contact to be updated. See
+<a href="#create_contact/2"><code class="inline">create_contact/2</code></a> to know about the params that can be given.
+</li>
+</ul>
+<h2 id="update_contact/2-returns" class="section-heading">
+  <a href="#update_contact/2-returns" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Returns
+</h2>
+
+<ul>
+<li><code class="inline">{:ok, %Cashtrail.Contacts.Contact{}}</code> in case of success.
+</li>
+<li><code class="inline">{:error, %Ecto.Changeset{}}</code> in case of error.
+</li>
+</ul>
+<h2 id="update_contact/2-examples" class="section-heading">
+  <a href="#update_contact/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="n">update_contact</span><span class="p" data-group-id="3694830090-1">(</span><span class="n">contact</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3694830090-2">%{</span><span class="ss">field</span><span class="p">:</span><span class="w"> </span><span class="n">new_value</span><span class="p" data-group-id="3694830090-2">}</span><span class="p" data-group-id="3694830090-1">)</span><span class="w">
+</span><span class="p" data-group-id="3694830090-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3694830090-4">%</span><span class="nc" data-group-id="3694830090-4">Contact</span><span class="p" data-group-id="3694830090-4">{</span><span class="p" data-group-id="3694830090-4">}</span><span class="p" data-group-id="3694830090-3">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">update_contact</span><span class="p" data-group-id="3694830090-5">(</span><span class="n">contact</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3694830090-6">%{</span><span class="ss">field</span><span class="p">:</span><span class="w"> </span><span class="n">bad_value</span><span class="p" data-group-id="3694830090-6">}</span><span class="p" data-group-id="3694830090-5">)</span><span class="w">
+</span><span class="p" data-group-id="3694830090-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3694830090-8">%</span><span class="nc" data-group-id="3694830090-8">Ecto.Changeset</span><span class="p" data-group-id="3694830090-8">{</span><span class="p" data-group-id="3694830090-8">}</span><span class="p" data-group-id="3694830090-7">}</span></code></pre>
+  </section>
+</section>
+          </div>
+        </section>
+      <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.21.3),
+          </span>
+          <span class="line">
+            designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
+        </p>
+        <p>
+          <button class="line footer-button display-shortcuts-help">
+            Display keyboard shortcuts
+          </button>
+          <button class="line footer-button night-mode-toggle">
+            Toggle night mode
+          </button>
+          <button class="line footer-button display-quick-switch">
+            Go to a HexDocs package
+          </button>
+          <button class="line footer-button tooltips-toggle">
+            <span class="tooltips-option-disable">Disable tooltips</span>
+            <span class="tooltips-option-enable">Enable tooltips</span>
+          </button>
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+  </body>
+</html>

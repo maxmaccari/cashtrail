@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.21.3">
+    <meta name="project" content=" vdev">
+    <title>Cashtrail.Contacts.Contact —  vdev</title>
+    <link rel="stylesheet" href="dist/elixir-0ab8a6a80ebaaa287431.css" />
+    <script src="dist/sidebar_items-d8f8a4813e.js"></script>
+      <script src="docs_config.js"></script>
+    <script async src="dist/app-a225d03098e64fef431a.js"></script>
+  </head>
+  <body data-type="modules">
+    <script>try { if(localStorage.getItem('night-mode') === 'true') document.body.className += ' night-mode'; } catch (e) { }</script>
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle">
+  <span class="icon-menu" title="Collapse/expand sidebar"></span>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button">
+      <span class="icon-search" aria-hidden="true"></span>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button">
+      <span class="icon-cross" title="Cancel search"></span>
+    </button>
+    <label class="search-label">
+      <input name="q" type="text" id="search-list" class="search-input" placeholder="Search..." aria-label="Search" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectDetails">
+      <a href="api-reference.html" class="sidebar-projectName">
+      </a>
+      <h2 class="sidebar-projectVersion">
+        vdev
+      </h2>
+    </div>
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+      <h1>
+        <small class="app-vsn"> vdev</small>
+Cashtrail.Contacts.Contact      </h1>
+
+
+        <section id="moduledoc">
+<p>This is an <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Schema.html"><code class="inline">Ecto.Schema</code></a> struct that represents a contact of the entity.</p>
+<p><strong>Warning</strong>: Don&#39;t use the functions of this module. Only use this module as a
+struct to represent a contact. The functions of this module are internal and
+can change over time. Only manipulate contacts through the
+<a href="Cashtrail.Contacts.html"><code class="inline">Cashtrail.Contacts</code></a> that is the context for this.</p>
+<h2 id="module-definition" class="section-heading">
+  <a href="#module-definition" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Definition
+</h2>
+
+<p>According to the <a href="http://www.businessdictionary.com/definition/contact.html">BusinessDictionary.com</a>,
+this term can be used to describe reaching out to or being in touch with another
+person, business, or entity. So you can use this module to relate transactions to
+a person, business, or entity only to know who you received money from or to whom
+you paid some money, and contact them if necessary.</p>
+<h2 id="module-fields" class="section-heading">
+  <a href="#module-fields" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Fields
+</h2>
+
+<ul>
+<li><code class="inline">:id</code> - The unique id of the contact.
+</li>
+<li><code class="inline">:name</code> - This is the name that you refer to the contact. It can be the most know
+name of the contact, like the trade name of the company, or a nickname by which
+the person is well known.
+</li>
+<li><p><code class="inline">:type</code> - The type of contact. This can be:</p>
+<ul>
+<li><code class="inline">&quot;company&quot;</code> - Used if the contact is a company. This is the default value if
+no type is chosen
+</li>
+<li><code class="inline">&quot;person&quot;</code> - Used if the contact is an individual.
+</li>
+</ul>
+</li>
+<li><code class="inline">:legal_name</code> - This is the name of register in government agencies. This can
+be the registered name of people or the legal name of companies.
+</li>
+<li><code class="inline">:tax_id</code> - This is a number used by governments to as unique identifier of
+individuals, be a person, be a company.
+</li>
+<li><code class="inline">:customer</code> - Says if this contact is a customer. It can be used to filter data.
+</li>
+<li><code class="inline">:supplier</code> - Says if this contact is a supplier. It can be used to filter data.
+</li>
+<li><code class="inline">:email</code> - The email of the contact.
+</li>
+<li><code class="inline">:phone</code> - The phone number of the contact. This field can receive and represents
+any phone number format.
+</li>
+<li><code class="inline">:category</code> - The category of the contact, which is related to <a href="Cashtrail.Contacts.Category.html"><code class="inline">Cashtrail.Contacts.Category</code></a>.
+</li>
+<li><code class="inline">:category_id</code> - The id of the category witch the contact belongs to.
+</li>
+<li><code class="inline">:address</code> - The address of the contact, represented by the <a href="Cashtrail.Contacts.Address.html"><code class="inline">Cashtrail.Contacts.Address</code></a>
+struct.
+</li>
+<li><code class="inline">:inserted_at</code> - When the contact was inserted at the first time.
+</li>
+<li><code class="inline">:updated_at</code> - When the contact was updated at the last time.
+</li>
+</ul>
+<p>See <a href="Cashtrail.Contacts.html"><code class="inline">Cashtrail.Contacts</code></a> to know how to list, get, insert, update, and delete contacts.</p>
+        </section>
+
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Summary
+          </h1>
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:t/0">t()</a>
+  </div>
+</div>
+  </div>
+        </section>
+
+        <section id="types" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Types          </h1>
+          <div class="types-list">
+<section class="detail" id="t:t/0">
+  <div class="detail-header">
+    <a href="#t:t/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">t()</h1>
+      <div class="specs">
+          <pre>t() :: %Cashtrail.Contacts.Contact{
+  __meta__: <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Schema.Metadata.html#t:t/0">Ecto.Schema.Metadata.t</a>(),
+  address: <a href="Cashtrail.Contacts.Address.html#t:t/0">Cashtrail.Contacts.Address.t</a>() | nil,
+  category:
+    <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Association.NotLoaded.html#t:t/0">Ecto.Association.NotLoaded.t</a>() | <a href="Cashtrail.Contacts.Category.html#t:t/0">Cashtrail.Contacts.Category.t</a>() | nil,
+  category_id: <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.UUID.html#t:t/0">Ecto.UUID.t</a>() | nil,
+  customer: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>() | nil,
+  email: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
+  id: <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.UUID.html#t:t/0">Ecto.UUID.t</a>() | nil,
+  inserted_at: <a href="https://hexdocs.pm/elixir/NaiveDateTime.html#t:t/0">NaiveDateTime.t</a>() | nil,
+  legal_name: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
+  name: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
+  phone: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
+  supplier: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>() | nil,
+  tax_id: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
+  type: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
+  updated_at: <a href="https://hexdocs.pm/elixir/NaiveDateTime.html#t:t/0">NaiveDateTime.t</a>() | nil
+}</pre>
+      </div>
+  </div>
+  <section class="docstring">
+  </section>
+</section>
+          </div>
+        </section>
+      <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.21.3),
+          </span>
+          <span class="line">
+            designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
+        </p>
+        <p>
+          <button class="line footer-button display-shortcuts-help">
+            Display keyboard shortcuts
+          </button>
+          <button class="line footer-button night-mode-toggle">
+            Toggle night mode
+          </button>
+          <button class="line footer-button display-quick-switch">
+            Go to a HexDocs package
+          </button>
+          <button class="line footer-button tooltips-toggle">
+            <span class="tooltips-option-disable">Disable tooltips</span>
+            <span class="tooltips-option-enable">Enable tooltips</span>
+          </button>
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+  </body>
+</html>
