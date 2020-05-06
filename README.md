@@ -1,5 +1,5 @@
 # Cashtrail
-> An open-source tool for you track, manage and plan your money.
+> An open-source tool for you to track, manage, and plan your money.
 
 ![Elixir CI](https://github.com/maxmaccari/cashtrail/workflows/Elixir%20CI/badge.svg?branch=master)
 
@@ -18,14 +18,15 @@ At this moment the project is in **Phase 1**, so this is not ready for use.
 
 ## Motivation
 
-I was looking for an application to track my money and I wanted something that I
-could have to control of the data and I could integrate easily with other
-applications.
+I was looking for another application to track my incomes and expenses, and I wanted 
+something that I could track in different currencies, use the same application for
+my company and my personal finances, have to control of the data, and I could 
+integrate extend or easily with other applications.
 
-This is not intended to be complex account software. This is a money tracker that 
-I thought according to my needs, and that could be the needs of other people. 
-And as it is an open-source project focused on being easily integrated, I believe 
-that this can be easily modified or extended to other people's needs.
+This is not intended to be complex accounting software. This is an expense tracker 
+that  I thought according to my needs, and that could be the needs of other people. 
+And as it is an open-source project focused on being easily integrated and extended, 
+So I believe that this can be easily modified to other people's needs.
 
 So I encourage you to fork the project and modify it according to your needs. The 
 core is extensively documented, and Elixir is an easy language to deal with business 
@@ -35,7 +36,7 @@ rules. So I hope there will not be a problem for you working in the source code.
 
 ### Entities and Multi-tenancy with Postgres schemas
 
-The Cashtrail works with entities. Entities are units that you may want to manage.
+The Cashtrail works with entities. Entities are distinct units of data that you may want to manage. This can be your company finances, your finances, or some other organization's finances.
 
 So you can host the application, and use this to control in the same instance:
   * Your finances;
@@ -57,9 +58,9 @@ on https://elixir-lang.org/getting-started/mix-otp/dependencies-and-umbrella-pro
 The applications under the umbrella are:
   * Cashtrail: This is the core of the application and where all business logic
   rules related to baking and transactions are created. You can see 
-  `apps/cashtrail/README.md` or the [docs]() for more info about how this project is 
+  `apps/cashtrail/README.md` or the [docs](https://maxmaccari.github.io/cashtrail/doc/api-reference.html) for more info about how this project is 
   structured.
-  * CastrailWeb: The web application where the LiveView app, GraphQL Schema and
+  * CastrailWeb: The web application where the LiveView app, GraphQL Schema, and
   the rest endpoints will be mounted.
 
 ### Built With
@@ -91,11 +92,17 @@ Elixir 1.10.2 (compiled with Erlang/OTP 21)
 ```
 
 You should have access to a [Postgres 9.6+](https://www.postgresql.org/) database to run the application
-and the tests. You can have the installation instructions on the [official postgres website](https://www.postgresql.org/docs/9.6/tutorial-install.html).
+and the tests. You can have the installation instructions on the [official Postgres website](https://www.postgresql.org/docs/9.6/tutorial-install.html).
 
 ### Building and running the application
 
-First, you have to clone this repository. 
+First, you have to clone this repository.
+
+```console
+foo@bar:~$ git clone git@github.com:maxmaccari/cashtrail.git
+Cloning into 'cashtrail'...
+foo@bar:~$ cd cashtrail
+```
 
 After you can run `mix deps.get` to fetch all dependencies.
 
@@ -124,7 +131,7 @@ if you need instructions to configure the database.
 ### Running for development
 
 You can change the database configuration for development on `config/dev.exs`. 
-After set the properly configuration you can run the following command.
+After setting the proper configuration you can run the following command.
 
 ```console
 foo@bar:~$ mix phx.server

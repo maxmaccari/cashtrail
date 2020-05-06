@@ -22,12 +22,14 @@ defmodule Cashtrail.Factory.CurrenciesFactory do
 
         %Currency{
           active: true,
-          description: "My Coin",
-          type: Enum.random(["cash", "digital_currency", "miles", "cryptocurrency", "other"]),
-          format: "#0.000,00",
+          description: "#{iso_code} Currency",
           iso_code: iso_code,
+          type: Enum.random(["money", "cryptocurrency", "virtual", "other"]),
           symbol: "$",
-          precision: Enum.random(0..6)
+          precision: Enum.random(0..4),
+          separator: Enum.random([".", ",", "\\"]),
+          delimiter: Enum.random([".", ",", ""]),
+          format: "%s%n"
         }
         |> Helpers.put_tenant(attrs)
         |> merge_attributes(Helpers.drop_tenant(attrs))

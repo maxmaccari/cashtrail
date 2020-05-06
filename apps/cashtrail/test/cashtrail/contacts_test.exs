@@ -127,6 +127,20 @@ defmodule Cashtrail.ContactsTest do
       assert Contacts.list_contacts(tenant, filter: %{"supplier" => true}).entries == [contact]
     end
 
+    test "list_contacts/2 filtering by category_id", %{tenant: tenant} do
+      insert(:contact, tenant: tenant, category: build(:contact_category, tenant: tenant))
+      category = insert(:contact_category, tenant: tenant)
+      contact = insert(:contact, tenant: tenant, category: category) |> forget(:category)
+
+      assert Contacts.list_contacts(tenant, filter: %{category_id: category.id}).entries == [
+               contact
+             ]
+
+      assert Contacts.list_contacts(tenant, filter: %{"category_id" => category.id}).entries == [
+               contact
+             ]
+    end
+
     test "list_contacts/2 filtering by invalid key", %{tenant: tenant} do
       contact = insert(:contact, tenant: tenant) |> forget(:category)
       assert Contacts.list_contacts(tenant, filter: %{invalid: nil}).entries == [contact]
@@ -150,7 +164,8 @@ defmodule Cashtrail.ContactsTest do
     end
 
     test "create_contact/2 with valid data creates a contact", %{tenant: tenant} do
-      contact_params = params_for(:contact)
+      category = insert(:contact_category, tenant: tenant)
+      contact_params = params_for(:contact, category_id: category.id)
       assert {:ok, %Contact{} = contact} = Contacts.create_contact(tenant, contact_params)
       assert contact.customer == contact_params.customer
       assert contact.email == contact_params.email
@@ -162,12 +177,15 @@ defmodule Cashtrail.ContactsTest do
       assert contact.type == contact_params.type
       assert contact.address.street == contact_params.address.street
       assert contact.address.number == contact_params.address.number
-      assert contact.address.line_1 == contact_params.address.line_1
-      assert contact.address.line_2 == contact_params.address.line_2
+      assert contact.address.complement == contact_params.address.complement
+      assert contact.address.district == contact_params.address.district
       assert contact.address.city == contact_params.address.city
       assert contact.address.state == contact_params.address.state
       assert contact.address.country == contact_params.address.country
       assert contact.address.zip == contact_params.address.zip
+      assert contact.address.line_1 == contact_params.address.line_1
+      assert contact.address.line_2 == contact_params.address.line_2
+      assert contact.category_id == category.id
     end
 
     @invalid_attrs %{
@@ -183,6 +201,11 @@ defmodule Cashtrail.ContactsTest do
     }
     test "create_contact/2 with invalid data returns error changeset", %{tenant: tenant} do
       assert {:error, %Ecto.Changeset{}} = Contacts.create_contact(tenant, @invalid_attrs)
+    end
+
+    test "create_contact/2 with invalid category returns error changeset", %{tenant: tenant} do
+      params = params_for(:contact, category_id: Ecto.UUID.generate())
+      assert {:error, %Ecto.Changeset{}} = Contacts.create_contact(tenant, params)
     end
 
     @update_attrs %{

@@ -3,18 +3,21 @@ defmodule Cashtrail.Paginator do
   alias Cashtrail.Paginator.Page
 
   @moduledoc """
-  Allow to fetch paged data with its metadata.
+  Allow fetching paged data with its metadata.
   """
 
   @doc """
   Returns a `%Cashtrail.Paginator.Page{}` with the entries fetched from a queriable
   and its page metadata.
 
-  The allowed options are:
-    * `:page` - the number of page you want to get;
-    * `:page_size` - the size of the page you want to get. It can be:
-      * `:all` to fetch all entries or;
-      * any integer value get the provided count.
+  ## Expected arguments
+
+  * queriable - A `Ecto.Queryable` that the query will be performed.
+  * options - A `keyword` with the following possible options:
+    * `:page` - A `integer` with the number of the page you want to get.
+    * `:page_size` - The size of the page you want to get. It can be:
+      * `:all` to fetch all entries or.
+      * any `integer` value to get the provided count.
 
   ## Example
 

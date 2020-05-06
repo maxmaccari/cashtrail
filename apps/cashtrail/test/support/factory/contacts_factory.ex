@@ -27,6 +27,8 @@ defmodule Cashtrail.Factory.ContactsFactory do
           address: %Cashtrail.Contacts.Address{
             street: Faker.Address.street_name(),
             number: Faker.Address.building_number(),
+            complement: Faker.Address.secondary_address(),
+            district: Faker.Address.city(),
             line_1: Faker.Address.secondary_address(),
             line_2: Faker.Address.city(),
             city: Faker.Address.city(),

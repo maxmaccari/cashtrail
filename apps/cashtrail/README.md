@@ -15,14 +15,23 @@ The requirement to be done are:
   - [x] Entities management;
   - [x] Contacts management;
   - [x] Currencies management
-  - [ ] Accounts (bank) management;
+  - [ ] Bank Accounts management;
   - [ ] Transactions management;
-  - [ ] Tagging transactions
   - [ ] Credit card business rules;
   - [ ] Default data creation;
 
+See the [docs](https://maxmaccari.github.io/cashtrail/doc/api-reference.html) to see 
+what is done in the project.
 
-First, you have to clone this repository. 
+## Getting Started
+
+First, you have to clone this repository.
+
+```console
+foo@bar:~$ git clone git@github.com:maxmaccari/cashtrail.git
+Cloning into 'cashtrail'...
+foo@bar:~$ cd cashtrail
+```
 
 After you can run `mix deps.get` to fetch all dependencies.
 
@@ -30,16 +39,23 @@ After you can run `mix deps.get` to fetch all dependencies.
 foo@bar:~$ mix deps.get
 ```
 
-And you can compile the dependencies through the command
+And you can compile the dependencies through the command.
 
 ```console
 foo@bar:~$ mix deps.compile
 ```
 
+And you can enter to the Cashtrail app directory to run specific commands for this 
+app.
+
+```console
+foo@bar:~$ cd app/cashtrail
+```
+
 ### Running the tests
 
-You can change the database configuration on `config/test.exs`. After setting the 
-proper configuration you can run the following command.
+You can change the database configuration on `config/test.exs`. After you set the 
+proper configuration you can run the following command:
 
 ```console
 foo@bar:~$ mix test
@@ -86,7 +102,7 @@ Docs successfully generated.
 View them at "doc/index.html".
 ```
 
-The docs are generated in the `doc/` folder. At this point you can open the
+The docs are generated in the `doc/` folder. At this point, you can open the
 `doc/index.html` in your browser to explore the documentation of this project.
 
 ## Built With

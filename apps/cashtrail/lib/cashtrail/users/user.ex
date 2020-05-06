@@ -1,6 +1,33 @@
 defmodule Cashtrail.Users.User do
   @moduledoc """
-  It represents a user of the application.
+  This is an `Ecto.Schema` struct that represents a user of the application.
+
+  **Warning**: Don't use the functions of this module. Only use this module as a
+  struct to represent a contact. The functions of this module are internal and
+  can change over time. Only manipulate contacts through the `Cashtrail.Users`
+  that is the context for this.
+
+  The user is any individual that uses the application. They can create their
+  entities or be assigned to an entity as a member. See `Cashtrail.Entities.Entity`
+  to know more about what is an Entity.
+
+  ## Fields
+
+  * `:id` - The unique id of the user.
+  * `:email` - The email address of the user. This must be unique in the whole
+  application.
+  * `:first_name` - The first name of the user.
+  * `:last_name` - The last name of the user.
+  * `:password` - This is a virtual field used to the users input their passwords.
+  When a user is retrieved, this value is empty.
+  * `:password_hash` - This field keeps the hashed password. You can search more
+  about hashing algorithms or see `Comeonin` to know more about it.
+  * `:entities` - The entities that the user is owner.
+  * `:inserted_at` - When the user was inserted at the first time.
+  * `:updated_at` - When the user was updated at the last time.
+
+  See `Cashtrail.Users` to know how to list, get, insert, update, delete, and
+  authenticate users.
   """
 
   use Ecto.Schema

@@ -1,4 +1,6 @@
 defmodule CashtrailWeb.ErrorView do
+  @moduledoc false
+
   use CashtrailWeb, :view
 
   # If you want to customize a particular status code

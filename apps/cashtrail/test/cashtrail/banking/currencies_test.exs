@@ -28,11 +28,14 @@ defmodule Cashtrail.Banking.CurrenciesTest do
     end
 
     test "list_currencies/1 filtering by type", %{tenant: tenant} do
-      insert(:currency, tenant: tenant, type: "digital_currency")
-      currency = insert(:currency, tenant: tenant, type: "cash")
+      insert(:currency, tenant: tenant, type: "virtual")
+      currency = insert(:currency, tenant: tenant, type: "money")
 
-      assert Currencies.list_currencies(tenant, filter: %{type: "cash"}).entries == [currency]
-      assert Currencies.list_currencies(tenant, filter: %{"type" => "cash"}).entries == [currency]
+      assert Currencies.list_currencies(tenant, filter: %{type: "money"}).entries == [currency]
+
+      assert Currencies.list_currencies(tenant, filter: %{"type" => "money"}).entries == [
+               currency
+             ]
     end
 
     test "list_currencies/1 filtering by active", %{tenant: tenant} do
@@ -75,12 +78,25 @@ defmodule Cashtrail.Banking.CurrenciesTest do
       assert currency.symbol == currency_params.symbol
       assert currency.type == currency_params.type
       assert currency.precision == currency_params.precision
+      assert currency.separator == currency_params.separator
+      assert currency.delimiter == currency_params.delimiter
     end
 
     test "create_currency/2 with downcased iso_code upcases the value", %{tenant: tenant} do
       currency_params = params_for(:currency, tenant: tenant, iso_code: "abc")
       assert {:ok, %Currency{} = currency} = Currencies.create_currency(tenant, currency_params)
       assert currency.iso_code == "ABC"
+    end
+
+    test "create_currency/2 with allowed empty values sets defaults values", %{tenant: tenant} do
+      currency_params =
+        params_for(:currency, tenant: tenant, separator: "", format: "", type: "", active: nil)
+
+      assert {:ok, %Currency{} = currency} = Currencies.create_currency(tenant, currency_params)
+      assert currency.type == "money"
+      assert currency.active == true
+      assert currency.separator == "."
+      assert currency.format == "%s%n"
     end
 
     @invalid_attrs %{
@@ -155,25 +171,60 @@ defmodule Cashtrail.Banking.CurrenciesTest do
                Currencies.create_currency(tenant, currency_params)
     end
 
+    test "create_currency/2 with invalid separator returns error changeset", %{tenant: tenant} do
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  separator:
+                    {"should be %{count} character(s)",
+                     [count: 1, validation: :length, kind: :is, type: :string]}
+                ]
+              }} = Currencies.create_currency(tenant, params_for(:currency, separator: ".."))
+    end
+
+    test "create_currency/2 with invalid delimiter returns error changeset", %{tenant: tenant} do
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  delimiter:
+                    {"should be at most %{count} character(s)",
+                     [count: 1, validation: :length, kind: :max, type: :string]}
+                ]
+              }} = Currencies.create_currency(tenant, params_for(:currency, delimiter: ".."))
+    end
+
+    test "create_currency/2 with invalid format returns error changeset", %{tenant: tenant} do
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  format: {"Should have one %n to display the number, or be empty", []}
+                ]
+              }} = Currencies.create_currency(tenant, params_for(:currency, format: "%s"))
+    end
+
     @update_attrs %{
       active: false,
       description: "some updated description",
-      format: "some updated format",
+      format: "%n",
       iso_code: "ABC",
-      symbol: "some updated symbol",
-      type: "digital_currency",
-      precision: "3"
+      symbol: "M$",
+      type: "virtual",
+      precision: "3",
+      separator: ",",
+      delimiter: "."
     }
     test "update_currency/2 with valid data updates the currency", %{tenant: tenant} do
       currency = insert(:currency, tenant: tenant)
       assert {:ok, %Currency{} = currency} = Currencies.update_currency(currency, @update_attrs)
       assert currency.active == false
       assert currency.description == "some updated description"
-      assert currency.format == "some updated format"
+      assert currency.format == "%n"
       assert currency.iso_code == "ABC"
-      assert currency.symbol == "some updated symbol"
-      assert currency.type == "digital_currency"
+      assert currency.symbol == "M$"
+      assert currency.type == "virtual"
       assert currency.precision == 3
+      assert currency.separator == ","
+      assert currency.delimiter == "."
     end
 
     test "update_currency/2 with invalid data returns error changeset", %{tenant: tenant} do
