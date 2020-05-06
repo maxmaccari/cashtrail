@@ -1,9 +1,38 @@
 defmodule Cashtrail.Entities.EntityMember do
   @moduledoc """
-  Represents a member of an `Cashtrail.Entity` that links authorized users to the
-  `Cashtrail.Entity`, except the owner.
+  This is an `Ecto.Schema` struct that represents a member of an
+  `Cashtrail.Entity` that links authorized users to the `Cashtrail.Entity`,
+  except the owner.
+
+  **Warning**: Don't use the functions of this module. Only use this module as a
+  struct to represent a contact. The functions of this module are internal and
+  can change over time. Only manipulate contacts through the `Cashtrail.Entities`
+  that is the context for this.
+
+  The EntityMember is a member of the entity. As a member of entity, the user
+  can have permissions to read, create entity, or even admin the entity.
 
   The owner cannot be a member of the `Cashtrail.Entity`.
+
+  ## Fields
+
+  * `:id` - The unique id of the entity member.
+  * `:permission` - The permission of the entity member. The permissions can be:
+    * `"read"` - With this permission, the member can read the data from the entity.
+    * `"write"` - With this permission, the member can read, create, modify and
+    delete data from the entity, except change the entity settings or manage the
+    members of the entity.
+    * `"admin"` - With this permission, the member can have all permissions from write,
+    change the settings, and manage the members of the entity.
+  * `:entity` - The entity that the member is part of, related to `Cashtrail.Entities.Entity`.
+  * `:entity_id` - The id of the entity that the member is part of.
+  * `:user` - The user that is member of the entity, related to `Cashtrail.Users.User`.
+  * `:user_id` - The id of the user that is member of the entity.
+  * `:inserted_at` - When the entity member was inserted at the first time.
+  * `:updated_at` - When the entity member was updated at the last time.
+
+  See `Cashtrail.Entities` to know how to list, get, insert, update, and delete
+  entity members.
   """
 
   use Ecto.Schema

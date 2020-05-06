@@ -198,7 +198,6 @@ defmodule Cashtrail.Banking.Currencies do
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking currency changes.
 
-
   ## Expected Arguments
 
   * currency - The `%Cashtrail.Banking.Currencies.Currency{}` to be tracked.

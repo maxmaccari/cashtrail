@@ -57,7 +57,6 @@ defmodule Cashtrail.Users do
 
   * id - A `string` that is the unique id of the user to be found.
 
-
   ## Examples
 
       iex> get_user!(123)

@@ -9,8 +9,9 @@ defmodule Cashtrail.Banking.Currencies.Currency do
 
   ## Definition
 
-  The definition of currency is any form when in use or circulation as a medium
-  of exchange. This can be any system of money in common use by people.
+  According to [Investopedia](https://www.investopedia.com/terms/c/currency.asp),
+  currency is any form when in use or circulation as a medium of exchange. This
+  can be any system of money in common use by people.
 
   The common examples of currencies are Brazilia, reais (R$), U.S. dollars (US$),
   euros (€), Japanese yen (¥), and pounds sterling (£). There are cryptocurrencies

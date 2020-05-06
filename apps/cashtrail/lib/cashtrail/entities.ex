@@ -1,10 +1,11 @@
 defmodule Cashtrail.Entities do
   @moduledoc """
-  The Entities context manages data related to entities. An Entity keeps all
+  The Entities context manages the data related to entities. An Entity keeps all
   financial data of something, that can be a company, financial finances,
-  organization, church, event, etc.
+  organization, church, event, etc. And they can have one owner or other members,
+  as well.
 
-  They can have one owner or other members.
+  See `Cashtrail.Entities.Entity` to have more info about entity.
   """
 
   @type entity :: Cashtrail.Entities.Entity.t()
@@ -20,14 +21,20 @@ defmodule Cashtrail.Entities do
   import Cashtrail.QueryBuilder, only: [build_filter: 3, build_search: 3]
 
   @doc """
-  Returns a list of all entities.
+  Returns a `%Cashtrail.Paginator.Page{}` struct with a list of entities in the
+  `:entries` field.
 
-  Options:
+  ## Expected arguments
+
+  * options - A `keyword` list of the following options:
     * `:filter` => filters by following attributes:
       * `:type` or `"type"`
       * `:status` or `"status"`
     * `:search` => search entities by `:name`.
     * See `Cashtrail.Paginator.paginate/2` to see paginations options.
+
+  See `Cashtrail.Entities.Entity` to have more detailed info about the fields to
+  be filtered or searched.
 
   ## Examples
 
@@ -50,14 +57,21 @@ defmodule Cashtrail.Entities do
   end
 
   @doc """
-  Returns a list of entities from the given user.
+  Returns a `%Cashtrail.Paginator.Page{}` struct with a list of entities in the
+  `:entries` field from the given user.
 
-  Options:
+  ## Expected arguments
+
+  * user - A `%Cashtrail.Users.User{}` that owns or is member of the entity.
+  * options - A `keyword` list of the following options:
     * `:filter` => filters by following attributes:
       * `:type` or `"type"`
       * `:status` or `"status"`
     * `:search` => search entities by `:name`.
     * See `Cashtrail.Paginator.paginate/2` to see paginations options.
+
+  See `Cashtrail.Entities.Entity` to have more detailed info about the fields to
+  be filtered or searched.
 
   ## Examples
 
@@ -82,6 +96,13 @@ defmodule Cashtrail.Entities do
 
   Raises `Ecto.NoResultsError` if the Entity does not exist.
 
+  See `Cashtrail.Entities.Entity` to have more detailed info about the returned
+  struct.
+
+  ## Expected Arguments
+
+  * id - A `string` that is the unique id of the entity to be found.
+
   ## Examples
 
       iex> get_entity!(123)
@@ -95,14 +116,23 @@ defmodule Cashtrail.Entities do
   def get_entity!(id), do: Repo.get!(Entity, id)
 
   @doc """
-  Creates a entity.
+  Creates an entity.
 
-  ## Params
-    * `:name` (required)
-    * `:type` - can be `"personal"`, `"company"` or `"other"`. Defaults to
-    `"personal"`.
-    * `:status` - can be `"active"` or `"archived"`. Defaults to `"active"`.
-    * `:owner_id` - a reference to `Cashtrail.Users.User`
+  ## Expected Arguments
+
+  * params - A `map` with the params of the entity to be created:
+    * `:name` (required) - A `string` with the name or description of the entity.
+    * `:type` - A `string` with the type of the entity. It can be `"personal"`,
+    `"company"` or `"other"`. Defaults to `"personal"`.
+    * `:owner_id` - A `string` that references to the `Cashtrail.Users.User` that
+    is the owner of the entity.
+
+  See `Cashtrail.Entities.Entity` to have more detailed info about the fields.
+
+   ## Returns
+
+  * `{:ok, %Cashtrail.Entities.Entity{}}` in case of success.
+  * `{:error, %Ecto.Changeset{}}` in case of error.
 
   ## Examples
 
@@ -132,9 +162,20 @@ defmodule Cashtrail.Entities do
   end
 
   @doc """
-  Updates a entity.
+  Updates an entity.
 
-  See `create_currency/1` docs to know more about the accepted params.
+  See `update_entity/1` docs to know more about the accepted params.
+
+  ## Expected Arguments
+
+  * user - The `%Cashtrail.Entities.Entity{}` to be updated.
+  * params - A `map` with the field of the entity to be updated. See
+  `create_entity/2` to know about the params that can be given.
+
+  ## Returns
+
+  * `{:ok, %Cashtrail.Entities.Entity{}}` in case of success.
+  * `{:error, %Ecto.Changeset{}}` in case of error.
 
   ## Examples
 
@@ -153,7 +194,16 @@ defmodule Cashtrail.Entities do
   end
 
   @doc """
-  Deletes a entity.
+  Deletes an entity.
+
+  ## Expected Arguments
+
+  * entity - The `%Cashtrail.Entities.Entity{}` to be deleted.
+
+  ## Returns
+
+  * `{:ok, %Cashtrail.Entities.Entity{}}` in case of success.
+  * `{:error, %Ecto.Changeset{}}` in case of error.
 
   ## Examples
 
@@ -183,6 +233,10 @@ defmodule Cashtrail.Entities do
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking entity changes.
 
+  ## Expected Arguments
+
+  * entity - The `%Cashtrail.Entities.Entity{}` to be tracked.
+
   ## Examples
 
       iex> change_entity(entity)
@@ -195,33 +249,44 @@ defmodule Cashtrail.Entities do
   end
 
   @doc """
-  Transfer the ownership of a entity from one user to another.
+  Transfer the ownership of an entity from one user to another.
 
-  Returns:
-    * {:ok, %Entity{}} if the entity is transfered successfully.
-    * {:error, changeset} if to user is invalid or it's not found.
-    * {:error, :unauthorized} if from user is not the owner of the entity.
+  ## Expected Arguments
+
+  * entity - The `%Cashtrail.Entities.Entity{}` to be transfered.
+  * from_user - The `%Cashtrail.Users.User{}` to be transfered.
+  * to_user - The `%Cashtrail.Users.User{}` to be transfered.
+
+  ## Returns
+    * `{:ok, %Entity{}}` if the entity is transfered successfully.
+    * `{:error, changeset}` if to_user is invalid or it's not found.
+    * `{:error, :unauthorized}` if from_user is not the owner of the entity.
+
+  ## Effects
+
+  After the ownership transference, the previous owner (`from_user`) becomes a
+  member of the entity with `:admin` permissions.
 
   ## Examples
 
-      iex> transfer_ownership(entity, from, to)
+      iex> transfer_ownership(entity, from_user, to_user)
       {:ok, %Entity{}}
 
-      iex> transfer_ownership(entity, from, to)
+      iex> transfer_ownership(entity, from_user, to_user)
       {:error, %Ecto.Changeset{source: %Entity{}}}
 
-      iex> transfer_ownership(entity, invalid_from, to)
+      iex> transfer_ownership(entity, invalid_from, to_user)
       {:error, :unauthorized}
   """
   @spec transfer_ownership(entity(), User.t(), User.t()) ::
           {:error, :unauthorized} | {:ok, entity()}
-  def transfer_ownership(%Entity{} = entity, %User{} = from, %User{} = to) do
-    if entity.owner_id == from.id do
-      changeset = Entity.transfer_changeset(entity, %{owner_id: to.id})
+  def transfer_ownership(%Entity{} = entity, %User{} = from_user, %User{} = to_user) do
+    if entity.owner_id == from_user.id do
+      changeset = Entity.transfer_changeset(entity, %{owner_id: to_user.id})
 
       with {:ok, entity} <- Repo.update(changeset) do
-        remove_member(entity, to)
-        add_member(entity, from, "admin")
+        remove_member(entity, to_user)
+        add_member(entity, from_user, "admin")
 
         {:ok, entity}
       end
@@ -231,15 +296,19 @@ defmodule Cashtrail.Entities do
   end
 
   @doc """
-  Display if the entity belongs to the user
+  Returns a `boolean` that says if the entity belongs to the user.
+
+  ## Expected Arguments
+
+  * user - The `%Cashtrail.Users.User{}` to be deleted.
 
   ## Examples
 
-    iex> belongs_to?(%Entity{owner_id: "aaa"}, %User{id: "aaa"})
-    true
+      iex> belongs_to?(%Entity{owner_id: "aaa"}, %User{id: "aaa"})
+      true
 
-    iex> belongs_to?(%Entity{owner_id: "bbb"}, %User{id: "aaa"})
-    false
+      iex> belongs_to?(%Entity{owner_id: "bbb"}, %User{id: "aaa"})
+      false
   """
   @spec belongs_to?(entity(), User.t()) :: boolean
   def belongs_to?(%Entity{owner_id: owner_id}, %User{id: user_id}) do
@@ -249,13 +318,20 @@ defmodule Cashtrail.Entities do
   alias Cashtrail.Users
 
   @doc """
-  Returns a list of entity_members from the given entity.
+  Returns a `%Cashtrail.Paginator.Page{}` struct with a list of entity_members in the
+  `:entries` field.
 
-  Options:
+  ## Expected arguments
+
+  * options - A `keyword` list of the following options:
     * `:filter` => filters by following attributes:
       * `:permission` or `"permission"`
     * `:search` => search users by its user `:name`.
     * See `Cashtrail.Paginator.paginate/2` to see paginations options.
+
+  See `Cashtrail.Entities.EntityMember` to have more detailed info about the
+  fields to be filtered or searched.
+
   ## Examples
 
       iex> list_entity_members(entity)
@@ -287,15 +363,26 @@ defmodule Cashtrail.Entities do
   defp search_members(query, _), do: query
 
   @doc """
-  Creates a entity_member for the entity.
+  Creates an entity_member for the entity.
 
-  ## Params
-  * `:permission` (required) - can be `"read"`, `"write"` or `"admin"`.
-    * `:user_id` - a reference to `Cashtrail.Users.User`
-    * `:user` - a map of the `Cashtrail.Users.User` that should be created. See
-    `Cashtrail.Users.create_user/1` docs to know more about the accepted
-    params.
+  ## Expected Arguments
 
+  * entity - The `%Cashtrail.Entities.Entity{}` that the member will be created.
+  * params - A `map` with the params of the user to be created:
+    * `:permission` (required) - a `string` with the permission that will be given
+    to the member. It can be: `"read"`, `"write"` or `"admin"`.
+    * `:user_id` - A `string` with a reference to one `Cashtrail.Users.User` to
+    be added as a member to the entity.
+    * `:user` - A `map` of the `Cashtrail.Users.User` that should be created as a
+    member of the entity. See `Cashtrail.Users.create_user/1` docs to know more
+    about the accepted params.
+
+  See `Cashtrail.Entities.EntityMember` to have more detailed info about the fields.
+
+  ## Returns
+
+  * `{:ok, %Cashtrail.Entities.EntityMember{}}` in case of success.
+  * `{:error, %Ecto.Changeset{}}` in case of error.
 
   ## Examples
 
@@ -327,11 +414,24 @@ defmodule Cashtrail.Entities do
   end
 
   @doc """
-  Creates a entity_member for the entity, the user and the permission.
+  Add a user as an entity_member for the entity giving permission.
 
-  Returns:
-    * `%Ecto.Changeset{}` if the given user is invalid or is already added.
-    * `:invalid` if the given user is the owner of the entity.
+  ## Expected Arguments
+
+  * entity - The `%Cashtrail.Entities.Entity{}` that the member will be added.
+  * user - A `%Cashtrail.Users.User{}` that is the user to be added as a member.
+  The user cannot be the owner of the entity, otherwise, it will return an error.
+  * permission - A `string` with the permission that will be given to the member.
+  It can be: `"read"`, `"write"` or `"admin"`.
+
+  See `Cashtrail.Entities.EntityMember` to have more detailed info about the
+  permissions.
+
+  ## Returns
+
+  * `{:ok, %Cashtrail.Entities.EntityMember{}}` in case of success.
+  * `{:error, :invalid}` in case of the user be the owner of the entity.
+  * `{:error, %Ecto.Changeset{}}` in case of error.
 
   ## Examples
 
@@ -342,13 +442,15 @@ defmodule Cashtrail.Entities do
       {:error, %Ecto.Changeset{}}
 
   """
-  @spec add_member(entity, User.t()) ::
+  @spec add_member(entity, User.t(), String.t()) ::
           {:ok, entity_member} | {:error, :invalid | Ecto.Changeset.t(entity)}
-  def add_member(%Entity{owner_id: owner_id}, %User{id: user_id}) when owner_id == user_id do
+  def add_member(entity, user, permission \\ "read")
+
+  def add_member(%Entity{owner_id: owner_id}, %User{id: user_id}, _) when owner_id == user_id do
     {:error, :invalid}
   end
 
-  def add_member(%Entity{} = entity, %User{id: user_id}, permission \\ "read") do
+  def add_member(%Entity{} = entity, %User{id: user_id}, permission) do
     entity
     |> Ecto.build_assoc(:members)
     |> EntityMember.changeset(%{user_id: user_id, permission: permission})
@@ -356,9 +458,18 @@ defmodule Cashtrail.Entities do
   end
 
   @doc """
-  Deletes a entity_member.
+  Removes an entity_member from the entity.
 
-  If entity member is not found, it returns a error
+  ## Expected Arguments
+
+  * entity - The `%Cashtrail.Entities.Entity{}` that the member will be removed.
+  * user - A `%Cashtrail.Users.User{}` that is the user to be removed as a member
+  of the given entity.
+
+  ## Returns
+
+  * `{:ok, %Cashtrail.Entities.EntityMember{}}` in case of success.
+  * `{:error, :not_found}` if the user is not a member of the entity.
 
   ## Examples
 
@@ -379,10 +490,27 @@ defmodule Cashtrail.Entities do
   end
 
   @doc """
-  Updates the member permission.
+  Updates the member's permission.
 
-  If the user is not member or is the owner, returns error. The owner always
-  will have the admin permission.
+  If the user is not a member or is the owner, it returns an error. The owner will always
+  have admin permission.
+
+  ## Expected Arguments
+
+  * entity - The `%Cashtrail.Entities.Entity{}` that the member will have the
+  permissions updated.
+  * user - A `%Cashtrail.Users.User{}` that is the user to have the permissions
+  updated.
+  * permission - A `string` with the permission that will be given
+    to the member. It can be: `"read"`, `"write"` or `"admin"`.
+
+  ## Returns
+
+  * `{:ok, %Cashtrail.Entities.EntityMember{}}` in case of success.
+  * `{:error, :invalid}` if the user is the owner of the entity.
+  * `{:error, :not_found}` if the user is not a member of the entity.
+  * `{:error, %Ecto.Changeset{}}` in case of validation errors.
+
 
   ## Examples
 
@@ -420,18 +548,21 @@ defmodule Cashtrail.Entities do
   end
 
   @doc """
-  Returns the member permission as a atom or :unauthorized if the member is not
-  found.
+  Returns the member permission as an atom or :unauthorized if the member is not
+  found. If the user is the owner, return the permission as :admin.
 
-  If the user is the owner, returns the permission as :admin
+  ## Expected Arguments
+
+  * entity - The `%Cashtrail.Entities.Entity{}` that the member belongs.
+  * user - The `%Cashtrail.Users.User{}` to know the permission.
 
   ## Examples
 
-    iex> get_member_permission(entity, user)
-    :admin
+      iex> get_member_permission(entity, user)
+      :admin
 
-    iex> get_member_permission(entity, another_user)
-    :unauthorized
+      iex> get_member_permission(entity, another_user)
+      :unauthorized
   """
   @spec get_member_permission(entity(), User.t()) :: atom()
   def get_member_permission(%Entity{owner_id: owner_id} = entity, %User{id: user_id} = user) do
@@ -450,19 +581,24 @@ defmodule Cashtrail.Entities do
   end
 
   @doc """
-  Returns the member struct from the user and the entity. Returns nil if the user is
-  not a member from the entity or is the owner.
+  Returns the `%Cashtrail.Entities.EntityMember{}` from the user and the entity. Returns
+  `nil` if the user is not a member of the entity or if it is the owner.
+
+  ## Expected Arguments
+
+  * entity - The `%Cashtrail.Entities.Entity{}` that the member belongs.
+  * user - The `%Cashtrail.Users.User{}` to have the entity_member found.
 
   ## Examples
 
-    iex> member_from_user(entity, user)
-    %EntityMember{}
+      iex> member_from_user(entity, user)
+      %EntityMember{}
 
-    iex> member_from_user(entity, owner)
-    nil
+      iex> member_from_user(entity, owner)
+      nil
 
-    iex> member_from_user(entity, non_member_user)
-    nil
+      iex> member_from_user(entity, non_member_user)
+      nil
   """
   @spec member_from_user(entity(), User.t()) ::
           entity_member | nil
@@ -472,6 +608,10 @@ defmodule Cashtrail.Entities do
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking entity_member changes.
+
+  ## Expected Arguments
+
+  * entity_member - The `%Cashtrail.Entities.EntityMember{}` to be tracked.
 
   ## Examples
 
