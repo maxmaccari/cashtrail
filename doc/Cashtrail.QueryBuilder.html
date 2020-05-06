@@ -89,14 +89,14 @@ search by schema fields.</p>
     <a href="#build_filter/3">build_filter(query, params, allowed_filters)</a>
   </div>
     <div class="summary-synopsis"><p>Returns a <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Query.html"><code class="inline">Ecto.Query</code></a> with the queries based on the given filters and
-allowed fields, or the given <code class="inline">t:Ecto.Queryable.t</code> without changes.</p></div>
+allowed fields, or the given <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Queryable.html"><code class="inline">Ecto.Queryable</code></a> without changes.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#build_search/3">build_search(query, term, fields)</a>
   </div>
     <div class="summary-synopsis"><p>Returns a <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Query.html"><code class="inline">Ecto.Query</code></a> with the queries based on the given term and fields,
-or the given <code class="inline">t:Ecto.Queryable.t</code> without changes.</p></div>
+or the given <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Queryable.html"><code class="inline">Ecto.Queryable</code></a> without changes.</p></div>
 </div>
   </div>
         </section>
@@ -123,7 +123,7 @@ Functions          </h1>
   </div>
   <section class="docstring">
 <p>Returns a <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Query.html"><code class="inline">Ecto.Query</code></a> with the queries based on the given filters and
-allowed fields, or the given <code class="inline">t:Ecto.Queryable.t</code> without changes.</p>
+allowed fields, or the given <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Queryable.html"><code class="inline">Ecto.Queryable</code></a> without changes.</p>
 <p>The query will use only the params that have the key in the allowed_filters param.</p>
 <h2 id="build_filter/3-expected-arguments" class="section-heading">
   <a href="#build_filter/3-expected-arguments" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
@@ -131,7 +131,7 @@ allowed fields, or the given <code class="inline">t:Ecto.Queryable.t</code> with
 </h2>
 
 <ul>
-<li>query - The <code class="inline">t:Ecto.Queryable.t</code> that the query will be performed.
+<li>query - The <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Queryable.html"><code class="inline">Ecto.Queryable</code></a> that the query will be performed.
 </li>
 <li>params - A <code class="inline">map</code> keys of the fields and values to be filtered. The keys
 can be even <code class="inline">string</code> or <code class="inline">atom</code>, and the values must be the same type of
@@ -174,7 +174,7 @@ this param.
   </div>
   <section class="docstring">
 <p>Returns a <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Query.html"><code class="inline">Ecto.Query</code></a> with the queries based on the given term and fields,
-or the given <code class="inline">t:Ecto.Queryable.t</code> without changes.</p>
+or the given <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Queryable.html"><code class="inline">Ecto.Queryable</code></a> without changes.</p>
 <p>The search is implement using <code class="inline">ILIKE</code> in the fields of the given queryable
 schema. And the term must be a <code class="inline">string</code>.</p>
 <h2 id="build_search/3-expected-arguments" class="section-heading">
@@ -183,7 +183,7 @@ schema. And the term must be a <code class="inline">string</code>.</p>
 </h2>
 
 <ul>
-<li>query - The <code class="inline">t:Ecto.Queryable.t</code> that the query will be performed.
+<li>query - The <a href="https://hexdocs.pm/ecto/3.4.3/Ecto.Queryable.html"><code class="inline">Ecto.Queryable</code></a> that the query will be performed.
 </li>
 <li>term - A <code class="inline">string</code> with the text that will be searched.
 </li>
