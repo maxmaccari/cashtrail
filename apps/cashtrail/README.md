@@ -23,8 +23,11 @@ The requirement to be done are:
 See the [docs](https://maxmaccari.github.io/cashtrail/doc/api-reference.html) to see 
 what is done in the project.
 
+<<<<<<< HEAD
 ## Getting Started
 
+=======
+>>>>>>> Improve README
 First, you have to clone this repository.
 
 ```console
