@@ -13,7 +13,7 @@ defmodule Cashtrail.Entities.Tenants do
 
   ## Expected arguments
 
-  * A `%Cashtray.Entities.Entity{}` struct of the tenant that will be created.
+  * A `%Cashtrail.Entities.Entity{}` struct of the tenant that will be created.
 
   ## Returns
 
@@ -35,7 +35,7 @@ defmodule Cashtrail.Entities.Tenants do
 
   ## Expected arguments
 
-  * A `%Cashtray.Entities.Entity{}` struct of the tenant that will be dropped.
+  * A `%Cashtrail.Entities.Entity{}` struct of the tenant that will be dropped.
 
   ## Returns
 
@@ -57,7 +57,7 @@ defmodule Cashtrail.Entities.Tenants do
 
   ## Expected arguments
 
-  * A `%Cashtray.Entities.Entity{}` struct of the tenant that want to get the prefix.
+  * A `%Cashtrail.Entities.Entity{}` struct of the tenant that want to get the prefix.
 
   See `Triplex.to_prefix/1` docs for more information.
   """
@@ -72,7 +72,7 @@ defmodule Cashtrail.Entities.Tenants do
   ## Expected arguments
 
   * queryable - The `Ecto.Queryable` that the the prefix will be configured.
-  * A `%Cashtray.Entities.Entity{}` struct of the tenant that want to configure the prefix.
+  * A `%Cashtrail.Entities.Entity{}` struct of the tenant that want to configure the prefix.
 
   See `Triplex.to_prefix/1` docs for more information.
   """
