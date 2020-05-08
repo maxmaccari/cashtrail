@@ -2,6 +2,7 @@
 > An open-source tool for you to track, manage, and plan your money.
 
 ![Elixir CI](https://github.com/maxmaccari/cashtrail/workflows/Elixir%20CI/badge.svg?branch=master)
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/maxmaccari/cashtrail) 
 
 ## !!!Warning!!!
 
