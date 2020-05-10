@@ -1,2 +1,10 @@
 image:
   file: .gitpod.Dockerfile
+tasks:
+- init: |
+    mix deps.get
+    mix deps.compile
+  command: mix phx.server
+ports:
+- port: 4000
+  onOpen: open-browser
