@@ -84,6 +84,7 @@ defmodule Cashtrail.Users.User do
     |> validate_format(:avatar_url, @url_regex, message: "is not a valid url")
     |> validate_confirmation(:password)
     |> change_password()
+    |> downcase_email()
   end
 
   defp change_password(changeset) do
@@ -93,6 +94,13 @@ defmodule Cashtrail.Users.User do
 
       _ ->
         changeset
+    end
+  end
+
+  defp downcase_email(changeset) do
+    case get_field(changeset, :email) do
+      nil -> changeset
+      email -> put_change(changeset, :email, String.downcase(email))
     end
   end
 end
