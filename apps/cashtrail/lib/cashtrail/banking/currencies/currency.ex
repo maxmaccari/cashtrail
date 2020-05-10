@@ -43,7 +43,9 @@ defmodule Cashtrail.Banking.Currencies.Currency do
     among the members of a specific virtual community. For example loyalty points, game points, etc.
     * `"other"` - other types of currencies that don't match the previous categories.
   * `:iso_code` - The [ISO 4217](https://pt.wikipedia.org/wiki/ISO_4217) code of the currency.
-  * `:active` - Says if the currency is active or not.
+  * `:active` - Says if the currency is active or not. This field can be used only
+  to hide the currency in currencies listing. This doesn't archive accounts that use
+  this currency, and not prevents the currency using.
   * `:symbol` -  The symbol of the currency, like R$, US$, €, ¥, or £ for example.
   * `:precision` - Every currency can have a different number of decimal places.
   For example, the dinar has three decimal places, dollar two, and yen zero.

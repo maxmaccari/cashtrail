@@ -60,9 +60,10 @@ defmodule Cashtrail.Entities.Entity do
   * `:id` - The unique id of the entity.
   * `:name` - The name (or description) of the entity.
   * `:status` - The status of the entity, that can be:
-    * `"active"` - if the entity is used;
+    * `"active"` - if the entity is used.
     * `"archived"` -if the entity is no longer used, but you want to keep the
-    data history.
+    data history. This can be used to hide the entity in entity listing, or to
+    unauthorized other users to edit the entity data.
   * `:type` - The type of the entity, that can be:
     * `"personal"` - if the entity is used for personal reasons, like control
     your finances, your family finances, personal project finances,
