@@ -1,12 +1,12 @@
 defmodule Cashtrail.Entities.Tenants do
-  alias Cashtrail.Entities.Entity
-
   @moduledoc """
   Deals with tenants creation for Entity.
 
   Every created Entity should be a tenant and have its data. Tenants are schemas
   in the Postgres having the data related to the Entity.
   """
+
+  alias Cashtrail.Entities
 
   @doc """
   Create a tenant for the given Entity.
@@ -24,7 +24,7 @@ defmodule Cashtrail.Entities.Tenants do
   """
   @spec create(%Cashtrail.Entities.Entity{id: Ecto.UUID.t()}) ::
           {:error, String.t()} | {:ok, Ecto.UUID.t()}
-  def create(%Entity{} = entity) do
+  def create(%Entities.Entity{} = entity) do
     entity
     |> Triplex.to_prefix()
     |> Triplex.create()
@@ -46,7 +46,7 @@ defmodule Cashtrail.Entities.Tenants do
   """
   @spec drop(%Cashtrail.Entities.Entity{id: Ecto.UUID.t()}) ::
           {:error, String.t()} | {:ok, Ecto.UUID.t()}
-  def drop(%Entity{} = entity) do
+  def drop(%Entities.Entity{} = entity) do
     entity
     |> Triplex.to_prefix()
     |> Triplex.drop()
@@ -62,7 +62,7 @@ defmodule Cashtrail.Entities.Tenants do
   See `Triplex.to_prefix/1` docs for more information.
   """
   @spec to_prefix(Cashtrail.Entities.Entity.t()) :: String.t()
-  def to_prefix(%Entity{} = entity) do
+  def to_prefix(%Entities.Entity{} = entity) do
     Triplex.to_prefix(entity)
   end
 
@@ -77,7 +77,7 @@ defmodule Cashtrail.Entities.Tenants do
   See `Triplex.to_prefix/1` docs for more information.
   """
   @spec put_prefix(Ecto.Queryable.t(), Cashtrail.Entities.Entity.t()) :: Ecto.Query.t()
-  def put_prefix(queryable, %Entity{} = entity) do
+  def put_prefix(queryable, %Entities.Entity{} = entity) do
     queryable
     |> Ecto.Queryable.to_query()
     |> Map.put(:prefix, to_prefix(entity))

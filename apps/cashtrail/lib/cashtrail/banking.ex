@@ -11,14 +11,12 @@ defmodule Cashtrail.Banking do
   import Ecto.Query, warn: false
   alias Cashtrail.Repo
 
-  alias Cashtrail.{Entities, Paginator}
+  alias Cashtrail.{Banking, Entities, Paginator}
 
   import Cashtrail.Entities.Tenants, only: [to_prefix: 1]
   import Cashtrail.QueryBuilder, only: [build_filter: 3, build_search: 3]
 
-  alias Cashtrail.Banking.Currency
-
-  @type currency :: Currency.t()
+  @type currency :: Banking.Currency.t()
 
   @doc """
   Returns a `%Cashtrail.Paginator.Page{}` struct with a list of currencies in the
@@ -55,7 +53,7 @@ defmodule Cashtrail.Banking do
   """
   @spec list_currencies(Entities.Entity.t(), keyword) :: Paginator.Page.t()
   def list_currencies(%Entities.Entity{} = entity, options \\ []) do
-    Currency
+    Banking.Currency
     |> build_filter(Keyword.get(options, :filter), [:type, :active])
     |> build_search(Keyword.get(options, :search), [:description, :iso_code, :symbol])
     |> Ecto.Queryable.to_query()
@@ -87,7 +85,7 @@ defmodule Cashtrail.Banking do
   """
   @spec get_currency!(Entities.Entity.t(), Ecto.UUID.t() | String.t()) :: currency
   def get_currency!(%Entities.Entity{} = entity, id) do
-    Repo.get!(Currency, id, prefix: to_prefix(entity))
+    Repo.get!(Banking.Currency, id, prefix: to_prefix(entity))
   end
 
   @doc """
@@ -136,8 +134,8 @@ defmodule Cashtrail.Banking do
   @spec create_currency(Entities.Entity.t(), map) ::
           {:ok, currency} | {:error, Ecto.Changeset.t(currency)}
   def create_currency(%Entities.Entity{} = entity, attrs) do
-    %Currency{}
-    |> Currency.changeset(attrs)
+    %Banking.Currency{}
+    |> Banking.Currency.changeset(attrs)
     |> Repo.insert(prefix: to_prefix(entity))
   end
 
@@ -165,9 +163,9 @@ defmodule Cashtrail.Banking do
 
   """
   @spec update_currency(currency, map) :: {:ok, currency} | {:error, Ecto.Changeset.t(currency)}
-  def update_currency(%Currency{} = currency, attrs) do
+  def update_currency(%Banking.Currency{} = currency, attrs) do
     currency
-    |> Currency.changeset(attrs)
+    |> Banking.Currency.changeset(attrs)
     |> Repo.update()
   end
 
@@ -193,7 +191,7 @@ defmodule Cashtrail.Banking do
 
   """
   @spec delete_currency(currency) :: {:ok, currency} | {:error, Ecto.Changeset.t(currency)}
-  def delete_currency(%Currency{} = currency) do
+  def delete_currency(%Banking.Currency{} = currency) do
     Repo.delete(currency)
   end
 
@@ -211,7 +209,7 @@ defmodule Cashtrail.Banking do
 
   """
   @spec change_currency(currency) :: Ecto.Changeset.t(currency)
-  def change_currency(%Currency{} = currency) do
-    Currency.changeset(currency, %{})
+  def change_currency(%Banking.Currency{} = currency) do
+    Banking.Currency.changeset(currency, %{})
   end
 end

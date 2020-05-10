@@ -6,8 +6,6 @@ defmodule Cashtrail.ContactsTest do
   alias Cashtrail.Contacts
 
   describe "categories" do
-    alias Cashtrail.Contacts.Category
-
     test "list_categories/2 returns all categories", %{tenant: tenant} do
       category = insert(:contact_category, tenant: tenant)
       assert Contacts.list_categories(tenant).entries == [category]
@@ -41,7 +39,10 @@ defmodule Cashtrail.ContactsTest do
 
     test "create_category/2 with valid data creates a category", %{tenant: tenant} do
       category_params = params_for(:contact_category, tenant: tenant)
-      assert {:ok, %Category{} = category} = Contacts.create_category(tenant, category_params)
+
+      assert {:ok, %Contacts.Category{} = category} =
+               Contacts.create_category(tenant, category_params)
+
       assert category.description == category_params.description
     end
 
@@ -52,7 +53,9 @@ defmodule Cashtrail.ContactsTest do
 
     test "create_category/2 with same description returns error changeset", %{tenant: tenant} do
       category_params = params_for(:contact_category, tenant: tenant)
-      assert {:ok, %Category{} = category} = Contacts.create_category(tenant, category_params)
+
+      assert {:ok, %Contacts.Category{} = category} =
+               Contacts.create_category(tenant, category_params)
 
       assert {:error, %Ecto.Changeset{errors: [description: _]}} =
                Contacts.create_category(tenant, category_params)
@@ -61,7 +64,10 @@ defmodule Cashtrail.ContactsTest do
     @update_attrs %{description: "some updated description"}
     test "update_category/2 with valid data updates the category", %{tenant: tenant} do
       category = insert(:contact_category, tenant: tenant)
-      assert {:ok, %Category{} = category} = Contacts.update_category(category, @update_attrs)
+
+      assert {:ok, %Contacts.Category{} = category} =
+               Contacts.update_category(category, @update_attrs)
+
       assert category.description == "some updated description"
     end
 
@@ -73,7 +79,7 @@ defmodule Cashtrail.ContactsTest do
 
     test "delete_category/1 deletes the category", %{tenant: tenant} do
       category = insert(:contact_category, tenant: tenant)
-      assert {:ok, %Category{}} = Contacts.delete_category(category)
+      assert {:ok, %Contacts.Category{}} = Contacts.delete_category(category)
       assert_raise Ecto.NoResultsError, fn -> Contacts.get_category!(tenant, category.id) end
     end
 
@@ -84,8 +90,6 @@ defmodule Cashtrail.ContactsTest do
   end
 
   describe "contacts" do
-    alias Cashtrail.Contacts.Contact
-
     test "list_contacts/2 returns all contacts", %{tenant: tenant} do
       contact = insert(:contact, tenant: tenant) |> forget(:category)
       assert Contacts.list_contacts(tenant).entries == [contact]
@@ -166,7 +170,10 @@ defmodule Cashtrail.ContactsTest do
     test "create_contact/2 with valid data creates a contact", %{tenant: tenant} do
       category = insert(:contact_category, tenant: tenant)
       contact_params = params_for(:contact, category_id: category.id)
-      assert {:ok, %Contact{} = contact} = Contacts.create_contact(tenant, contact_params)
+
+      assert {:ok, %Contacts.Contact{} = contact} =
+               Contacts.create_contact(tenant, contact_params)
+
       assert contact.customer == contact_params.customer
       assert contact.email == contact_params.email
       assert contact.legal_name == contact_params.legal_name
@@ -221,7 +228,10 @@ defmodule Cashtrail.ContactsTest do
     }
     test "update_contact/2 with valid data updates the contact", %{tenant: tenant} do
       contact = insert(:contact, tenant: tenant)
-      assert {:ok, %Contact{} = contact} = Contacts.update_contact(contact, @update_attrs)
+
+      assert {:ok, %Contacts.Contact{} = contact} =
+               Contacts.update_contact(contact, @update_attrs)
+
       assert contact.address == %{contact.address | street: "My New Street", city: "My New City"}
       assert contact.customer == false
       assert contact.email == "some updated email"
@@ -241,7 +251,7 @@ defmodule Cashtrail.ContactsTest do
 
     test "delete_contact/1 deletes the contact", %{tenant: tenant} do
       contact = insert(:contact, tenant: tenant)
-      assert {:ok, %Contact{}} = Contacts.delete_contact(contact)
+      assert {:ok, %Contacts.Contact{}} = Contacts.delete_contact(contact)
       assert_raise Ecto.NoResultsError, fn -> Contacts.get_contact!(tenant, contact.id) end
     end
 

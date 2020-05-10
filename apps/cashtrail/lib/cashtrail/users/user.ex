@@ -32,7 +32,7 @@ defmodule Cashtrail.Users.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Cashtrail.Users.PasswordHash
+  import Cashtrail.Users.PasswordHash, only: [hash_pwd_salt: 1]
 
   @type t() :: %Cashtrail.Users.User{
           id: Ecto.UUID.t() | nil,
@@ -85,7 +85,7 @@ defmodule Cashtrail.Users.User do
   defp change_password(changeset) do
     case changeset do
       %Ecto.Changeset{changes: %{password: password}, valid?: true} ->
-        put_change(changeset, :password_hash, PasswordHash.hash_pwd_salt(password))
+        put_change(changeset, :password_hash, hash_pwd_salt(password))
 
       _ ->
         changeset

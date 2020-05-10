@@ -120,17 +120,20 @@ defmodule Cashtrail.EntitiesTest do
                membered_entity
              ]
 
-      assert Entities.list_entities_for(owner, relation_type: :both).entries == [
-               owned_entity,
-               membered_entity
-             ]
+      entities = Entities.list_entities_for(owner, relation_type: :both).entries
+      assert length(entities) == 2
+      assert Enum.member?(entities, membered_entity)
+      assert Enum.member?(entities, owned_entity)
 
-      assert Entities.list_entities_for(owner, relation_type: :invalid).entries == [
-               owned_entity,
-               membered_entity
-             ]
+      entities = Entities.list_entities_for(owner, relation_type: :invalid).entries
+      assert length(entities) == 2
+      assert Enum.member?(entities, membered_entity)
+      assert Enum.member?(entities, owned_entity)
 
-      assert Entities.list_entities_for(owner).entries == [owned_entity, membered_entity]
+      entities = Entities.list_entities_for(owner).entries
+      assert length(entities) == 2
+      assert Enum.member?(entities, membered_entity)
+      assert Enum.member?(entities, owned_entity)
     end
 
     test "list_entities_for/2 filtering by invalid key" do

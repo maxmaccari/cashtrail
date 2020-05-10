@@ -1,6 +1,6 @@
 defmodule Cashtrail.Paginator do
   alias Cashtrail.Repo
-  alias Cashtrail.Paginator.Page
+  alias Cashtrail.Paginator
 
   @moduledoc """
   Allow fetching paged data with its metadata.
@@ -27,11 +27,11 @@ defmodule Cashtrail.Paginator do
       iex> paginate(Entity, page_size: :all)
       %Cashtrail.Paginator.Page{page_size: 22, page: 1, entries: []}
   """
-  @spec paginate(Ecto.Queryable.t(), keyword) :: Page.t()
+  @spec paginate(Ecto.Queryable.t(), keyword) :: Paginator.Page.t()
   def paginate(queriable, options \\ []) do
     queriable
     |> fetch_data(options)
-    |> Page.from()
+    |> Paginator.Page.from()
   end
 
   defp fetch_data(queriable, options) do

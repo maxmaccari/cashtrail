@@ -87,8 +87,7 @@ defmodule Cashtrail.Entities.Entity do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Cashtrail.Users.User
-  alias Cashtrail.Entities.EntityMember
+  alias Cashtrail.{Entities, Users}
 
   @type t() :: %Cashtrail.Entities.Entity{
           id: Ecto.UUID.t() | nil,
@@ -96,8 +95,8 @@ defmodule Cashtrail.Entities.Entity do
           status: String.t() | nil,
           type: String.t() | nil,
           owner_id: Ecto.UUID.t() | nil,
-          owner: Ecto.Association.NotLoaded.t() | User.t() | nil,
-          members: Ecto.Association.NotLoaded.t() | list(EntityMember.t()),
+          owner: Ecto.Association.NotLoaded.t() | Users.User.t() | nil,
+          members: Ecto.Association.NotLoaded.t() | list(Entities.EntityMember.t()),
           inserted_at: NaiveDateTime.t() | nil,
           updated_at: NaiveDateTime.t() | nil,
           __meta__: Ecto.Schema.Metadata.t()
@@ -109,8 +108,8 @@ defmodule Cashtrail.Entities.Entity do
     field :name, :string
     field :status, :string, default: "active"
     field :type, :string, default: "personal"
-    belongs_to :owner, User
-    has_many :members, EntityMember
+    belongs_to :owner, Users.User
+    has_many :members, Entities.EntityMember
 
     timestamps()
   end

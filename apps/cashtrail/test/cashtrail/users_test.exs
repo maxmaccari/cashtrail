@@ -6,8 +6,6 @@ defmodule Cashtrail.UsersTest do
   alias Cashtrail.Users
 
   describe "users" do
-    alias Cashtrail.Users.User
-
     test "list_users/1 returns all users" do
       user = insert(:user)
       assert Users.list_users().entries == [user]
@@ -69,7 +67,7 @@ defmodule Cashtrail.UsersTest do
 
     test "create_user/1 with valid data creates a user" do
       user_params = params_for(:user, password: "@abc1234")
-      assert {:ok, %User{} = user} = Users.create_user(user_params)
+      assert {:ok, %Users.User{} = user} = Users.create_user(user_params)
       assert user.email == user_params.email
       assert user.first_name == user_params.first_name
       assert user.last_name == user_params.last_name
@@ -81,7 +79,7 @@ defmodule Cashtrail.UsersTest do
       user_params = params_for(:user, password: "@abc1234")
       user_params = %{user_params | email: String.upcase(user_params.email)}
 
-      assert {:ok, %User{} = user} = Users.create_user(user_params)
+      assert {:ok, %Users.User{} = user} = Users.create_user(user_params)
 
       assert user.email == String.downcase(user_params.email)
     end
@@ -100,7 +98,7 @@ defmodule Cashtrail.UsersTest do
     test "create_user/1 with an already used email returns error changeset" do
       user_params = params_for(:user, password: "@abc1234")
 
-      assert {:ok, %User{} = user} = Users.create_user(user_params)
+      assert {:ok, %Users.User{} = user} = Users.create_user(user_params)
 
       assert {:error, %Ecto.Changeset{errors: [email: {"has already been taken", _}]}} =
                Users.create_user(user_params)
@@ -151,7 +149,7 @@ defmodule Cashtrail.UsersTest do
     }
     test "update_user/2 with valid data updates the user" do
       user = %{password_hash: old_password_hash} = insert(:user)
-      assert {:ok, %User{} = user} = Users.update_user(user, @update_attrs)
+      assert {:ok, %Users.User{} = user} = Users.update_user(user, @update_attrs)
       assert user.email == "updated_john_doe@example.com"
       assert user.first_name == "some updated first_name"
       assert user.last_name == "some updated last_name"
@@ -167,7 +165,7 @@ defmodule Cashtrail.UsersTest do
 
     test "delete_user/1 deletes the user" do
       user = insert(:user)
-      assert {:ok, %User{}} = Users.delete_user(user)
+      assert {:ok, %Users.User{}} = Users.delete_user(user)
       assert_raise Ecto.NoResultsError, fn -> Users.get_user!(user.id) end
     end
 

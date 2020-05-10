@@ -38,16 +38,15 @@ defmodule Cashtrail.Entities.EntityMember do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Cashtrail.Users.User
-  alias Cashtrail.Entities.Entity
+  alias Cashtrail.{Entities, Users}
 
   @type t() :: %Cashtrail.Entities.EntityMember{
           id: Ecto.UUID.t() | nil,
           permission: String.t() | nil,
           entity_id: Ecto.UUID.t() | nil,
-          entity: Ecto.Association.NotLoaded.t() | Entity.t() | nil,
+          entity: Ecto.Association.NotLoaded.t() | Entities.Entity.t() | nil,
           user_id: Ecto.UUID.t() | nil,
-          user: Ecto.Association.NotLoaded.t() | User.t() | nil,
+          user: Ecto.Association.NotLoaded.t() | Users.User.t() | nil,
           inserted_at: NaiveDateTime.t() | nil,
           updated_at: NaiveDateTime.t() | nil,
           __meta__: Ecto.Schema.Metadata.t()
@@ -57,8 +56,8 @@ defmodule Cashtrail.Entities.EntityMember do
   @foreign_key_type :binary_id
   schema "entity_members" do
     field :permission, :string
-    belongs_to :entity, Entity
-    belongs_to :user, User
+    belongs_to :entity, Entities.Entity
+    belongs_to :user, Users.User
 
     timestamps()
   end

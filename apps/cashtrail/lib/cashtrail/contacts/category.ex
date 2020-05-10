@@ -27,12 +27,12 @@ defmodule Cashtrail.Contacts.Category do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Cashtrail.Contacts.Contact
+  alias Cashtrail.Contacts
 
   @type t :: %Cashtrail.Contacts.Category{
           id: Ecto.UUID.t() | nil,
           description: String.t() | nil,
-          contacts: Ecto.Association.NotLoaded.t() | list(Contact.t()),
+          contacts: Ecto.Association.NotLoaded.t() | list(Contacts.Contact.t()),
           inserted_at: NaiveDateTime.t() | nil,
           updated_at: NaiveDateTime.t() | nil,
           __meta__: Ecto.Schema.Metadata.t()
@@ -42,7 +42,7 @@ defmodule Cashtrail.Contacts.Category do
   @foreign_key_type :binary_id
   schema "contact_categories" do
     field :description, :string
-    has_many :contacts, Contact
+    has_many :contacts, Contacts.Contact
 
     timestamps()
   end
