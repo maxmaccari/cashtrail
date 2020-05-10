@@ -22,7 +22,6 @@ defmodule Cashtrail.Users.User do
   When a user is retrieved, this value is empty.
   * `:password_hash` - This field keeps the hashed password. You can search more
   about hashing algorithms or see `Comeonin` to know more about it.
-  * `:entities` - The entities that the user is owner.
   * `:inserted_at` - When the user was inserted at the first time.
   * `:updated_at` - When the user was updated at the last time.
 
@@ -34,7 +33,6 @@ defmodule Cashtrail.Users.User do
   import Ecto.Changeset
 
   alias Cashtrail.Users.PasswordHash
-  alias Cashtrail.Entities.Entity
 
   @type t() :: %Cashtrail.Users.User{
           id: Ecto.UUID.t() | nil,
@@ -44,7 +42,6 @@ defmodule Cashtrail.Users.User do
           password: String.t() | nil,
           password_hash: String.t() | nil,
           avatar_url: String.t() | nil,
-          entities: Ecto.Association.NotLoaded.t() | list(Entity.t()),
           inserted_at: NaiveDateTime.t() | nil,
           updated_at: NaiveDateTime.t() | nil,
           __meta__: Ecto.Schema.Metadata.t()
@@ -59,8 +56,6 @@ defmodule Cashtrail.Users.User do
     field :avatar_url, :string
     field :password_hash, :string
     field :password, :string, virtual: true
-
-    has_many :entities, Entity, foreign_key: :owner_id
 
     timestamps()
   end

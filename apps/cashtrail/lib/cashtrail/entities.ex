@@ -68,6 +68,11 @@ defmodule Cashtrail.Entities do
       * `:type` or `"type"`
       * `:status` or `"status"`
     * `:search` => search entities by `:name`.
+    * `:relation_type` => filter by relation type, that can be:
+      * `:owner` => list only entities owned by the user.
+      * `:member` => list only entities that the user is member of.
+      * `:both` => the default value, list entities that the user is owned by or
+      is member of the entities.
     * See `Cashtrail.Paginator.paginate/2` to see paginations options.
 
   See `Cashtrail.Entities.Entity` to have more detailed info about the fields to
@@ -75,20 +80,36 @@ defmodule Cashtrail.Entities do
 
   ## Examples
 
-      iex> list_entities_from(owner)
+      iex> list_entities_for(owner)
       %Cashtrail.Paginator.Page{entries: [%Entity{}, ...]}
 
-      iex> list_entities_from(member)
+      iex> list_entities_for(member)
       %Cashtrail.Paginator.Page{entries: [%Entity{}, ...]}
 
   """
-  @spec list_entities_from(User.t(), keyword) :: Paginator.Page.t(entity())
-  def list_entities_from(%User{} = user, params \\ []) do
+  @spec list_entities_for(User.t(), keyword) :: Paginator.Page.t(entity())
+  def list_entities_for(%User{id: user_id}, options \\ []) do
     from(e in Entity)
+    |> build_filter(Keyword.get(options, :filter), [:type, :status])
+    |> build_search(Keyword.get(options, :search), [:name])
+    |> of_relation(user_id, Keyword.get(options, :relation_type, :both))
+    |> Paginator.paginate(options)
+  end
+
+  defp of_relation(query, user_id, :owner) do
+    where(query, [e], e.owner_id == ^user_id)
+  end
+
+  defp of_relation(query, user_id, :member) do
+    query
     |> join(:left, [e], m in assoc(e, :members))
-    |> or_where([e], e.owner_id == ^user.id)
-    |> or_where([e, m], m.user_id == ^user.id)
-    |> Paginator.paginate(params)
+    |> where([_, m], m.user_id == ^user_id)
+  end
+
+  defp of_relation(query, user_id, _) do
+    query
+    |> join(:left, [e], m in assoc(e, :members))
+    |> where([e, m], e.owner_id == ^user_id or m.user_id == ^user_id)
   end
 
   @doc """
@@ -154,9 +175,8 @@ defmodule Cashtrail.Entities do
     end
   end
 
-  def create_entity(%User{} = user, attrs, false) do
-    user
-    |> Ecto.build_assoc(:entities)
+  def create_entity(%User{id: user_id}, attrs, false) do
+    %Entity{owner_id: user_id}
     |> Entity.changeset(attrs)
     |> Repo.insert()
   end
