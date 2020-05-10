@@ -4,8 +4,8 @@ config :cashtrail, comeonin_hash_module: Cashtrail.FakePasswordHash
 
 # Configure your database
 config :cashtrail, Cashtrail.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: System.get_env("POSTGRES_USERNAME", "postgres"),
+  password: System.get_env("POSTGRES_PASSWORD", "postgres"),
   database: "cashtrail_test",
   hostname: System.get_env("POSTGRES_HOST", "localhost"),
   port: System.get_env("POSTGRES_PORT", "5432") |> String.to_integer(),
