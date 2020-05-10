@@ -1,16 +1,14 @@
-defmodule Cashtrail.Banking.CurrenciesTest do
+defmodule Cashtrail.BankingTest do
   @moduledoc false
 
   use Cashtrail.TenantCase
 
-  alias Cashtrail.Banking.Currencies
+  alias Cashtrail.{Banking, Paginator}
 
   describe "currencies" do
-    alias Cashtrail.Banking.Currencies.Currency
-
     test "list_currencies/1 returns all currencies", %{tenant: tenant} do
       currency = insert(:currency, tenant: tenant)
-      assert Currencies.list_currencies(tenant).entries == [currency]
+      assert Banking.list_currencies(tenant).entries == [currency]
     end
 
     test "list_currencies/1 works with pagination", %{tenant: tenant} do
@@ -18,7 +16,7 @@ defmodule Cashtrail.Banking.CurrenciesTest do
         insert_list(25, :currency, tenant: tenant)
         |> Enum.slice(20, 5)
 
-      assert Currencies.list_currencies(tenant, page: 2) == %Cashtrail.Paginator.Page{
+      assert Banking.list_currencies(tenant, page: 2) == %Paginator.Page{
                entries: currencies,
                page_number: 2,
                page_size: 20,
@@ -31,9 +29,9 @@ defmodule Cashtrail.Banking.CurrenciesTest do
       insert(:currency, tenant: tenant, type: "virtual")
       currency = insert(:currency, tenant: tenant, type: "money")
 
-      assert Currencies.list_currencies(tenant, filter: %{type: "money"}).entries == [currency]
+      assert Banking.list_currencies(tenant, filter: %{type: "money"}).entries == [currency]
 
-      assert Currencies.list_currencies(tenant, filter: %{"type" => "money"}).entries == [
+      assert Banking.list_currencies(tenant, filter: %{"type" => "money"}).entries == [
                currency
              ]
     end
@@ -42,14 +40,14 @@ defmodule Cashtrail.Banking.CurrenciesTest do
       insert(:currency, tenant: tenant, active: false)
       currency = insert(:currency, tenant: tenant, active: true)
 
-      assert Currencies.list_currencies(tenant, filter: %{active: true}).entries == [currency]
-      assert Currencies.list_currencies(tenant, filter: %{"active" => true}).entries == [currency]
+      assert Banking.list_currencies(tenant, filter: %{active: true}).entries == [currency]
+      assert Banking.list_currencies(tenant, filter: %{"active" => true}).entries == [currency]
     end
 
     test "list_currencies/1 filtering by invalid filters show all results", %{tenant: tenant} do
       currency = insert(:currency, tenant: tenant)
 
-      assert Currencies.list_currencies(tenant, filter: %{invalid: "123"}).entries == [currency]
+      assert Banking.list_currencies(tenant, filter: %{invalid: "123"}).entries == [currency]
     end
 
     test "list_currencies/1 searching by iso_code, symbol and description", %{tenant: tenant} do
@@ -58,19 +56,22 @@ defmodule Cashtrail.Banking.CurrenciesTest do
       currency =
         insert(:currency, tenant: tenant, description: "ghijk", iso_code: "lmn", symbol: "op$")
 
-      assert Currencies.list_currencies(tenant, search: "hij").entries == [currency]
-      assert Currencies.list_currencies(tenant, search: "lm").entries == [currency]
-      assert Currencies.list_currencies(tenant, search: "p$").entries == [currency]
+      assert Banking.list_currencies(tenant, search: "hij").entries == [currency]
+      assert Banking.list_currencies(tenant, search: "lm").entries == [currency]
+      assert Banking.list_currencies(tenant, search: "p$").entries == [currency]
     end
 
     test "get_currency!/2 returns the currency with given id", %{tenant: tenant} do
       currency = insert(:currency, tenant: tenant)
-      assert Currencies.get_currency!(tenant, currency.id) == currency
+      assert Banking.get_currency!(tenant, currency.id) == currency
     end
 
     test "create_currency/2 with valid data creates a currency", %{tenant: tenant} do
       currency_params = params_for(:currency, tenant: tenant)
-      assert {:ok, %Currency{} = currency} = Currencies.create_currency(tenant, currency_params)
+
+      assert {:ok, %Banking.Currency{} = currency} =
+               Banking.create_currency(tenant, currency_params)
+
       assert currency.active == true
       assert currency.description == currency_params.description
       assert currency.format == currency_params.format
@@ -84,7 +85,10 @@ defmodule Cashtrail.Banking.CurrenciesTest do
 
     test "create_currency/2 with downcased iso_code upcases the value", %{tenant: tenant} do
       currency_params = params_for(:currency, tenant: tenant, iso_code: "abc")
-      assert {:ok, %Currency{} = currency} = Currencies.create_currency(tenant, currency_params)
+
+      assert {:ok, %Banking.Currency{} = currency} =
+               Banking.create_currency(tenant, currency_params)
+
       assert currency.iso_code == "ABC"
     end
 
@@ -92,7 +96,9 @@ defmodule Cashtrail.Banking.CurrenciesTest do
       currency_params =
         params_for(:currency, tenant: tenant, separator: "", format: "", type: "", active: nil)
 
-      assert {:ok, %Currency{} = currency} = Currencies.create_currency(tenant, currency_params)
+      assert {:ok, %Banking.Currency{} = currency} =
+               Banking.create_currency(tenant, currency_params)
+
       assert currency.type == "money"
       assert currency.active == true
       assert currency.separator == "."
@@ -109,7 +115,7 @@ defmodule Cashtrail.Banking.CurrenciesTest do
       precision: -1
     }
     test "create_currency/2 with invalid data returns error changeset", %{tenant: tenant} do
-      assert {:error, %Ecto.Changeset{}} = Currencies.create_currency(tenant, @invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Banking.create_currency(tenant, @invalid_attrs)
     end
 
     test "create_currency/2 with invalid type returns error changeset", %{tenant: tenant} do
@@ -118,7 +124,7 @@ defmodule Cashtrail.Banking.CurrenciesTest do
                 errors: [
                   type: {"is invalid", _}
                 ]
-              }} = Currencies.create_currency(tenant, params_for(:currency, type: "invalid"))
+              }} = Banking.create_currency(tenant, params_for(:currency, type: "invalid"))
     end
 
     test "create_currency/2 with invalid precission returns error changeset", %{tenant: tenant} do
@@ -129,7 +135,7 @@ defmodule Cashtrail.Banking.CurrenciesTest do
                     {"must be greater than or equal to %{number}",
                      [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
                 ]
-              }} = Currencies.create_currency(tenant, params_for(:currency, precision: -1))
+              }} = Banking.create_currency(tenant, params_for(:currency, precision: -1))
     end
 
     test "create_currency/2 with invalid iso_code returns error changeset", %{tenant: tenant} do
@@ -139,36 +145,38 @@ defmodule Cashtrail.Banking.CurrenciesTest do
            iso_code: {"is not a valid ISO 4217 code", _},
            iso_code: {"should be %{count} character(s)", _}
          ]
-       }} = Currencies.create_currency(tenant, params_for(:currency, iso_code: "ab"))
+       }} = Banking.create_currency(tenant, params_for(:currency, iso_code: "ab"))
 
       {:error,
        %Ecto.Changeset{
          errors: [
            iso_code: {"should be %{count} character(s)", _}
          ]
-       }} = Currencies.create_currency(tenant, params_for(:currency, iso_code: "abcd"))
+       }} = Banking.create_currency(tenant, params_for(:currency, iso_code: "abcd"))
 
       {:error,
        %Ecto.Changeset{
          errors: [
            iso_code: {"is not a valid ISO 4217 code", _}
          ]
-       }} = Currencies.create_currency(tenant, params_for(:currency, iso_code: "a b"))
+       }} = Banking.create_currency(tenant, params_for(:currency, iso_code: "a b"))
 
       {:error,
        %Ecto.Changeset{
          errors: [
            iso_code: {"is not a valid ISO 4217 code", _}
          ]
-       }} = Currencies.create_currency(tenant, params_for(:currency, iso_code: "a1b"))
+       }} = Banking.create_currency(tenant, params_for(:currency, iso_code: "a1b"))
     end
 
     test "create_currency/2 with same iso_code returns a error changeset", %{tenant: tenant} do
       currency_params = params_for(:currency, tenant: tenant, iso_code: "ABC")
-      assert {:ok, %Currency{} = currency} = Currencies.create_currency(tenant, currency_params)
+
+      assert {:ok, %Banking.Currency{} = currency} =
+               Banking.create_currency(tenant, currency_params)
 
       assert {:error, %Ecto.Changeset{errors: [iso_code: _]}} =
-               Currencies.create_currency(tenant, currency_params)
+               Banking.create_currency(tenant, currency_params)
     end
 
     test "create_currency/2 with invalid separator returns error changeset", %{tenant: tenant} do
@@ -179,7 +187,7 @@ defmodule Cashtrail.Banking.CurrenciesTest do
                     {"should be %{count} character(s)",
                      [count: 1, validation: :length, kind: :is, type: :string]}
                 ]
-              }} = Currencies.create_currency(tenant, params_for(:currency, separator: ".."))
+              }} = Banking.create_currency(tenant, params_for(:currency, separator: ".."))
     end
 
     test "create_currency/2 with invalid delimiter returns error changeset", %{tenant: tenant} do
@@ -190,7 +198,7 @@ defmodule Cashtrail.Banking.CurrenciesTest do
                     {"should be at most %{count} character(s)",
                      [count: 1, validation: :length, kind: :max, type: :string]}
                 ]
-              }} = Currencies.create_currency(tenant, params_for(:currency, delimiter: ".."))
+              }} = Banking.create_currency(tenant, params_for(:currency, delimiter: ".."))
     end
 
     test "create_currency/2 with invalid format returns error changeset", %{tenant: tenant} do
@@ -199,7 +207,7 @@ defmodule Cashtrail.Banking.CurrenciesTest do
                 errors: [
                   format: {"Should have one %n to display the number, or be empty", []}
                 ]
-              }} = Currencies.create_currency(tenant, params_for(:currency, format: "%s"))
+              }} = Banking.create_currency(tenant, params_for(:currency, format: "%s"))
     end
 
     @update_attrs %{
@@ -215,7 +223,10 @@ defmodule Cashtrail.Banking.CurrenciesTest do
     }
     test "update_currency/2 with valid data updates the currency", %{tenant: tenant} do
       currency = insert(:currency, tenant: tenant)
-      assert {:ok, %Currency{} = currency} = Currencies.update_currency(currency, @update_attrs)
+
+      assert {:ok, %Banking.Currency{} = currency} =
+               Banking.update_currency(currency, @update_attrs)
+
       assert currency.active == false
       assert currency.description == "some updated description"
       assert currency.format == "%n"
@@ -229,19 +240,19 @@ defmodule Cashtrail.Banking.CurrenciesTest do
 
     test "update_currency/2 with invalid data returns error changeset", %{tenant: tenant} do
       currency = insert(:currency, tenant: tenant)
-      assert {:error, %Ecto.Changeset{}} = Currencies.update_currency(currency, @invalid_attrs)
-      assert currency == Currencies.get_currency!(tenant, currency.id)
+      assert {:error, %Ecto.Changeset{}} = Banking.update_currency(currency, @invalid_attrs)
+      assert currency == Banking.get_currency!(tenant, currency.id)
     end
 
     test "delete_currency/1 deletes the currency", %{tenant: tenant} do
       currency = insert(:currency, tenant: tenant)
-      assert {:ok, %Currency{}} = Currencies.delete_currency(currency)
-      assert_raise Ecto.NoResultsError, fn -> Currencies.get_currency!(tenant, currency.id) end
+      assert {:ok, %Banking.Currency{}} = Banking.delete_currency(currency)
+      assert_raise Ecto.NoResultsError, fn -> Banking.get_currency!(tenant, currency.id) end
     end
 
     test "change_currency/1 returns a currency changeset", %{tenant: tenant} do
       currency = insert(:currency, tenant: tenant)
-      assert %Ecto.Changeset{} = Currencies.change_currency(currency)
+      assert %Ecto.Changeset{} = Banking.change_currency(currency)
     end
   end
 end

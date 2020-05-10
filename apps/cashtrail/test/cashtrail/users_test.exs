@@ -54,8 +54,7 @@ defmodule Cashtrail.UsersTest do
     test "authenticate_user/2 email is case insensitive" do
       user = insert(:user, password_hash: "my_password123")
 
-      assert {:ok, autenticated} =
-               Users.authenticate(String.upcase(user.email), "my_password123")
+      assert {:ok, autenticated} = Users.authenticate(String.upcase(user.email), "my_password123")
     end
 
     test "authenticate_user/2 with invalid password return :unathorized error" do

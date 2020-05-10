@@ -1,11 +1,11 @@
-defmodule Cashtrail.Banking.Currencies.Currency do
+defmodule Cashtrail.Banking.Currency do
   @moduledoc """
   This is an `Ecto.Schema` struct that represents a currency of the entity.
 
   **Warning**: Don't use the functions of this module. Only use this module as a
   struct to represent a currency. The functions of this module are internal and
-  can change over time. Only manipulate currencies through the
-  `Cashtrail.Banking.Currencies` that is the context for this.
+  can change over time. Only manipulate currencies through the `Cashtrail.Banking`
+  that is the context for this.
 
   ## Definition
 
@@ -63,13 +63,13 @@ defmodule Cashtrail.Banking.Currencies.Currency do
   * `:inserted_at` - When the currency was inserted at the first time.
   * `:updated_at` - When the currency was updated at the last time.
 
-  See `Cashtrail.Banking.Currencies` to know how to list, get, insert, update, and delete currencies.
+  See `Cashtrail.Banking` to know how to list, get, insert, update, and delete currencies.
   """
 
   use Ecto.Schema
   import Ecto.Changeset
 
-  @type t :: %Cashtrail.Banking.Currencies.Currency{
+  @type t :: %Cashtrail.Banking.Currency{
           id: Ecto.UUID.t() | nil,
           description: String.t() | nil,
           iso_code: String.t() | nil,

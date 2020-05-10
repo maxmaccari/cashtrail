@@ -1,7 +1,7 @@
-defmodule Cashtrail.Factory.CurrenciesFactory do
+defmodule Cashtrail.Factory.BankingFactory do
   @moduledoc false
 
-  alias Cashtrail.Banking.Currencies.Currency
+  alias Cashtrail.Banking
   alias Cashtrail.Factory.Helpers
 
   defmacro __using__(_opts) do
@@ -20,7 +20,7 @@ defmodule Cashtrail.Factory.CurrenciesFactory do
         iso_code_2_3 = sequence(:iso_code_2, @iso_code_sequence)
         iso_code = iso_code_1 <> iso_code_2_3
 
-        %Currency{
+        %Banking.Currency{
           active: true,
           description: "#{iso_code} Currency",
           iso_code: iso_code,

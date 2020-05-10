@@ -4,7 +4,7 @@ defmodule Cashtrail.Factory do
   use ExMachina.Ecto, repo: Cashtrail.Repo
 
   use Cashtrail.Factory.EntitiesFactory
-  use Cashtrail.Factory.CurrenciesFactory
+  use Cashtrail.Factory.BankingFactory
   use Cashtrail.Factory.ContactsFactory
   use Cashtrail.Factory.UsersFactory
 end
