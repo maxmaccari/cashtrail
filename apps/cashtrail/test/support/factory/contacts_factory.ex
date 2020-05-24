@@ -1,13 +1,13 @@
 defmodule Cashtrail.Factory.ContactsFactory do
   @moduledoc false
 
-  alias Cashtrail.Contacts.{Category, Contact}
+  alias Cashtrail.Contacts
   alias Cashtrail.Factory.Helpers
 
   defmacro __using__(_opts) do
     quote do
       def contact_category_factory(attrs \\ %{}) do
-        %Category{
+        %Contacts.Category{
           description: sequence(:category, &"Category #{&1}")
         }
         |> Helpers.put_tenant(attrs)
@@ -15,7 +15,7 @@ defmodule Cashtrail.Factory.ContactsFactory do
       end
 
       def contact_factory(attrs \\ %{}) do
-        %Contact{
+        %Contacts.Contact{
           name: Faker.App.name(),
           legal_name: Faker.Company.name(),
           tax_id: Faker.App.name(),
@@ -24,7 +24,7 @@ defmodule Cashtrail.Factory.ContactsFactory do
           supplier: Enum.random([true, false]),
           phone: Faker.Phone.EnUs.phone(),
           email: Faker.Internet.email(),
-          address: %Cashtrail.Contacts.Address{
+          address: %Contacts.Address{
             street: Faker.Address.street_name(),
             number: Faker.Address.building_number(),
             complement: Faker.Address.secondary_address(),

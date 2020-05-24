@@ -9,12 +9,12 @@ defmodule Cashtrail.Users do
   import Ecto.Query, warn: false
   alias Cashtrail.Repo
 
-  alias Cashtrail.Users.{PasswordHash, User}
-  alias Cashtrail.Paginator
+  alias Cashtrail.{Paginator, Users}
+  alias Cashtrail.Users.PasswordHash
 
   import Cashtrail.QueryBuilder, only: [build_search: 3]
 
-  @type user() :: User.t()
+  @type user() :: Users.User.t()
 
   @doc """
   Returns a `%Cashtrail.Paginator.Page{}` struct with a list of users in the
@@ -32,15 +32,15 @@ defmodule Cashtrail.Users do
   ## Examples
 
       iex> list_users()
-      %Cashtrail.Paginator{entries: [%User{}, ...]}
+      %Cashtrail.Paginator{entries: [%Users.User{}, ...]}
 
       iex> list_users(search: "my")
-      %Cashtrail.Paginator{entries: [%User{first_name: "My name"}, ...]}
+      %Cashtrail.Paginator{entries: [%Users.User{first_name: "My name"}, ...]}
 
   """
   @spec list_users(keyword) :: Cashtrail.Paginator.Page.t(user)
   def list_users(options \\ []) do
-    User
+    Users.User
     |> build_search(Keyword.get(options, :search), [:first_name, :last_name, :email])
     |> Paginator.paginate(options)
   end
@@ -60,14 +60,14 @@ defmodule Cashtrail.Users do
   ## Examples
 
       iex> get_user!(123)
-      %User{}
+      %Users.User{}
 
       iex> get_user!(456)
       ** (Ecto.NoResultsError)
 
   """
   @spec get_user!(Ecto.UUID.t() | String.t()) :: user()
-  def get_user!(id), do: Repo.get!(User, id)
+  def get_user!(id), do: Repo.get!(Users.User, id)
 
   @doc """
   Gets a single user by the given param.
@@ -84,14 +84,14 @@ defmodule Cashtrail.Users do
   ## Examples
 
       iex> get_user_by(email: "john@example.com")
-      %User{}
+      %Users.User{}
 
       iex> get_user_by(email: "noexists')
       nil
 
   """
   @spec get_user_by(keyword | map) :: nil | user()
-  def get_user_by(params \\ []), do: Repo.get_by(User, params)
+  def get_user_by(params \\ []), do: Repo.get_by(Users.User, params)
 
   @doc """
   Authenticates a user with its email and password.
@@ -109,7 +109,7 @@ defmodule Cashtrail.Users do
   ## Examples
 
       iex> authenticate(email, password)
-      {:ok, %User{}}
+      {:ok, %Users.User{}}
 
       iex> authenticate(email, wrong_pass)
       {:error, :unauthorized}
@@ -120,18 +120,21 @@ defmodule Cashtrail.Users do
   @spec authenticate(String.t(), String.t()) ::
           {:ok, user()} | {:error, :not_found | :unauthorized}
   def authenticate(email, password) do
-    user = get_user_by(email: email)
-
-    cond do
-      user && PasswordHash.verify_pass(password, user.password_hash) ->
-        {:ok, user}
-
-      user ->
-        {:error, :unauthorized}
-
-      true ->
+    case get_user_by(email: email) do
+      nil ->
         PasswordHash.no_user_verify()
         {:error, :not_found}
+
+      %Users.User{} = user ->
+        verify_password_hash(user, password)
+    end
+  end
+
+  defp verify_password_hash(%Users.User{password_hash: password_hash} = user, password) do
+    if PasswordHash.verify_pass(password, password_hash) do
+      {:ok, user}
+    else
+      {:error, :unauthorized}
     end
   end
 
@@ -146,7 +149,8 @@ defmodule Cashtrail.Users do
     * `:first_name` (required) - A `string` with the first name of the user.
     * `:last_name` - A `string` with the last name of the user.
     * `:password` (required) - A `string` with the password of the user to be created.
-    The password must contain at least one letter, one number, and one special character.
+    The password must have the min size of 6 characters containing at least one
+    letter, and one number.
     * `:password_confirmation` (required) - A `string` with password confirmation
     of the user to be created. Must be the equals the `:password` field.
 
@@ -160,7 +164,7 @@ defmodule Cashtrail.Users do
   ## Examples
 
       iex> create_user(%{field: value})
-      {:ok, %User{}}
+      {:ok, %Cashtrail.Users.User{}}
 
       iex> create_user(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
@@ -169,8 +173,8 @@ defmodule Cashtrail.Users do
   @spec create_user(map) ::
           {:ok, user()} | {:error, Ecto.Changeset.t(user())}
   def create_user(attrs) do
-    %User{}
-    |> User.changeset(attrs)
+    %Users.User{}
+    |> Users.User.changeset(attrs)
     |> Repo.insert()
   end
 
@@ -191,16 +195,16 @@ defmodule Cashtrail.Users do
   ## Examples
 
       iex> update_user(user, %{field: new_value})
-      {:ok, %User{}}
+      {:ok, %Users.User{}}
 
       iex> update_user(user, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
   @spec update_user(user(), map) :: {:ok, user()} | {:error, Ecto.Changeset.t(user())}
-  def update_user(%User{} = user, attrs) do
+  def update_user(%Users.User{} = user, attrs) do
     user
-    |> User.changeset(attrs)
+    |> Users.User.changeset(attrs)
     |> Repo.update()
   end
 
@@ -219,14 +223,14 @@ defmodule Cashtrail.Users do
   ## Examples
 
       iex> delete_user(user)
-      {:ok, %User{}}
+      {:ok, %Users.User{}}
 
       iex> delete_user(user)
       {:error, %Ecto.Changeset{}}
 
   """
   @spec delete_user(user()) :: {:ok, user()} | {:error, Ecto.Changeset.t(user())}
-  def delete_user(%User{} = user) do
+  def delete_user(%Users.User{} = user) do
     Repo.delete(user)
   end
 
@@ -240,11 +244,11 @@ defmodule Cashtrail.Users do
   ## Examples
 
       iex> change_user(user)
-      %Ecto.Changeset{source: %User{}}
+      %Ecto.Changeset{source: %Cashtrail.Users.User{}}
 
   """
   @spec change_user(user()) :: Ecto.Changeset.t(user())
-  def change_user(%User{} = user) do
-    User.changeset(user, %{})
+  def change_user(%Users.User{} = user) do
+    Users.User.changeset(user, %{})
   end
 end

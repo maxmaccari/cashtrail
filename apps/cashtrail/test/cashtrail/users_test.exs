@@ -6,8 +6,6 @@ defmodule Cashtrail.UsersTest do
   alias Cashtrail.Users
 
   describe "users" do
-    alias Cashtrail.Users.User
-
     test "list_users/1 returns all users" do
       user = insert(:user)
       assert Users.list_users().entries == [user]
@@ -51,6 +49,12 @@ defmodule Cashtrail.UsersTest do
       assert autenticated == user
     end
 
+    test "authenticate_user/2 email is case insensitive" do
+      user = insert(:user, password_hash: "my_password123")
+
+      assert {:ok, autenticated} = Users.authenticate(String.upcase(user.email), "my_password123")
+    end
+
     test "authenticate_user/2 with invalid password return :unathorized error" do
       user = insert(:user, password_hash: "my_password123")
       assert {:error, :unauthorized} = Users.authenticate(user.email, "invalid")
@@ -62,13 +66,22 @@ defmodule Cashtrail.UsersTest do
     end
 
     test "create_user/1 with valid data creates a user" do
-      user_params = params_for(:user, password: "@abc1234")
-      assert {:ok, %User{} = user} = Users.create_user(user_params)
+      user_params = params_for(:user, password: "abc1234")
+      assert {:ok, %Users.User{} = user} = Users.create_user(user_params)
       assert user.email == user_params.email
       assert user.first_name == user_params.first_name
       assert user.last_name == user_params.last_name
       assert user.avatar_url == user_params.avatar_url
       assert user.password_hash != nil
+    end
+
+    test "create_user/1 with uppercase email creates a user with downcased email" do
+      user_params = params_for(:user, password: "@abc1234")
+      user_params = %{user_params | email: String.upcase(user_params.email)}
+
+      assert {:ok, %Users.User{} = user} = Users.create_user(user_params)
+
+      assert user.email == String.downcase(user_params.email)
     end
 
     @invalid_attrs %{email: nil, first_name: nil, last_name: nil, password: nil, avatar_url: nil}
@@ -82,22 +95,37 @@ defmodule Cashtrail.UsersTest do
                |> Users.create_user()
     end
 
+    test "create_user/1 with an already used email returns error changeset" do
+      user_params = params_for(:user, password: "@abc1234")
+
+      assert {:ok, %Users.User{} = user} = Users.create_user(user_params)
+
+      assert {:error, %Ecto.Changeset{errors: [email: {"has already been taken", _}]}} =
+               Users.create_user(user_params)
+
+      # To ensure that the email validation is case insensitive
+      assert {:error, %Ecto.Changeset{errors: [email: {"has already been taken", _}]}} =
+               Users.create_user(%{user_params | email: String.upcase(user_params.email)})
+    end
+
     test "create_user/1 with a invalid password returns error changeset" do
       assert {:error,
               %Ecto.Changeset{errors: [password: {"should be at least %{count} character(s)", _}]}} =
-               Users.create_user(params_for(:user, password: "@abc123"))
-
-      assert {:error,
-              %Ecto.Changeset{errors: [password: {"should be at most %{count} character(s)", _}]}} =
-               Users.create_user(params_for(:user, password: "@abc56789012345678901"))
+               Users.create_user(params_for(:user, password: "abc12"))
 
       assert {:error,
               %Ecto.Changeset{
                 errors: [
-                  password:
-                    {"should have at least one special character, one number and one letter", _}
+                  password: {"should have at least one number, and one letter", _}
                 ]
-              }} = Users.create_user(params_for(:user, password: "is invalid"))
+              }} = Users.create_user(params_for(:user, password: "123456"))
+
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  password: {"should have at least one number, and one letter", _}
+                ]
+              }} = Users.create_user(params_for(:user, password: "abcdef"))
     end
 
     test "create_user/1 with invalid avatar_url returns error changeset" do
@@ -123,7 +151,7 @@ defmodule Cashtrail.UsersTest do
     }
     test "update_user/2 with valid data updates the user" do
       user = %{password_hash: old_password_hash} = insert(:user)
-      assert {:ok, %User{} = user} = Users.update_user(user, @update_attrs)
+      assert {:ok, %Users.User{} = user} = Users.update_user(user, @update_attrs)
       assert user.email == "updated_john_doe@example.com"
       assert user.first_name == "some updated first_name"
       assert user.last_name == "some updated last_name"
@@ -139,13 +167,24 @@ defmodule Cashtrail.UsersTest do
 
     test "delete_user/1 deletes the user" do
       user = insert(:user)
-      assert {:ok, %User{}} = Users.delete_user(user)
+      assert {:ok, %Users.User{}} = Users.delete_user(user)
       assert_raise Ecto.NoResultsError, fn -> Users.get_user!(user.id) end
     end
 
     test "change_user/1 returns a user changeset" do
       user = insert(:user)
       assert %Ecto.Changeset{} = Users.change_user(user)
+    end
+
+    test "change_user/1 downcase the user email" do
+      user = build(:user)
+
+      changed_user =
+        %{user | email: String.upcase(user.email)}
+        |> Users.change_user()
+        |> Ecto.Changeset.apply_changes()
+
+      assert changed_user == user
     end
   end
 end

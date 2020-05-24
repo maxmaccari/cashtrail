@@ -7,9 +7,9 @@ defmodule Cashtrail.Repo.Migrations.CreateCurrencies do
       add :description, :string, null: false
       add :iso_code, :string, size: 3
       add :type, :string, null: false, default: "money"
-      add :active, :boolean, default: true, null: false
+      add :active, :boolean, null: false, default: true
       add :symbol, :string, null: false, default: ""
-      add :precision, :integer, default: 0, null: false
+      add :precision, :smallint, null: false, default: 0
       add :separator, :string, null: false, default: ","
       add :delimiter, :string, null: false, default: ""
       add :format, :string, null: false, default: "%s%n"
@@ -18,5 +18,6 @@ defmodule Cashtrail.Repo.Migrations.CreateCurrencies do
     end
 
     create unique_index(:currencies, :iso_code)
+    create constraint(:currencies, :currencies_precision_positive_check, check: "precision >= 0")
   end
 end

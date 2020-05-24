@@ -9,14 +9,12 @@ defmodule Cashtrail.Contacts do
   import Ecto.Query, warn: false
   alias Cashtrail.Repo
 
-  alias Cashtrail.Entities.Entity
-  alias Cashtrail.Contacts.Category
-  alias Cashtrail.Paginator
+  alias Cashtrail.{Contacts, Entities, Paginator}
 
   import Cashtrail.Entities.Tenants, only: [to_prefix: 1, put_prefix: 2]
   import Cashtrail.QueryBuilder, only: [build_filter: 3, build_search: 3]
 
-  @type category :: Category.t()
+  @type category :: Contacts.Category.t()
 
   @doc """
   Returns a `%Cashtrail.Paginator.Page{}` struct with a list of contact categories
@@ -32,15 +30,15 @@ defmodule Cashtrail.Contacts do
   ## Examples
 
       iex> list_categories(entity)
-      %Cashtrail.Paginator{entries: [%Contacts.Category{}, ...]}
+      %Cashtrail.Paginator{entries: [%Cashtrail.Contacts.Category{}, ...]}
 
       iex> list_categories(entity, search: "My desc")
-      %Cashtrail.Paginator{entries: [%Contacts.Category{description: "My Description"}, ...]}
+      %Cashtrail.Paginator{entries: [%Cashtrail.Contacts.Category{description: "My Description"}, ...]}
 
   """
-  @spec list_categories(Cashtrail.Entities.Entity.t()) :: Cashtrail.Paginator.Page.t(category)
+  @spec list_categories(Entities.Entity.t(), keyword) :: Paginator.Page.t(category)
   def list_categories(entity, options \\ []) do
-    Cashtrail.Contacts.Category
+    Contacts.Category
     |> build_search(Keyword.get(options, :search), [:description])
     |> put_prefix(entity)
     |> Paginator.paginate(options)
@@ -62,15 +60,15 @@ defmodule Cashtrail.Contacts do
   ## Examples
 
       iex> get_category!(entity, 123)
-      %Category{}
+      %Cashtrail.Contacts.Category{}
 
       iex> get_category!(entity, 456)
       ** (Ecto.NoResultsError)
 
   """
-  @spec get_category!(Entity.t(), Ecto.UUID.t() | String.t()) :: category
-  def get_category!(%Entity{} = entity, id),
-    do: Repo.get!(Category, id, prefix: to_prefix(entity))
+  @spec get_category!(Entities.Entity.t(), Ecto.UUID.t() | String.t()) :: category
+  def get_category!(%Entities.Entity{} = entity, id),
+    do: Repo.get!(Contacts.Category, id, prefix: to_prefix(entity))
 
   @doc """
   Creates a contact category.
@@ -92,17 +90,17 @@ defmodule Cashtrail.Contacts do
   ## Examples
 
       iex> create_category(entity, %{field: value})
-      {:ok, %Category{}}
+      {:ok, %Cashtrail.Contacts.Category{}}
 
       iex> create_category(entity, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  @spec create_category(Entity.t(), map) ::
+  @spec create_category(Entities.Entity.t(), map) ::
           {:ok, category} | {:error, Ecto.Changeset.t(category)}
-  def create_category(%Entity{} = entity, attrs) do
-    %Category{}
-    |> Category.changeset(attrs)
+  def create_category(%Entities.Entity{} = entity, attrs) do
+    %Contacts.Category{}
+    |> Contacts.Category.changeset(attrs)
     |> Repo.insert(prefix: to_prefix(entity))
   end
 
@@ -123,16 +121,16 @@ defmodule Cashtrail.Contacts do
   ## Examples
 
       iex> update_category(category, %{field: new_value})
-      {:ok, %Category{}}
+      {:ok, %Cashtrail.Contacts.Category{}}
 
       iex> update_category(category, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
   @spec update_category(category, map) :: {:ok, category} | {:error, Ecto.Changeset.t(category)}
-  def update_category(%Category{} = category, attrs) do
+  def update_category(%Contacts.Category{} = category, attrs) do
     category
-    |> Category.changeset(attrs)
+    |> Contacts.Category.changeset(attrs)
     |> Repo.update()
   end
 
@@ -151,14 +149,14 @@ defmodule Cashtrail.Contacts do
   ## Examples
 
       iex> delete_category(category)
-      {:ok, %Category{}}
+      {:ok, %Cashtrail.Contacts.Category{}}
 
       iex> delete_category(category)
       {:error, %Ecto.Changeset{}}
 
   """
   @spec delete_category(category) :: {:ok, category} | {:error, Ecto.Changeset.t(category)}
-  def delete_category(%Category{} = category) do
+  def delete_category(%Contacts.Category{} = category) do
     Repo.delete(category)
   end
 
@@ -172,17 +170,15 @@ defmodule Cashtrail.Contacts do
   ## Examples
 
       iex> change_category(category)
-      %Ecto.Changeset{source: %Category{}}
+      %Ecto.Changeset{source: %Cashtrail.Contacts.Category{}}
 
   """
   @spec change_category(category) :: Ecto.Changeset.t(category)
-  def change_category(%Category{} = category) do
-    Category.changeset(category, %{})
+  def change_category(%Contacts.Category{} = category) do
+    Contacts.Category.changeset(category, %{})
   end
 
-  alias Cashtrail.Contacts.Contact
-
-  @type contact :: Contact.t()
+  @type contact :: Contacts.Contact.t()
 
   @doc """
   Returns a `%Cashtrail.Paginator.Page{}` struct with a list of contacts in the
@@ -206,18 +202,18 @@ defmodule Cashtrail.Contacts do
   ## Examples
 
       iex> list_contacts(entity)
-      %Cashtrail.Paginator{entries: [%Contact{}, ...]}
+      %Cashtrail.Paginator{entries: [%Cashtrail.Contacts.Contact{}, ...]}
 
       iex> list_contacts(entity, filter: %{type: "company"})
-      %Cashtrail.Paginator{entries: [%Contact{type: "company"}, ...]}
+      %Cashtrail.Paginator{entries: [%Cashtrail.Contacts.Contact{type: "company"}, ...]}
 
       iex> list_contacts(entity, search: "my")
-      %Cashtrail.Paginator{entries: [%Contact{name: "My name"}, ...]}
+      %Cashtrail.Paginator{entries: [%Cashtrail.Contacts.Contact{name: "My name"}, ...]}
 
   """
-  @spec list_contacts(Entity.t(), keyword) :: Paginator.Page.t(contact)
-  def list_contacts(%Entity{} = entity, options \\ []) do
-    Contact
+  @spec list_contacts(Entities.Entity.t(), keyword) :: Paginator.Page.t(contact)
+  def list_contacts(%Entities.Entity{} = entity, options \\ []) do
+    Contacts.Contact
     |> build_filter(Keyword.get(options, :filter), [:type, :customer, :supplier, :category_id])
     |> build_search(Keyword.get(options, :search), [:name, :legal_name])
     |> put_prefix(entity)
@@ -240,14 +236,15 @@ defmodule Cashtrail.Contacts do
   ## Examples
 
       iex> get_contact!(entity, 123)
-      %Contact{}
+      %Cashtrail.Contacts.Contact{}
 
       iex> get_contact!(entity, 456)
       ** (Ecto.NoResultsError)
 
   """
-  @spec get_contact!(Entity.t(), Ecto.UUID.t() | String.t()) :: contact
-  def get_contact!(%Entity{} = entity, id), do: Repo.get!(Contact, id, prefix: to_prefix(entity))
+  @spec get_contact!(Entities.Entity.t(), Ecto.UUID.t() | String.t()) :: contact
+  def get_contact!(%Entities.Entity{} = entity, id),
+    do: Repo.get!(Contacts.Contact, id, prefix: to_prefix(entity))
 
   @doc """
   Creates a contact.
@@ -291,17 +288,17 @@ defmodule Cashtrail.Contacts do
   ## Examples
 
       iex> create_contact(entity, %{field: value})
-      {:ok, %Contact{}}
+      {:ok, %Cashtrail.Contacts.Contact{}}
 
       iex> create_contact(entity, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  @spec create_contact(Entity.t(), map) ::
+  @spec create_contact(Entities.Entity.t(), map) ::
           {:ok, contact} | {:error, Ecto.Changeset.t(contact)}
-  def create_contact(%Entity{} = entity, attrs) do
-    %Contact{}
-    |> Contact.changeset(attrs)
+  def create_contact(%Entities.Entity{} = entity, attrs) do
+    %Contacts.Contact{}
+    |> Contacts.Contact.changeset(attrs)
     |> Repo.insert(prefix: to_prefix(entity))
   end
 
@@ -322,16 +319,16 @@ defmodule Cashtrail.Contacts do
   ## Examples
 
       iex> update_contact(contact, %{field: new_value})
-      {:ok, %Contact{}}
+      {:ok, %Cashtrail.Contacts.Contact{}}
 
       iex> update_contact(contact, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
   @spec update_contact(contact, map) :: {:ok, contact} | {:error, Ecto.Changeset.t(contact)}
-  def update_contact(%Contact{} = contact, attrs) do
+  def update_contact(%Contacts.Contact{} = contact, attrs) do
     contact
-    |> Contact.changeset(attrs)
+    |> Contacts.Contact.changeset(attrs)
     |> Repo.update()
   end
 
@@ -350,14 +347,14 @@ defmodule Cashtrail.Contacts do
   ## Examples
 
       iex> delete_contact(contact)
-      {:ok, %Contact{}}
+      {:ok, %Cashtrail.Contacts.Contact{}}
 
       iex> delete_contact(contact)
       {:error, %Ecto.Changeset{}}
 
   """
   @spec delete_contact(contact) :: {:ok, contact} | {:error, Ecto.Changeset.t(contact)}
-  def delete_contact(%Contact{} = contact) do
+  def delete_contact(%Contacts.Contact{} = contact) do
     Repo.delete(contact)
   end
 
@@ -371,11 +368,11 @@ defmodule Cashtrail.Contacts do
   ## Examples
 
       iex> change_contact(contact)
-      %Ecto.Changeset{source: %Contact{}}
+      %Ecto.Changeset{source: %Cashtrail.Contacts.Contact{}}
 
   """
   @spec change_contact(contact) :: Ecto.Changeset.t(contact)
-  def change_contact(%Contact{} = contact) do
-    Contact.changeset(contact, %{})
+  def change_contact(%Contacts.Contact{} = contact) do
+    Contacts.Contact.changeset(contact, %{})
   end
 end

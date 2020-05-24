@@ -1,7 +1,8 @@
 defmodule CashtrailWeb.Application do
+  @moduledoc false
+
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
-  @moduledoc false
 
   use Application
 

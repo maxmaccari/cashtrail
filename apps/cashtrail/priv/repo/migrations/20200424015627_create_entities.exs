@@ -13,5 +13,6 @@ defmodule Cashtrail.Repo.Migrations.CreateEntities do
     end
 
     create index(:entities, [:owner_id])
+    create index(:entities, [:status])
   end
 end

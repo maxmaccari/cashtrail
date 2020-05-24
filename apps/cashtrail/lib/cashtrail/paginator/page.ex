@@ -52,13 +52,19 @@ defmodule Cashtrail.Paginator.Page do
     }
   """
   @spec from([any] | Scrivener.Page.t()) :: Cashtrail.Paginator.Page.t()
-  def from(%Scrivener.Page{} = page) do
+  def from(%Scrivener.Page{
+        entries: entries,
+        page_number: page_number,
+        page_size: page_size,
+        total_entries: total_entries,
+        total_pages: total_pages
+      }) do
     %Cashtrail.Paginator.Page{
-      entries: page.entries,
-      page_number: page.page_number,
-      page_size: page.page_size,
-      total_entries: page.total_entries,
-      total_pages: page.total_pages
+      entries: entries,
+      page_number: page_number,
+      page_size: page_size,
+      total_entries: total_entries,
+      total_pages: total_pages
     }
   end
 

@@ -55,23 +55,23 @@ defmodule Cashtrail.EntitiesTest do
       assert Entities.list_entities(search: "fgh").entries == [entity]
     end
 
-    test "list_entities_from/2 returns all entities from an user that is owner" do
+    test "list_entities_for/2 returns all entities from an user that is owner" do
       insert(:entity)
       owner = insert(:user)
       entity = insert(:entity, owner: owner) |> forget(:owner)
 
-      assert Entities.list_entities_from(owner).entries == [entity]
+      assert Entities.list_entities_for(owner).entries == [entity]
     end
 
-    test "list_entities_from/2 returns all entities from an user that is member" do
+    test "list_entities_for/2 returns all entities from an user that is member" do
       entity = insert(:entity) |> forget(:owner)
       user = insert(:user)
       insert(:entity_member, entity: entity, user: user)
 
-      assert Entities.list_entities_from(user).entries == [entity]
+      assert Entities.list_entities_for(user).entries == [entity]
     end
 
-    test "list_entities_from/2 works with pagination" do
+    test "list_entities_for/2 works with pagination" do
       owner = insert(:user)
       insert_list(25, :entity, owner: owner)
 
@@ -81,34 +81,72 @@ defmodule Cashtrail.EntitiesTest do
                page_size: 20,
                total_entries: 25,
                total_pages: 2
-             } = Entities.list_entities_from(owner, page: 2)
+             } = Entities.list_entities_for(owner, page: 2)
 
       assert length(entities) == 5
     end
 
-    test "list_entities_from/2 filtering by type" do
-      insert(:entity, type: "personal") |> forget(:owner)
-      entity = insert(:entity, type: "company") |> forget(:owner)
-      assert Entities.list_entities(filter: %{type: "company"}).entries == [entity]
-      assert Entities.list_entities(filter: %{"type" => "company"}).entries == [entity]
+    test "list_entities_for/2 filtering by type" do
+      owner = insert(:user)
+      insert(:entity, type: "personal", owner: owner) |> forget(:owner)
+      entity = insert(:entity, type: "company", owner: owner) |> forget(:owner)
+      assert Entities.list_entities_for(owner, filter: %{type: "company"}).entries == [entity]
+      assert Entities.list_entities_for(owner, filter: %{"type" => "company"}).entries == [entity]
     end
 
-    test "list_entities_from/2 filtering by status" do
-      insert(:entity, status: "active")
-      entity = insert(:entity, status: "archived") |> forget(:owner)
-      assert Entities.list_entities(filter: %{status: "archived"}).entries == [entity]
-      assert Entities.list_entities(filter: %{"status" => "archived"}).entries == [entity]
+    test "list_entities_for/2 filtering by status" do
+      owner = insert(:user)
+      insert(:entity, status: "active", owner: owner)
+      entity = insert(:entity, status: "archived", owner: owner) |> forget(:owner)
+
+      assert Entities.list_entities_for(owner, filter: %{status: "archived"}).entries == [entity]
+
+      assert Entities.list_entities_for(owner, filter: %{"status" => "archived"}).entries == [
+               entity
+             ]
     end
 
-    test "list_entities_from/2 filtering by invalid key" do
-      entity = insert(:entity, type: "company") |> forget(:owner)
-      assert Entities.list_entities(filter: %{invalid: nil}).entries == [entity]
+    test "list_entities_for/2 by relation type" do
+      owner = insert(:user)
+      owned_entity = insert(:entity, owner: owner) |> forget(:owner)
+      membered_entity = insert(:entity) |> forget(:owner)
+      insert(:entity_member, user: owner, entity: membered_entity)
+
+      assert Entities.list_entities_for(owner, relation_type: :owner).entries == [
+               owned_entity
+             ]
+
+      assert Entities.list_entities_for(owner, relation_type: :member).entries == [
+               membered_entity
+             ]
+
+      entities = Entities.list_entities_for(owner, relation_type: :both).entries
+      assert length(entities) == 2
+      assert Enum.member?(entities, membered_entity)
+      assert Enum.member?(entities, owned_entity)
+
+      entities = Entities.list_entities_for(owner, relation_type: :invalid).entries
+      assert length(entities) == 2
+      assert Enum.member?(entities, membered_entity)
+      assert Enum.member?(entities, owned_entity)
+
+      entities = Entities.list_entities_for(owner).entries
+      assert length(entities) == 2
+      assert Enum.member?(entities, membered_entity)
+      assert Enum.member?(entities, owned_entity)
     end
 
-    test "list_entities_from/2 searching by name" do
-      insert(:entity, name: "abc")
-      entity = insert(:entity, name: "defghij") |> forget(:owner)
-      assert Entities.list_entities(search: "fgh").entries == [entity]
+    test "list_entities_for/2 filtering by invalid key" do
+      owner = insert(:user)
+      entity = insert(:entity, owner: owner) |> forget(:owner)
+      assert Entities.list_entities_for(owner, filter: %{invalid: nil}).entries == [entity]
+    end
+
+    test "list_entities_for/2 searching by name" do
+      owner = insert(:user)
+      insert(:entity, name: "abc", owner: owner)
+      entity = insert(:entity, name: "defghij", owner: owner) |> forget(:owner)
+      assert Entities.list_entities_for(owner, search: "fgh").entries == [entity]
     end
 
     test "get_entity!/2 returns the entity with given id" do

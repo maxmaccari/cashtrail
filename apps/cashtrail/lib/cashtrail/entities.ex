@@ -14,9 +14,7 @@ defmodule Cashtrail.Entities do
   import Ecto.Query, warn: false
   alias Cashtrail.Repo
 
-  alias Cashtrail.Entities.{Entity, EntityMember, Tenants}
-  alias Cashtrail.Paginator
-  alias Cashtrail.Users.User
+  alias Cashtrail.{Entities, Paginator, Users}
 
   import Cashtrail.QueryBuilder, only: [build_filter: 3, build_search: 3]
 
@@ -39,18 +37,18 @@ defmodule Cashtrail.Entities do
   ## Examples
 
       iex> list_entities()
-      %Cashtrail.Paginator.Page{entries: [%Entity{}, ...]}
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Entities.Entity{}, ...]}
 
       iex> list_entities(filter: %{type: "company"})
-      %Cashtrail.Paginator.Page{entries: [%Entity{type: "company"}, ...]}
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Entities.Entity{type: "company"}, ...]}
 
       iex> list_entities(search: "my")
-      %Cashtrail.Paginator.Page{entries: [%Entity{name: "My company"}, ...]}
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Entities.Entity{name: "My company"}, ...]}
 
   """
   @spec list_entities(keyword) :: Paginator.Page.t(entity())
   def list_entities(options \\ []) do
-    from(e in Entity)
+    from(e in Entities.Entity)
     |> build_filter(Keyword.get(options, :filter), [:type, :status])
     |> build_search(Keyword.get(options, :search), [:name])
     |> Paginator.paginate(options)
@@ -68,6 +66,11 @@ defmodule Cashtrail.Entities do
       * `:type` or `"type"`
       * `:status` or `"status"`
     * `:search` => search entities by `:name`.
+    * `:relation_type` => filter by relation type, that can be:
+      * `:owner` => list only entities owned by the user.
+      * `:member` => list only entities that the user is member of.
+      * `:both` => the default value, list entities that the user is owned by or
+      is member of the entities.
     * See `Cashtrail.Paginator.paginate/2` to see paginations options.
 
   See `Cashtrail.Entities.Entity` to have more detailed info about the fields to
@@ -75,20 +78,36 @@ defmodule Cashtrail.Entities do
 
   ## Examples
 
-      iex> list_entities_from(owner)
-      %Cashtrail.Paginator.Page{entries: [%Entity{}, ...]}
+      iex> list_entities_for(owner)
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Entities.Entity{}, ...]}
 
-      iex> list_entities_from(member)
-      %Cashtrail.Paginator.Page{entries: [%Entity{}, ...]}
+      iex> list_entities_for(member)
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Entities.Entity{}, ...]}
 
   """
-  @spec list_entities_from(User.t(), keyword) :: Paginator.Page.t(entity())
-  def list_entities_from(%User{} = user, params \\ []) do
-    from(e in Entity)
+  @spec list_entities_for(Users.User.t(), keyword) :: Paginator.Page.t(entity())
+  def list_entities_for(%Users.User{id: user_id}, options \\ []) do
+    from(e in Entities.Entity)
+    |> build_filter(Keyword.get(options, :filter), [:type, :status])
+    |> build_search(Keyword.get(options, :search), [:name])
+    |> of_relation(user_id, Keyword.get(options, :relation_type, :both))
+    |> Paginator.paginate(options)
+  end
+
+  defp of_relation(query, user_id, :owner) do
+    where(query, [e], e.owner_id == ^user_id)
+  end
+
+  defp of_relation(query, user_id, :member) do
+    query
     |> join(:left, [e], m in assoc(e, :members))
-    |> or_where([e], e.owner_id == ^user.id)
-    |> or_where([e, m], m.user_id == ^user.id)
-    |> Paginator.paginate(params)
+    |> where([_, m], m.user_id == ^user_id)
+  end
+
+  defp of_relation(query, user_id, _) do
+    query
+    |> join(:left, [e], m in assoc(e, :members))
+    |> where([e, m], e.owner_id == ^user_id or m.user_id == ^user_id)
   end
 
   @doc """
@@ -106,14 +125,14 @@ defmodule Cashtrail.Entities do
   ## Examples
 
       iex> get_entity!(123)
-      %Entity{}
+      %Cashtrail.Entities.Entity{}
 
       iex> get_entity!(456)
       ** (Ecto.NoResultsError)
 
   """
   @spec get_entity!(Ecto.UUID.t()) :: entity()
-  def get_entity!(id), do: Repo.get!(Entity, id)
+  def get_entity!(id), do: Repo.get!(Entities.Entity, id)
 
   @doc """
   Creates an entity.
@@ -137,27 +156,26 @@ defmodule Cashtrail.Entities do
   ## Examples
 
       iex> create_entity(user, %{field: value})
-      {:ok, %Entity{}}
+      {:ok, %Cashtrail.Entities.Entity{}}
 
       iex> create_entity(user, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  @spec create_entity(User.t(), map, boolean) ::
+  @spec create_entity(Users.User.t(), map, boolean) ::
           {:ok, entity()} | {:error, Ecto.Changeset.t(entity())}
   def create_entity(user, attrs, create_tenants \\ true)
 
-  def create_entity(%User{} = user, attrs, true) do
+  def create_entity(%Users.User{} = user, attrs, true) do
     with {:ok, entity} <- create_entity(user, attrs, false),
-         {:ok, _tenant} <- Tenants.create(entity) do
+         {:ok, _tenant} <- Entities.Tenants.create(entity) do
       {:ok, entity}
     end
   end
 
-  def create_entity(%User{} = user, attrs, false) do
-    user
-    |> Ecto.build_assoc(:entities)
-    |> Entity.changeset(attrs)
+  def create_entity(%Users.User{id: user_id}, attrs, false) do
+    %Entities.Entity{owner_id: user_id}
+    |> Entities.Entity.changeset(attrs)
     |> Repo.insert()
   end
 
@@ -178,16 +196,16 @@ defmodule Cashtrail.Entities do
   ## Examples
 
       iex> update_entity(entity, %{field: new_value})
-      {:ok, %Entity{}}
+      {:ok, %Cashtrail.Entities.Entity{}}
 
       iex> update_entity(entity, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
   @spec update_entity(entity(), map) :: {:ok, entity()} | {:error, Ecto.Changeset.t(entity())}
-  def update_entity(%Entity{} = entity, attrs) do
+  def update_entity(%Entities.Entity{} = entity, attrs) do
     entity
-    |> Entity.changeset(attrs)
+    |> Entities.Entity.changeset(attrs)
     |> Repo.update()
   end
 
@@ -206,7 +224,7 @@ defmodule Cashtrail.Entities do
   ## Examples
 
       iex> delete_entity(entity)
-      {:ok, %Entity{}}
+      {:ok, %Cashtrail.Entities.Entity{}}
 
       iex> delete_entity(entity)
       {:error, %Ecto.Changeset{}}
@@ -217,14 +235,14 @@ defmodule Cashtrail.Entities do
           | {:error, Ecto.Changeset.t(entity())}
   def delete_entity(entity, drop_tenants \\ true)
 
-  def delete_entity(%Entity{} = entity, true) do
+  def delete_entity(%Entities.Entity{} = entity, true) do
     with {:ok, entity} <- delete_entity(entity, false),
-         {:ok, _tenant} <- Tenants.drop(entity) do
+         {:ok, _tenant} <- Entities.Tenants.drop(entity) do
       {:ok, entity}
     end
   end
 
-  def delete_entity(%Entity{} = entity, false) do
+  def delete_entity(%Entities.Entity{} = entity, false) do
     Repo.delete(entity)
   end
 
@@ -238,12 +256,12 @@ defmodule Cashtrail.Entities do
   ## Examples
 
       iex> change_entity(entity)
-      %Ecto.Changeset{source: %Entity{}}
+      %Ecto.Changeset{source: %Cashtrail.Entities.Entity{}}
 
   """
   @spec change_entity(entity()) :: Ecto.Changeset.t(entity())
-  def change_entity(%Entity{} = entity) do
-    Entity.changeset(entity, %{})
+  def change_entity(%Entities.Entity{} = entity) do
+    Entities.Entity.changeset(entity, %{})
   end
 
   @doc """
@@ -256,7 +274,7 @@ defmodule Cashtrail.Entities do
   * to_user - The `%Cashtrail.Users.User{}` to be transfered.
 
   ## Returns
-    * `{:ok, %Entity{}}` if the entity is transfered successfully.
+    * `{:ok, %Cashtrail.Entities.Entity{}}` if the entity is transfered successfully.
     * `{:error, changeset}` if to_user is invalid or it's not found.
     * `{:error, :unauthorized}` if from_user is not the owner of the entity.
 
@@ -268,19 +286,23 @@ defmodule Cashtrail.Entities do
   ## Examples
 
       iex> transfer_ownership(entity, from_user, to_user)
-      {:ok, %Entity{}}
+      {:ok, %Cashtrail.Entities.Entity{}}
 
       iex> transfer_ownership(entity, from_user, to_user)
-      {:error, %Ecto.Changeset{source: %Entity{}}}
+      {:error, %Ecto.Changeset{source: %Cashtrail.Entities.Entity{}}}
 
       iex> transfer_ownership(entity, invalid_from, to_user)
       {:error, :unauthorized}
   """
   @spec transfer_ownership(entity(), User.t(), User.t()) ::
           {:error, :unauthorized} | {:ok, entity()}
-  def transfer_ownership(%Entity{} = entity, %User{} = from_user, %User{} = to_user) do
-    if entity.owner_id == from_user.id do
-      changeset = Entity.transfer_changeset(entity, %{owner_id: to_user.id})
+  def transfer_ownership(
+        %Entities.Entity{} = entity,
+        %Users.User{id: from_user_id} = from_user,
+        %Users.User{id: to_user_id} = to_user
+      ) do
+    if entity.owner_id == from_user_id do
+      changeset = Entities.Entity.transfer_changeset(entity, %{owner_id: to_user_id})
 
       with {:ok, entity} <- Repo.update(changeset) do
         remove_member(entity, to_user)
@@ -302,18 +324,16 @@ defmodule Cashtrail.Entities do
 
   ## Examples
 
-      iex> belongs_to?(%Entity{owner_id: "aaa"}, %User{id: "aaa"})
+      iex> belongs_to?(%Cashtrail.Entities.Entity{owner_id: "aaa"}, %Cashtrail.Users.User{id: "aaa"})
       true
 
-      iex> belongs_to?(%Entity{owner_id: "bbb"}, %User{id: "aaa"})
+      iex> belongs_to?(%Cashtrail.Entities.Entity{owner_id: "bbb"}, %Cashtrail.Users.User{id: "aaa"})
       false
   """
   @spec belongs_to?(entity(), User.t()) :: boolean
-  def belongs_to?(%Entity{owner_id: owner_id}, %User{id: user_id}) do
+  def belongs_to?(%Entities.Entity{owner_id: owner_id}, %Users.User{id: user_id}) do
     owner_id == user_id
   end
-
-  alias Cashtrail.Users
 
   @doc """
   Returns a `%Cashtrail.Paginator.Page{}` struct with a list of entity_members in the
@@ -333,18 +353,18 @@ defmodule Cashtrail.Entities do
   ## Examples
 
       iex> list_entity_members(entity)
-      %Cashtrail.Paginator.Page{entries: [%EntityMember{}, ...]}
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Entities.EntityMember{}, ...]}
 
       iex> list_entity_members(entity, filter: %{permission: "read"})
-      %Cashtrail.Paginator.Page{entries: [%EntityMember{permission: "read"}, ...]}
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Entities.EntityMember{permission: "read"}, ...]}
 
       iex> list_entity_members(entity, search: "my")
-      %Cashtrail.Paginator.Page{entries: [%EntityMember{user: %User{name: "My Name"}}, ...]}
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Entities.EntityMember{user: %Cashtrail.Users.User{name: "My Name"}}, ...]}
 
   """
   @spec list_members(entity, keyword | map) :: Paginator.Page.t(entity_member)
-  def list_members(%Entity{id: entity_id}, options \\ []) do
-    from(EntityMember, where: [entity_id: ^entity_id])
+  def list_members(%Entities.Entity{id: entity_id}, options \\ []) do
+    from(Entities.EntityMember, where: [entity_id: ^entity_id])
     |> build_filter(Keyword.get(options, :filter), [:permission])
     |> search_members(Keyword.get(options, :search))
     |> Paginator.paginate(options)
@@ -385,7 +405,7 @@ defmodule Cashtrail.Entities do
   ## Examples
 
       iex> create_member(entity, %{field: value})
-      {:ok, %EntityMember{}}
+      {:ok, %Cashtrail.Entities.EntityMember{}}
 
       iex> create_member(entity, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
@@ -393,12 +413,12 @@ defmodule Cashtrail.Entities do
   """
   @spec create_member(entity, map) ::
           {:ok, entity_member} | {:error, Ecto.Changeset.t(entity_member)}
-  def create_member(%Entity{} = entity, attrs) do
+  def create_member(%Entities.Entity{} = entity, attrs) do
     email = get_in(attrs, [:user, :email]) || get_in(attrs, ["user", "email"])
 
     attrs =
       case Users.get_user_by(email: email) do
-        %User{} = user ->
+        %Users.User{} = user ->
           attrs |> Map.delete(:user) |> Map.delete("user") |> Map.put(:user_id, user.id)
 
         _ ->
@@ -407,7 +427,7 @@ defmodule Cashtrail.Entities do
 
     entity
     |> Ecto.build_assoc(:members)
-    |> EntityMember.changeset(attrs)
+    |> Entities.EntityMember.changeset(attrs)
     |> Repo.insert()
   end
 
@@ -434,7 +454,7 @@ defmodule Cashtrail.Entities do
   ## Examples
 
       iex> add_member(entity, user)
-      {:ok, %EntityMember{}}
+      {:ok, %Cashtrail.Entities.EntityMember{}}
 
       iex> add_member(entity, invalid_user)
       {:error, %Ecto.Changeset{}}
@@ -444,14 +464,15 @@ defmodule Cashtrail.Entities do
           {:ok, entity_member} | {:error, :invalid | Ecto.Changeset.t(entity)}
   def add_member(entity, user, permission \\ "read")
 
-  def add_member(%Entity{owner_id: owner_id}, %User{id: user_id}, _) when owner_id == user_id do
+  def add_member(%Entities.Entity{owner_id: owner_id}, %Users.User{id: user_id}, _)
+      when owner_id == user_id do
     {:error, :invalid}
   end
 
-  def add_member(%Entity{} = entity, %User{id: user_id}, permission) do
+  def add_member(%Entities.Entity{} = entity, %Users.User{id: user_id}, permission) do
     entity
     |> Ecto.build_assoc(:members)
-    |> EntityMember.changeset(%{user_id: user_id, permission: permission})
+    |> Entities.EntityMember.changeset(%{user_id: user_id, permission: permission})
     |> Repo.insert()
   end
 
@@ -472,7 +493,7 @@ defmodule Cashtrail.Entities do
   ## Examples
 
       iex> delete_entity_member(entity_member)
-      {:ok, %EntityMember{}}
+      {:ok, %Cashtrail.Entities.EntityMember{}}
 
       iex> delete_entity_member(entity_member)
       {:error, :not_found}
@@ -480,9 +501,9 @@ defmodule Cashtrail.Entities do
   """
   @spec remove_member(entity, User.t()) ::
           {:ok, entity_member} | {:error, :not_found}
-  def remove_member(entity, user) do
+  def remove_member(%Entities.Entity{} = entity, %Users.User{} = user) do
     case member_from_user(entity, user) do
-      %EntityMember{} = entity_member -> Repo.delete(entity_member)
+      %Entities.EntityMember{} = entity_member -> Repo.delete(entity_member)
       _ -> {:error, :not_found}
     end
   end
@@ -527,14 +548,14 @@ defmodule Cashtrail.Entities do
   @spec update_member_permission(entity, User.t(), String.t()) ::
           {:ok, entity_member} | {:error, Ecto.Changeset.t(entity_member) | :invalid | :not_found}
   def update_member_permission(
-        %Entity{owner_id: owner_id} = entity,
-        %User{id: user_id} = user,
+        %Entities.Entity{owner_id: owner_id} = entity,
+        %Users.User{id: user_id} = user,
         permission
       ) do
     case member_from_user(entity, user) do
-      %EntityMember{} = entity_member ->
+      %Entities.EntityMember{} = entity_member ->
         entity_member
-        |> EntityMember.changeset(%{permission: permission})
+        |> Entities.EntityMember.changeset(%{permission: permission})
         |> Repo.update()
 
       _ when owner_id == user_id ->
@@ -562,10 +583,13 @@ defmodule Cashtrail.Entities do
       iex> get_member_permission(entity, another_user)
       :unauthorized
   """
-  @spec get_member_permission(entity(), User.t()) :: atom()
-  def get_member_permission(%Entity{owner_id: owner_id} = entity, %User{id: user_id} = user) do
+  @spec get_member_permission(entity(), Users.User.t()) :: atom()
+  def get_member_permission(
+        %Entities.Entity{owner_id: owner_id} = entity,
+        %Users.User{id: user_id} = user
+      ) do
     case member_from_user(entity, user) do
-      %EntityMember{} = entity_member ->
+      %Entities.EntityMember{} = entity_member ->
         # For security reasons to avoid reach the atom limit
         _trusted_values = [:read, :write, :admin]
         String.to_existing_atom(entity_member.permission)
@@ -590,7 +614,7 @@ defmodule Cashtrail.Entities do
   ## Examples
 
       iex> member_from_user(entity, user)
-      %EntityMember{}
+      %Cashtrail.Entities.EntityMember{}
 
       iex> member_from_user(entity, owner)
       nil
@@ -600,8 +624,8 @@ defmodule Cashtrail.Entities do
   """
   @spec member_from_user(entity(), User.t()) ::
           entity_member | nil
-  def member_from_user(%Entity{id: entity_id}, %User{id: user_id}) do
-    Repo.get_by(EntityMember, entity_id: entity_id, user_id: user_id)
+  def member_from_user(%Entities.Entity{id: entity_id}, %Users.User{id: user_id}) do
+    Repo.get_by(Entities.EntityMember, entity_id: entity_id, user_id: user_id)
   end
 
   @doc """
@@ -614,11 +638,11 @@ defmodule Cashtrail.Entities do
   ## Examples
 
       iex> change_member(entity_member)
-      %Ecto.Changeset{source: %EntityMember{}}
+      %Ecto.Changeset{source: %Cashtrail.Entities.EntityMember{}}
 
   """
   @spec change_member(entity_member()) :: Ecto.Changeset.t(entity_member())
-  def change_member(%EntityMember{} = entity_member) do
-    EntityMember.changeset(entity_member, %{})
+  def change_member(%Entities.EntityMember{} = entity_member) do
+    Entities.EntityMember.changeset(entity_member, %{})
   end
 end

@@ -4,9 +4,7 @@ defmodule Cashtrail.EntitiesWithTenantsTest do
   use Cashtrail.DataCase
 
   describe "entity with tenants" do
-    alias Cashtrail.Entities
-    alias Cashtrail.Entities.Entity
-    alias Cashtrail.Users.User
+    alias Cashtrail.{Entities, Users}
 
     setup do
       Ecto.Adapters.SQL.Sandbox.mode(Cashtrail.Repo, :auto)
@@ -27,7 +25,7 @@ defmodule Cashtrail.EntitiesWithTenantsTest do
         owner_id = (entity && entity.owner_id) || owner_id
 
         if owner_id do
-          from(User, where: [id: ^owner_id])
+          from(Users.User, where: [id: ^owner_id])
           |> Repo.delete_all()
         end
       end)
@@ -35,7 +33,9 @@ defmodule Cashtrail.EntitiesWithTenantsTest do
 
     test "create_entity/3 with valid data creates a tenant with the entity id" do
       user = insert(:user)
-      assert {:ok, %Entity{} = entity} = Entities.create_entity(user, params_for(:entity))
+
+      assert {:ok, %Entities.Entity{} = entity} =
+               Entities.create_entity(user, params_for(:entity))
 
       assert Triplex.exists?(entity.id)
 
@@ -46,7 +46,7 @@ defmodule Cashtrail.EntitiesWithTenantsTest do
       user = insert(:user)
       {:ok, entity} = Entities.create_entity(user, params_for(:entity))
 
-      assert {:ok, %Entity{}} = Entities.delete_entity(entity)
+      assert {:ok, %Entities.Entity{}} = Entities.delete_entity(entity)
       refute Triplex.exists?(entity.id)
 
       cleanup_entity_tenants(nil, entity.owner_id)

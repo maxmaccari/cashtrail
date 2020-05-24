@@ -48,7 +48,7 @@ defmodule Cashtrail.Contacts.Contact do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Cashtrail.Contacts.{Address, Category}
+  alias Cashtrail.Contacts
 
   @type t :: %Cashtrail.Contacts.Contact{
           id: Ecto.UUID.t() | nil,
@@ -60,7 +60,7 @@ defmodule Cashtrail.Contacts.Contact do
           supplier: boolean | nil,
           email: String.t() | nil,
           phone: String.t() | nil,
-          category: Ecto.Association.NotLoaded.t() | Category.t() | nil,
+          category: Ecto.Association.NotLoaded.t() | Contacts.Category.t() | nil,
           category_id: Ecto.UUID.t() | nil,
           address: Address.t() | nil,
           inserted_at: NaiveDateTime.t() | nil,
@@ -80,13 +80,14 @@ defmodule Cashtrail.Contacts.Contact do
     field :email, :string
     field :phone, :string
 
-    embeds_one :address, Address, on_replace: :update
-    belongs_to :category, Category
+    embeds_one :address, Contacts.Address, on_replace: :update
+    belongs_to :category, Contacts.Category
 
     timestamps()
   end
 
   @doc false
+  @spec changeset(t | Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
   def changeset(contact, attrs) do
     contact
     |> cast(attrs, [
