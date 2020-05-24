@@ -149,7 +149,8 @@ defmodule Cashtrail.Users do
     * `:first_name` (required) - A `string` with the first name of the user.
     * `:last_name` - A `string` with the last name of the user.
     * `:password` (required) - A `string` with the password of the user to be created.
-    The password must contain at least one letter, one number, and one special character.
+    The password must have the min size of 6 characters containing at least one
+    letter, and one number.
     * `:password_confirmation` (required) - A `string` with password confirmation
     of the user to be created. Must be the equals the `:password` field.
 

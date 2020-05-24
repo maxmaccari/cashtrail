@@ -66,7 +66,7 @@ defmodule Cashtrail.UsersTest do
     end
 
     test "create_user/1 with valid data creates a user" do
-      user_params = params_for(:user, password: "@abc1234")
+      user_params = params_for(:user, password: "abc1234")
       assert {:ok, %Users.User{} = user} = Users.create_user(user_params)
       assert user.email == user_params.email
       assert user.first_name == user_params.first_name
@@ -111,19 +111,21 @@ defmodule Cashtrail.UsersTest do
     test "create_user/1 with a invalid password returns error changeset" do
       assert {:error,
               %Ecto.Changeset{errors: [password: {"should be at least %{count} character(s)", _}]}} =
-               Users.create_user(params_for(:user, password: "@abc123"))
-
-      assert {:error,
-              %Ecto.Changeset{errors: [password: {"should be at most %{count} character(s)", _}]}} =
-               Users.create_user(params_for(:user, password: "@abc56789012345678901"))
+               Users.create_user(params_for(:user, password: "abc12"))
 
       assert {:error,
               %Ecto.Changeset{
                 errors: [
-                  password:
-                    {"should have at least one special character, one number and one letter", _}
+                  password: {"should have at least one number, and one letter", _}
                 ]
-              }} = Users.create_user(params_for(:user, password: "is invalid"))
+              }} = Users.create_user(params_for(:user, password: "123456"))
+
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  password: {"should have at least one number, and one letter", _}
+                ]
+              }} = Users.create_user(params_for(:user, password: "abcdef"))
     end
 
     test "create_user/1 with invalid avatar_url returns error changeset" do

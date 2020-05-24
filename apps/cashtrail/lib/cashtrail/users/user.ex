@@ -61,7 +61,7 @@ defmodule Cashtrail.Users.User do
   end
 
   @email_regex ~r/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/
-  @password_regex ~r/^(?=.*\d)(?=.*[a-z])(?=.*[!@#\$%\^&\*\_\=]).*/
+  @password_regex ~r/^(?=.*\d)(?=.*[a-zA-Z]).*/
   @url_regex ~r/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*)/
 
   @spec changeset(t() | Ecto.Changeset.t(t()), map) :: Ecto.Changeset.t(t())
@@ -72,9 +72,9 @@ defmodule Cashtrail.Users.User do
     |> validate_required([:first_name, :email, :password])
     |> validate_format(:email, @email_regex, message: "is not a valid email")
     |> unique_constraint(:email)
-    |> validate_length(:password, min: 8, max: 20)
+    |> validate_length(:password, min: 6)
     |> validate_format(:password, @password_regex,
-      message: "should have at least one special character, one number and one letter"
+      message: "should have at least one number, and one letter"
     )
     |> validate_format(:avatar_url, @url_regex, message: "is not a valid url")
     |> validate_confirmation(:password)
