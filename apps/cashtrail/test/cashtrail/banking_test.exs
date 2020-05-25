@@ -255,4 +255,59 @@ defmodule Cashtrail.BankingTest do
       assert %Ecto.Changeset{} = Banking.change_currency(currency)
     end
   end
+
+  describe "institutions" do
+    test "list_institutions/0 returns all institutions", %{tenant: tenant} do
+      institution = insert(:institution, tenant: tenant)
+      assert Banking.list_institutions(tenant) == [institution]
+    end
+
+    test "get_institution!/1 returns the institution with given id", %{tenant: tenant} do
+      institution = insert(:institution, tenant: tenant)
+      assert Banking.get_institution!(tenant, institution.id) == institution
+    end
+
+    test "create_institution/1 with valid data creates a institution", %{tenant: tenant} do
+      institution_params = params_for(:institution, tenant: tenant)
+        |> Map.put(:contact, params_for(:contact))
+
+      assert {:ok, %Banking.Institution{} = institution} = Banking.create_institution(tenant, institution_params)
+      assert institution.country == institution_params.country
+      assert institution.local_code == institution_params.local_code
+      assert institution.swift_code == institution_params.swift_code
+      assert institution.logo_url == institution_params.logo_url
+    end
+
+    @invalid_attrs %{logo_url: "invalid url", swift_code: "invalid swift"}
+    test "create_institution/1 with invalid data returns error changeset", %{tenant: tenant} do
+      assert {:error, %Ecto.Changeset{}} = Banking.create_institution(tenant, @invalid_attrs)
+    end
+
+    @update_attrs %{country: "Brazil", local_code: "875", logo_url: "http://some-url.com/logo.png", swift_code: "JEKPQS9478"}
+    test "update_institution/2 with valid data updates the institution", %{tenant: tenant} do
+      institution = insert(:institution, tenant: tenant)
+      assert {:ok, %Banking.Institution{} = institution} = Banking.update_institution(institution, @update_attrs)
+      assert institution.country == "Brazil"
+      assert institution.local_code == "875"
+      assert institution.logo_url == "http://some-url.com/logo.png"
+      assert institution.swift_code == "JEKPQS9478"
+    end
+
+    test "update_institution/2 with invalid data returns error changeset", %{tenant: tenant} do
+      institution = insert(:institution, tenant: tenant)
+      assert {:error, %Ecto.Changeset{}} = Banking.update_institution(institution, @invalid_attrs)
+      assert institution == Banking.get_institution!(tenant, institution.id)
+    end
+
+    test "delete_institution/1 deletes the institution", %{tenant: tenant} do
+      institution = insert(:institution, tenant: tenant)
+      assert {:ok, %Banking.Institution{}} = Banking.delete_institution(institution)
+      assert_raise Ecto.NoResultsError, fn -> Banking.get_institution!(tenant, institution.id) end
+    end
+
+    test "change_institution/1 returns a institution changeset", %{tenant: tenant} do
+      institution = insert(:institution, tenant: tenant)
+      assert %Ecto.Changeset{} = Banking.change_institution(institution)
+    end
+  end
 end

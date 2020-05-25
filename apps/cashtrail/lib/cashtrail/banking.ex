@@ -212,4 +212,107 @@ defmodule Cashtrail.Banking do
   def change_currency(%Banking.Currency{} = currency) do
     Banking.Currency.changeset(currency, %{})
   end
+
+  alias Cashtrail.Banking.Institution
+
+  @doc """
+  Returns the list of institutions.
+
+  ## Examples
+
+      iex> list_institutions()
+      [%Institution{}, ...]
+
+  """
+  def list_institutions(%Entities.Entity{} = entity) do
+    Banking.Institution
+    |> Ecto.Queryable.to_query()
+    |> preload([], contact: :category)
+    |> Map.put(:prefix, to_prefix(entity))
+    |> Repo.all()
+  end
+
+  @doc """
+  Gets a single institution.
+
+  Raises `Ecto.NoResultsError` if the Institution does not exist.
+
+  ## Examples
+
+      iex> get_institution!(123)
+      %Institution{}
+
+      iex> get_institution!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_institution!(%Entities.Entity{} = entity, id) do
+    Repo.get!(Institution, id, prefix: to_prefix(entity))
+    |> Repo.preload(contact: :category)
+  end
+
+  @doc """
+  Creates a institution.
+
+  ## Examples
+
+      iex> create_institution(%{field: value})
+      {:ok, %Institution{}}
+
+      iex> create_institution(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_institution(entity, attrs \\ %{}) do
+    %Institution{}
+    |> Institution.changeset(attrs)
+    |> Repo.insert(prefix: to_prefix(entity))
+  end
+
+  @doc """
+  Updates a institution.
+
+  ## Examples
+
+      iex> update_institution(institution, %{field: new_value})
+      {:ok, %Institution{}}
+
+      iex> update_institution(institution, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_institution(%Institution{} = institution, attrs) do
+    institution
+    |> Institution.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a institution.
+
+  ## Examples
+
+      iex> delete_institution(institution)
+      {:ok, %Institution{}}
+
+      iex> delete_institution(institution)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_institution(%Institution{} = institution) do
+    Repo.delete(institution)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking institution changes.
+
+  ## Examples
+
+      iex> change_institution(institution)
+      %Ecto.Changeset{data: %Institution{}}
+
+  """
+  def change_institution(%Institution{} = institution, attrs \\ %{}) do
+    Institution.changeset(institution, attrs)
+  end
 end
