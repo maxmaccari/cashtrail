@@ -34,6 +34,31 @@ defmodule Cashtrail.Factory.BankingFactory do
         |> Helpers.put_tenant(attrs)
         |> merge_attributes(Helpers.drop_tenant(attrs))
       end
+
+      def institution_factory(attrs \\ %{}) do
+        country_code = Faker.Address.country_code()
+        bank_code = for(_ <- 1..4, do: [Enum.random(65..90)]) |> to_string()
+
+        region =
+          for(_ <- 1..2, do: Enum.random([Enum.random(65..90), Enum.random(48..57)]))
+          |> to_string()
+
+        swift = "#{bank_code}#{country_code}#{region}XXX"
+        local_code = :rand.uniform(999) |> to_string()
+
+        logo_url =
+          "#{Faker.Internet.image_url()}#{Enum.random([".png", ".jpg", ".jpeg", ".gif", ""])}"
+
+        %Banking.Institution{
+          country: Faker.Address.country(),
+          local_code: local_code,
+          swift_code: swift,
+          logo_url: logo_url,
+          contact: build(:contact)
+        }
+        |> Helpers.put_tenant(attrs)
+        |> merge_attributes(Helpers.drop_tenant(attrs))
+      end
     end
   end
 end

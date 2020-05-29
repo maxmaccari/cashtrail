@@ -97,9 +97,25 @@ defmodule Cashtrail.QueryBuilder do
 
   defp do_build_search(query, _, []), do: query
 
+  defp do_build_search(query, term, [{relation, fields} | tail]) do
+    query =
+      join(query, :inner, [q], r in assoc(q, ^relation))
+      |> build_relation_search(term, fields)
+
+    do_build_search(query, term, tail)
+  end
+
   defp do_build_search(query, term, [field | tail]) do
     query = from(q in query, or_where: ilike(field(q, ^field), ^term))
 
     do_build_search(query, term, tail)
+  end
+
+  defp build_relation_search(query, _term, []), do: query
+
+  defp build_relation_search(query, term, [field | tail]) do
+    query = or_where(query, [_q, r], ilike(field(r, ^field), ^term))
+
+    build_relation_search(query, term, tail)
   end
 end
