@@ -17,6 +17,7 @@ defmodule Cashtrail.Banking do
   import Cashtrail.QueryBuilder, only: [build_filter: 3, build_search: 3]
 
   @type currency :: Banking.Currency.t()
+  @type institution :: Banking.Institution.t()
 
   @doc """
   Returns a `%Cashtrail.Paginator.Page{}` struct with a list of currencies in the
@@ -213,23 +214,45 @@ defmodule Cashtrail.Banking do
     Banking.Currency.changeset(currency, %{})
   end
 
-  alias Cashtrail.Banking.Institution
-
   @doc """
-  Returns the list of institutions.
+  Returns a `%Cashtrail.Paginator.Page{}` struct with a list of institutions in the
+  `:entries` field.
+
+  If no institutions are found, return an empty list in the `:entries` field.
+
+  ## Expected arguments
+
+  * entity - The `%Cashtrail.Entities.Entity{}` that the currency references.
+  * options - A `keyword` list of the following options:
+    * `:search` - search institutions by :country, or by the contact `:name`, or
+    `:legal_name`.
+    * See `Cashtrail.Paginator.paginate/2` to know about the pagination options.
+
+  See `Cashtrail.Banking.Currency` to have more detailed info about
+  each field to be filtered or searched.
 
   ## Examples
 
-      iex> list_institutions()
-      [%Institution{}, ...]
+      iex> list_institutions(entity)
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Currency{}, ...], ...}
 
+      iex> list_institutions(entity, page: 2)
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Currency{}, ...], page: 2}
+
+      iex> list_institutions(entity, filter: %{type: "money"})
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Currency{type: "money"}, ...]}
+
+      iex> list_institutions(entity, filter: %{search: "my"})
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Currency{description: "my money"}, ...]}
   """
-  def list_institutions(%Entities.Entity{} = entity) do
+  @spec list_institutions(Entities.Entity.t(), keyword()) :: Paginator.Page.t()
+  def list_institutions(%Entities.Entity{} = entity, options \\ []) do
     Banking.Institution
+    |> build_search(Keyword.get(options, :search), [:country, contact: [:name, :legal_name]])
     |> Ecto.Queryable.to_query()
     |> preload([], contact: :category)
     |> Map.put(:prefix, to_prefix(entity))
-    |> Repo.all()
+    |> Paginator.paginate(options)
   end
 
   @doc """
@@ -237,22 +260,55 @@ defmodule Cashtrail.Banking do
 
   Raises `Ecto.NoResultsError` if the Institution does not exist.
 
+  See `Cashtrail.Banking.Institution` to have more detailed info about
+  the returned struct.
+
+  ## Expected Arguments
+
+  * entity - The `%Cashtrail.Entities.Entity{}` that the institution references.
+  * id - A `string` that is the unique id of the institution to be found.
+
   ## Examples
 
-      iex> get_institution!(123)
+      iex> get_institution!(entity, 123)
       %Institution{}
 
-      iex> get_institution!(456)
+      iex> get_institution!(entity, 456)
       ** (Ecto.NoResultsError)
 
   """
+  @spec get_institution!(Entities.Entity.t(), Ecto.UUID.t()) :: institution()
   def get_institution!(%Entities.Entity{} = entity, id) do
-    Repo.get!(Institution, id, prefix: to_prefix(entity))
+    Repo.get!(Banking.Institution, id, prefix: to_prefix(entity))
     |> Repo.preload(contact: :category)
   end
 
   @doc """
   Creates a institution.
+
+  ## Expected Arguments
+
+  * entity - The `%Cashtrail.Entities.Entity{}` that the institution references.
+  * params - A `map` with the params of the currency to be created:
+    * `:contact` or :contact_id (required) -
+      * `:contact_id` - `string` that is the description uuid of the contact.
+      * `:contact` - a `map` with data about the contact to be created an referenced
+      by the institution. See `Cashtrail.Contacts.Contact` or `Cashtrail.Contacts.create_contact/2`
+      to have more information about accepted fields.
+    * `:country` - A `string` with the country where the institution is located.
+    * `:local_code` - A `string` with the code of the institution in the country
+    that the institution is located.
+    * `:swift_code` - A `string` with the SWIFT code that identifies a particular
+    bank worldwide.
+    * `:logo_url` - A `string` with the url with the logo of the institution.
+
+  See `Cashtrail.Banking.Institution` to have more detailed info about
+  the fields.
+
+  ## Returns
+
+  * `{:ok, %Cashtrail.Banking.Institution{}}` in case of success.
+  * `{:error, %Ecto.Changeset{}}` in case of error.
 
   ## Examples
 
@@ -263,14 +319,36 @@ defmodule Cashtrail.Banking do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_institution(entity, attrs \\ %{}) do
-    %Institution{}
-    |> Institution.changeset(attrs)
+  @spec create_institution(Entities.Entity.t(), map()) ::
+          {:ok, institution()} | {:error, Ecto.Changeset.t(institution())}
+  def create_institution(%Entities.Entity{} = entity, attrs \\ %{}) do
+    %Banking.Institution{}
+    |> Banking.Institution.changeset(attrs)
     |> Repo.insert(prefix: to_prefix(entity))
+    |> load_contact()
   end
+
+  defp load_contact(
+         {:ok, %Banking.Institution{contact: %Ecto.Association.NotLoaded{}} = institution}
+       ) do
+    {:ok, Repo.preload(institution, :contact)}
+  end
+
+  defp load_contact(result), do: result
 
   @doc """
   Updates a institution.
+
+  ## Expected Arguments
+
+  * institution - The `%Cashtrail.Banking.Institution{}` to be updated.
+  * params - A `map` with the field of the institution to be updated. See
+  `create_institution/2` to know about the params that can be given.
+
+  ## Returns
+
+  * `{:ok, %Cashtrail.Banking.Institution{}}` in case of success.
+  * `{:error, %Ecto.Changeset{}}` in case of error.
 
   ## Examples
 
@@ -281,14 +359,25 @@ defmodule Cashtrail.Banking do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_institution(%Institution{} = institution, attrs) do
+  @spec update_institution(institution(), map()) ::
+          {:ok, institution()} | {:error, Ecto.Changeset.t(institution())}
+  def update_institution(%Banking.Institution{} = institution, attrs) do
     institution
-    |> Institution.changeset(attrs)
+    |> Banking.Institution.changeset(attrs)
     |> Repo.update()
   end
 
   @doc """
   Deletes a institution.
+
+  ## Expected Arguments
+
+  * institution - The `%Cashtrail.Banking.Institution{}` to be deleted.
+
+  ## Returns
+
+  * `{:ok, %Cashtrail.Banking.Institution{}}` in case of success.
+  * `{:error, %Ecto.Changeset{}}` in case of error.
 
   ## Examples
 
@@ -299,12 +388,18 @@ defmodule Cashtrail.Banking do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_institution(%Institution{} = institution) do
+  @spec delete_institution(institution()) ::
+          {:ok, institution()} | {:error, Ecto.Changeset.t(institution())}
+  def delete_institution(%Banking.Institution{} = institution) do
     Repo.delete(institution)
   end
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking institution changes.
+
+  ## Expected Arguments
+
+  * institution - The `%Cashtrail.Banking.Institution{}` to be tracked.
 
   ## Examples
 
@@ -312,7 +407,9 @@ defmodule Cashtrail.Banking do
       %Ecto.Changeset{data: %Institution{}}
 
   """
-  def change_institution(%Institution{} = institution, attrs \\ %{}) do
-    Institution.changeset(institution, attrs)
+  @spec change_institution(institution(), map()) ::
+          Ecto.Changeset.t(institution())
+  def change_institution(%Banking.Institution{} = institution, attrs \\ %{}) do
+    Banking.Institution.changeset(institution, attrs)
   end
 end

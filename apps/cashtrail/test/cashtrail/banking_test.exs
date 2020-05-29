@@ -6,12 +6,12 @@ defmodule Cashtrail.BankingTest do
   alias Cashtrail.{Banking, Paginator}
 
   describe "currencies" do
-    test "list_currencies/1 returns all currencies", %{tenant: tenant} do
+    test "list_currencies/2 returns all currencies", %{tenant: tenant} do
       currency = insert(:currency, tenant: tenant)
       assert Banking.list_currencies(tenant).entries == [currency]
     end
 
-    test "list_currencies/1 works with pagination", %{tenant: tenant} do
+    test "list_currencies/2 works with pagination", %{tenant: tenant} do
       currencies =
         insert_list(25, :currency, tenant: tenant)
         |> Enum.slice(20, 5)
@@ -25,7 +25,7 @@ defmodule Cashtrail.BankingTest do
              }
     end
 
-    test "list_currencies/1 filtering by type", %{tenant: tenant} do
+    test "list_currencies/2 filtering by type", %{tenant: tenant} do
       insert(:currency, tenant: tenant, type: "virtual")
       currency = insert(:currency, tenant: tenant, type: "money")
 
@@ -36,7 +36,7 @@ defmodule Cashtrail.BankingTest do
              ]
     end
 
-    test "list_currencies/1 filtering by active", %{tenant: tenant} do
+    test "list_currencies/2 filtering by active", %{tenant: tenant} do
       insert(:currency, tenant: tenant, active: false)
       currency = insert(:currency, tenant: tenant, active: true)
 
@@ -44,13 +44,13 @@ defmodule Cashtrail.BankingTest do
       assert Banking.list_currencies(tenant, filter: %{"active" => true}).entries == [currency]
     end
 
-    test "list_currencies/1 filtering by invalid filters show all results", %{tenant: tenant} do
+    test "list_currencies/2 filtering by invalid filters show all results", %{tenant: tenant} do
       currency = insert(:currency, tenant: tenant)
 
       assert Banking.list_currencies(tenant, filter: %{invalid: "123"}).entries == [currency]
     end
 
-    test "list_currencies/1 searching by iso_code, symbol and description", %{tenant: tenant} do
+    test "list_currencies/2 searching by iso_code, symbol and description", %{tenant: tenant} do
       insert(:currency, tenant: tenant, description: "abc", iso_code: "cde", symbol: "ef$")
 
       currency =
@@ -257,36 +257,97 @@ defmodule Cashtrail.BankingTest do
   end
 
   describe "institutions" do
-    test "list_institutions/0 returns all institutions", %{tenant: tenant} do
+    test "list_institutions/2 returns all institutions", %{tenant: tenant} do
       institution = insert(:institution, tenant: tenant)
-      assert Banking.list_institutions(tenant) == [institution]
+      assert Banking.list_institutions(tenant).entries == [institution]
     end
 
-    test "get_institution!/1 returns the institution with given id", %{tenant: tenant} do
+    test "list_institutions/2 works with pagination", %{tenant: tenant} do
+      institutions =
+        insert_list(25, :institution, tenant: tenant)
+        |> Enum.slice(20, 5)
+
+      assert Banking.list_institutions(tenant, page: 2) == %Paginator.Page{
+               entries: institutions,
+               page_number: 2,
+               page_size: 20,
+               total_entries: 25,
+               total_pages: 2
+             }
+    end
+
+    test "list_institutions/2 searching by iso_code, symbol and description", %{tenant: tenant} do
+      insert(:institution,
+        tenant: tenant,
+        country: "abc",
+        contact: build(:contact, name: "def", legal_name: "ijk")
+      )
+
+      institution =
+        insert(:institution,
+          tenant: tenant,
+          country: "lmnopq",
+          contact: build(:contact, name: "rstuv", legal_name: "wxyz")
+        )
+
+      assert Banking.list_institutions(tenant, search: "mno").entries == [institution]
+      assert Banking.list_institutions(tenant, search: "rst").entries == [institution]
+      assert Banking.list_institutions(tenant, search: "xyz").entries == [institution]
+    end
+
+    test "get_institution!/2 returns the institution with given id", %{tenant: tenant} do
       institution = insert(:institution, tenant: tenant)
       assert Banking.get_institution!(tenant, institution.id) == institution
     end
 
-    test "create_institution/1 with valid data creates a institution", %{tenant: tenant} do
-      institution_params = params_for(:institution, tenant: tenant)
+    test "create_institution/2 with valid data creates a institution", %{tenant: tenant} do
+      institution_params =
+        params_for(:institution, tenant: tenant)
         |> Map.put(:contact, params_for(:contact))
 
-      assert {:ok, %Banking.Institution{} = institution} = Banking.create_institution(tenant, institution_params)
+      assert {:ok, %Banking.Institution{} = institution} =
+               Banking.create_institution(tenant, institution_params)
+
       assert institution.country == institution_params.country
       assert institution.local_code == institution_params.local_code
       assert institution.swift_code == institution_params.swift_code
       assert institution.logo_url == institution_params.logo_url
+      assert institution.contact.name == institution_params.contact.name
+    end
+
+    test "create_institution/2 with contact_id creates a institution with existing contact", %{
+      tenant: tenant
+    } do
+      contact = insert(:contact, tenant: tenant)
+      institution_params = params_for(:institution, tenant: tenant, contact_id: contact.id)
+
+      assert {:ok, %Banking.Institution{} = institution} =
+               Banking.create_institution(tenant, institution_params)
+
+      assert institution.country == institution_params.country
+      assert institution.local_code == institution_params.local_code
+      assert institution.swift_code == institution_params.swift_code
+      assert institution.logo_url == institution_params.logo_url
+      assert institution.contact.id == contact.id
     end
 
     @invalid_attrs %{logo_url: "invalid url", swift_code: "invalid swift"}
-    test "create_institution/1 with invalid data returns error changeset", %{tenant: tenant} do
+    test "create_institution/2 with invalid data returns error changeset", %{tenant: tenant} do
       assert {:error, %Ecto.Changeset{}} = Banking.create_institution(tenant, @invalid_attrs)
     end
 
-    @update_attrs %{country: "Brazil", local_code: "875", logo_url: "http://some-url.com/logo.png", swift_code: "JEKPQS9478"}
+    @update_attrs %{
+      country: "Brazil",
+      local_code: "875",
+      logo_url: "http://some-url.com/logo.png",
+      swift_code: "JEKPQS9478"
+    }
     test "update_institution/2 with valid data updates the institution", %{tenant: tenant} do
       institution = insert(:institution, tenant: tenant)
-      assert {:ok, %Banking.Institution{} = institution} = Banking.update_institution(institution, @update_attrs)
+
+      assert {:ok, %Banking.Institution{} = institution} =
+               Banking.update_institution(institution, @update_attrs)
+
       assert institution.country == "Brazil"
       assert institution.local_code == "875"
       assert institution.logo_url == "http://some-url.com/logo.png"

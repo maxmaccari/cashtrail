@@ -34,18 +34,17 @@ defmodule Cashtrail.Banking.Institution do
   alias Cashtrail.Contacts
 
   @type t :: %Cashtrail.Banking.Institution{
-    id: Ecto.UUID.t() | nil,
-    country: String.t() | nil,
-    local_code: String.t() | nil,
-    swift_code: String.t() | nil,
-    logo_url: String.t() | nil,
-    contact_id: Ecto.UUID.t() | nil,
-    contact: Cashtrail.Contacts.Contact.t() | nil,
-    inserted_at: NaiveDateTime.t() | nil,
-    updated_at: NaiveDateTime.t() | nil,
-    __meta__: Ecto.Schema.Metadata.t()
-  }
-
+          id: Ecto.UUID.t() | nil,
+          country: String.t() | nil,
+          local_code: String.t() | nil,
+          swift_code: String.t() | nil,
+          logo_url: String.t() | nil,
+          contact_id: Ecto.UUID.t() | nil,
+          contact: Cashtrail.Contacts.Contact.t() | nil,
+          inserted_at: NaiveDateTime.t() | nil,
+          updated_at: NaiveDateTime.t() | nil,
+          __meta__: Ecto.Schema.Metadata.t()
+        }
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -66,7 +65,7 @@ defmodule Cashtrail.Banking.Institution do
   @doc false
   def changeset(institution, attrs) do
     institution
-    |> cast(attrs, [:country, :local_code, :swift_code, :logo_url])
+    |> cast(attrs, [:country, :local_code, :swift_code, :logo_url, :contact_id])
     |> validate_format(:swift_code, @swift_regex, message: "is not a valid swift code")
     |> validate_format(:logo_url, @url_regex, message: "is not a valid url")
     |> ensure_associated_contact()

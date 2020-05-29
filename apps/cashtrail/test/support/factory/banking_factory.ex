@@ -37,12 +37,17 @@ defmodule Cashtrail.Factory.BankingFactory do
 
       def institution_factory(attrs \\ %{}) do
         country_code = Faker.Address.country_code()
-        bank_code = for(_ <- 1..2, do: [Enum.random(65..90)]) |> to_string()
-        region = for(_ <- 1..2, do: Enum.random([Enum.random(65..90), Enum.random(48..57)])) |> to_string()
-        agency = for(_ <- 1..4, do: Enum.random([Enum.random(65..90), Enum.random(48..57)])) |> to_string()
-        swift = "#{bank_code}#{country_code}#{region}#{agency}"
+        bank_code = for(_ <- 1..4, do: [Enum.random(65..90)]) |> to_string()
+
+        region =
+          for(_ <- 1..2, do: Enum.random([Enum.random(65..90), Enum.random(48..57)]))
+          |> to_string()
+
+        swift = "#{bank_code}#{country_code}#{region}XXX"
         local_code = :rand.uniform(999) |> to_string()
-        logo_url = "#{Faker.Internet.image_url()}#{Enum.random([".png", ".jpg", ".jpeg", ".gif", ""])}"
+
+        logo_url =
+          "#{Faker.Internet.image_url()}#{Enum.random([".png", ".jpg", ".jpeg", ".gif", ""])}"
 
         %Banking.Institution{
           country: Faker.Address.country(),
