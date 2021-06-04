@@ -3,7 +3,7 @@ defmodule Cashtrail.Users.PasswordHash do
 
   @moduledoc false
 
-  @hashing_module Application.get_env(:cashtrail, :comeonin_hash_module)
+  @hashing_module Application.compile_env(:cashtrail, :comeonin_hash_module, Argon2)
 
   @doc """
   Generates a random salt and then hashes the password.
