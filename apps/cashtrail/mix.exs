@@ -41,14 +41,14 @@ defmodule Cashtrail.MixProject do
   defp deps do
     [
       {:phoenix_pubsub, "~> 2.0"},
-      {:ecto_sql, "~> 3.4"},
+      {:ecto_sql, "~> 3.6"},
       {:postgrex, ">= 0.0.0"},
       {:jason, "~> 1.0"},
-      {:argon2_elixir, "~> 2.3"},
+      {:argon2_elixir, "~> 2.4"},
       {:triplex, "~> 1.3.0"},
-      {:ex_machina, "~> 2.4", only: :test},
-      {:faker, "~> 0.13.0", only: :test},
-      {:scrivener_ecto, "~> 2.3"},
+      {:ex_machina, "~> 2.7", only: :test},
+      {:faker, "~> 0.16.0", only: :test},
+      {:scrivener_ecto, "~> 2.7"},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false}
     ]
   end
