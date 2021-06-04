@@ -80,7 +80,7 @@ You can learn the technologies that this project is built in the following links
 
 ### Prerequisites
 
-You will need to have Erlang 21.0+ and Elixir 1.7+ installed to continue. You can have
+You will need to have Erlang 21.0+ and Elixir 1.10+ installed to continue. You can have
 the installation instructions on the [official elixir website](https://elixir-lang.org/install.html).
 
 After install elixir, you can enter the following command to check the version:
