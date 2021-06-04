@@ -27,7 +27,7 @@ defmodule Cashtrail.MixProject do
   def application do
     [
       mod: {Cashtrail.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :os_mon]
     ]
   end
 
@@ -42,6 +42,7 @@ defmodule Cashtrail.MixProject do
     [
       {:phoenix_pubsub, "~> 2.0"},
       {:ecto_sql, "~> 3.6"},
+      {:ecto_psql_extras, "~> 0.2"},
       {:postgrex, ">= 0.0.0"},
       {:jason, "~> 1.0"},
       {:argon2_elixir, "~> 2.4"},
