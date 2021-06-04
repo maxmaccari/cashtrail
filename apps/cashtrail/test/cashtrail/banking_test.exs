@@ -172,8 +172,7 @@ defmodule Cashtrail.BankingTest do
     test "create_currency/2 with same iso_code returns a error changeset", %{tenant: tenant} do
       currency_params = params_for(:currency, tenant: tenant, iso_code: "ABC")
 
-      assert {:ok, %Banking.Currency{} = currency} =
-               Banking.create_currency(tenant, currency_params)
+      assert {:ok, %Banking.Currency{}} = Banking.create_currency(tenant, currency_params)
 
       assert {:error, %Ecto.Changeset{errors: [iso_code: _]}} =
                Banking.create_currency(tenant, currency_params)

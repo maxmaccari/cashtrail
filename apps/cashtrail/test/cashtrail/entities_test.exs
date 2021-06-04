@@ -442,8 +442,7 @@ defmodule Cashtrail.EntitiesTest do
       entity_member_attrs =
         params_for(:entity_member) |> Map.put(:user, params_for(:user, password: "@abc1234"))
 
-      assert {:ok, %EntityMember{} = entity_member} =
-               Entities.create_member(entity, entity_member_attrs)
+      assert {:ok, %EntityMember{}} = Entities.create_member(entity, entity_member_attrs)
 
       assert {:error, %Ecto.Changeset{errors: [entity_id: {"has already been added", _}]}} =
                Entities.create_member(entity, entity_member_attrs)
@@ -466,7 +465,7 @@ defmodule Cashtrail.EntitiesTest do
     test "add_member/3 twice with the same user returns error changeset" do
       user = insert(:user)
       entity = insert(:entity)
-      assert {:ok, %EntityMember{} = entity_member} = Entities.add_member(entity, user)
+      assert {:ok, %EntityMember{}} = Entities.add_member(entity, user)
 
       assert {:error, %Ecto.Changeset{errors: [entity_id: {"has already been added", _}]}} =
                Entities.add_member(entity, user)
