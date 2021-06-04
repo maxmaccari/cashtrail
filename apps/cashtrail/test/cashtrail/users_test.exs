@@ -52,7 +52,8 @@ defmodule Cashtrail.UsersTest do
     test "authenticate_user/2 email is case insensitive" do
       user = insert(:user, password_hash: "my_password123")
 
-      assert {:ok, autenticated} = Users.authenticate(String.upcase(user.email), "my_password123")
+      assert {:ok, _autenticated} =
+               Users.authenticate(String.upcase(user.email), "my_password123")
     end
 
     test "authenticate_user/2 with invalid password return :unathorized error" do
@@ -98,7 +99,7 @@ defmodule Cashtrail.UsersTest do
     test "create_user/1 with an already used email returns error changeset" do
       user_params = params_for(:user, password: "@abc1234")
 
-      assert {:ok, %Users.User{} = user} = Users.create_user(user_params)
+      assert {:ok, %Users.User{}} = Users.create_user(user_params)
 
       assert {:error, %Ecto.Changeset{errors: [email: {"has already been taken", _}]}} =
                Users.create_user(user_params)

@@ -39,15 +39,15 @@ defmodule CashtrailWeb.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.5.1"},
-      {:phoenix_ecto, "~> 4.0"},
-      {:phoenix_live_dashboard, "~> 0.2.0"},
-      {:telemetry_metrics, "~> 0.4"},
-      {:telemetry_poller, "~> 0.4"},
-      {:gettext, "~> 0.11"},
+      {:phoenix, "~> 1.5.9"},
+      {:phoenix_ecto, "~> 4.2"},
+      {:phoenix_live_dashboard, "~> 0.4.0"},
+      {:telemetry_metrics, "~> 0.6"},
+      {:telemetry_poller, "~> 0.5"},
+      {:gettext, "~> 0.18"},
       {:cashtrail, in_umbrella: true},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.5"}
     ]
   end
 

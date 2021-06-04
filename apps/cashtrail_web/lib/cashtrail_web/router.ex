@@ -23,7 +23,7 @@ defmodule CashtrailWeb.Router do
 
     scope "/" do
       pipe_through [:fetch_session, :protect_from_forgery]
-      live_dashboard "/dashboard", metrics: CashtrailWeb.Telemetry
+      live_dashboard "/dashboard", metrics: CashtrailWeb.Telemetry, ecto_repos: Cashtrail.Repo
     end
   end
 end
