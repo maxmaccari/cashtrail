@@ -87,7 +87,7 @@ defmodule Cashtrail.QueryBuilder do
     iex> Cashtrail.QueryBuilder.build_search(Cashtrail.Users.User, "my name", [:first_name, :last_name])
     #Ecto.Query<from u0 in Cashtrail.Users.User, or_where: ilike(u0.first_name, ^"%my name%"), or_where: ilike(u0.last_name, ^"%my name%")>
   """
-  @spec build_search(Ecto.Queryable.t(), nil | String.t(), list(atom)) ::
+  @spec build_search(Ecto.Queryable.t(), nil | String.t(), list(atom) | keyword()) ::
           Ecto.Query.t() | Ecto.Queryable.t()
   def build_search(query, nil, _), do: query
 

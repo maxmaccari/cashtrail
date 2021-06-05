@@ -204,8 +204,8 @@ defmodule Cashtrail.Contacts do
       iex> list_contacts(entity)
       %Cashtrail.Paginator{entries: [%Cashtrail.Contacts.Contact{}, ...]}
 
-      iex> list_contacts(entity, filter: %{type: "company"})
-      %Cashtrail.Paginator{entries: [%Cashtrail.Contacts.Contact{type: "company"}, ...]}
+      iex> list_contacts(entity, filter: %{type: :company})
+      %Cashtrail.Paginator{entries: [%Cashtrail.Contacts.Contact{type: :company}, ...]}
 
       iex> list_contacts(entity, search: "my")
       %Cashtrail.Paginator{entries: [%Cashtrail.Contacts.Contact{name: "My name"}, ...]}
@@ -255,7 +255,7 @@ defmodule Cashtrail.Contacts do
   * params - A `map` with the params of the contact to be created:
     * `:name` (required) - A `string` with the description of the contact.
     * `:type` (required) - A `string` with the type of contact. It can receive
-    "company" or "person". Defaults to `"company"`.
+    `:company` or `:person`. Defaults to `:company`.
     * `:legal_name` - A `string` that is the legal name of the contact.
     * `:customer` - A `boolean` that says if the contact is a customer. Defaults to false.
     * `:supplier` - A `boolean` that says if the contact is a supplier. Defaults to false.

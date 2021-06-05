@@ -19,7 +19,7 @@ defmodule Cashtrail.Factory.ContactsFactory do
           name: Faker.App.name(),
           legal_name: Faker.Company.name(),
           tax_id: Faker.App.name(),
-          type: Enum.random(["company", "person"]),
+          type: Enum.random([:company, :person]),
           customer: Enum.random([true, false]),
           supplier: Enum.random([true, false]),
           phone: Faker.Phone.EnUs.phone(),

@@ -34,7 +34,7 @@ defmodule Cashtrail.Users.User do
 
   import Cashtrail.Users.PasswordHash, only: [hash_pwd_salt: 1]
 
-  @type t() :: %Cashtrail.Users.User{
+  @type t :: %Cashtrail.Users.User{
           id: Ecto.UUID.t() | nil,
           email: String.t() | nil,
           first_name: String.t() | nil,

@@ -110,9 +110,9 @@ defmodule Cashtrail.ContactsTest do
     end
 
     test "list_contacts/2 filtering by type", %{tenant: tenant} do
-      insert(:contact, tenant: tenant, type: "person")
-      contact = insert(:contact, tenant: tenant, type: "company") |> forget(:category)
-      assert Contacts.list_contacts(tenant, filter: %{type: "company"}).entries == [contact]
+      insert(:contact, tenant: tenant, type: :person)
+      contact = insert(:contact, tenant: tenant, type: :company) |> forget(:category)
+      assert Contacts.list_contacts(tenant, filter: %{type: :company}).entries == [contact]
       assert Contacts.list_contacts(tenant, filter: %{"type" => "company"}).entries == [contact]
     end
 
@@ -223,7 +223,7 @@ defmodule Cashtrail.ContactsTest do
       phone: "some updated phone",
       supplier: false,
       tax_id: "some updated tax_id",
-      type: "some updated type"
+      type: "company"
     }
     test "update_contact/2 with valid data updates the contact", %{tenant: tenant} do
       contact = insert(:contact, tenant: tenant)
@@ -239,7 +239,7 @@ defmodule Cashtrail.ContactsTest do
       assert contact.phone == "some updated phone"
       assert contact.supplier == false
       assert contact.tax_id == "some updated tax_id"
-      assert contact.type == "some updated type"
+      assert contact.type == :company
     end
 
     test "update_contact/2 with invalid data returns error changeset", %{tenant: tenant} do

@@ -24,7 +24,7 @@ defmodule Cashtrail.Factory.BankingFactory do
           active: true,
           description: "#{iso_code} Currency",
           iso_code: iso_code,
-          type: Enum.random(["money", "cryptocurrency", "virtual", "other"]),
+          type: Enum.random([:money, :cryptocurrency, :virtual, :other]),
           symbol: "$",
           precision: Enum.random(0..4),
           separator: Enum.random([".", ",", "\\"]),
