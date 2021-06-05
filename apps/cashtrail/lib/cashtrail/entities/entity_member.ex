@@ -18,11 +18,11 @@ defmodule Cashtrail.Entities.EntityMember do
 
   * `:id` - The unique id of the entity member.
   * `:permission` - The permission of the entity member. The permissions can be:
-    * `"read"` - With this permission, the member can read the data from the entity.
-    * `"write"` - With this permission, the member can read, create, modify, and
+    * `:read` - With this permission, the member can read the data from the entity.
+    * `:write` - With this permission, the member can read, create, modify, and
     delete data from the entity, except change the entity settings or manage the
     members of the entity.
-    * `"admin"` - With this permission, the member can have all permissions from write,
+    * `:admin` - With this permission, the member can have all permissions from write,
     change the settings, and manage the members of the entity.
   * `:entity` - The entity that the member is part of, related to `Cashtrail.Entities.Entity`.
   * `:entity_id` - The id of the entity that the member is part of.
@@ -40,9 +40,11 @@ defmodule Cashtrail.Entities.EntityMember do
 
   alias Cashtrail.{Entities, Users}
 
-  @type t() :: %Cashtrail.Entities.EntityMember{
+  @type permission :: :admin | :read | :write
+
+  @type t :: %Cashtrail.Entities.EntityMember{
           id: Ecto.UUID.t() | nil,
-          permission: String.t() | nil,
+          permission: permission() | nil,
           entity_id: Ecto.UUID.t() | nil,
           entity: Ecto.Association.NotLoaded.t() | Entities.Entity.t() | nil,
           user_id: Ecto.UUID.t() | nil,
@@ -55,7 +57,7 @@ defmodule Cashtrail.Entities.EntityMember do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "entity_members" do
-    field :permission, :string
+    field :permission, Ecto.Enum, values: [:read, :write, :admin]
     belongs_to :entity, Entities.Entity
     belongs_to :user, Users.User
 
@@ -68,7 +70,6 @@ defmodule Cashtrail.Entities.EntityMember do
     entity_member
     |> cast(attrs, [:permission, :user_id])
     |> validate_required([:permission])
-    |> validate_inclusion(:permission, ["read", "write", "admin"])
     |> cast_assoc(:user)
     |> unique_constraint([:entity_id, :user_id], message: "has already been added")
     |> foreign_key_constraint(:entity_id)

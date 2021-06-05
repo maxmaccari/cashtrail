@@ -60,16 +60,16 @@ defmodule Cashtrail.Entities.Entity do
   * `:id` - The unique id of the entity.
   * `:name` - The name (or description) of the entity.
   * `:status` - The status of the entity, that can be:
-    * `"active"` - if the entity is used.
-    * `"archived"` -if the entity is no longer used, but you want to keep the
+    * `:active` - if the entity is used.
+    * `:archived` -if the entity is no longer used, but you want to keep the
     data history. This can be used to hide the entity in entity listing, or to
     unauthorized other users to edit the entity data.
   * `:type` - The type of the entity, that can be:
-    * `"personal"` - if the entity is used for personal reasons, like control
+    * `:personal` - if the entity is used for personal reasons, like control
     your finances, your family finances, personal project finances,
     or something like that.
-    * `"company"` - if the entity is used to control the finances of a company.
-    * `"other"` - if the entity is used to control the finances for other reasons.
+    * `:company` - if the entity is used to control the finances of a company.
+    * `:other` - if the entity is used to control the finances for other reasons.
     * `:owner` - The owner of the entity. The owner is usually who has created the
     entity and has all permissions over an entity, including to delete it. If a
     user is deleted, all his entities are excluded too. The ownership of an entity
@@ -89,11 +89,11 @@ defmodule Cashtrail.Entities.Entity do
 
   alias Cashtrail.{Entities, Users}
 
-  @type t() :: %Cashtrail.Entities.Entity{
+  @type t :: %Cashtrail.Entities.Entity{
           id: Ecto.UUID.t() | nil,
           name: String.t() | nil,
-          status: String.t() | nil,
-          type: String.t() | nil,
+          status: atom() | nil,
+          type: atom() | nil,
           owner_id: Ecto.UUID.t() | nil,
           owner: Ecto.Association.NotLoaded.t() | Users.User.t() | nil,
           members: Ecto.Association.NotLoaded.t() | list(Entities.EntityMember.t()),
@@ -106,8 +106,8 @@ defmodule Cashtrail.Entities.Entity do
   @foreign_key_type :binary_id
   schema "entities" do
     field :name, :string
-    field :status, :string, default: "active"
-    field :type, :string, default: "personal"
+    field :status, Ecto.Enum, values: [:active, :archived], default: :active
+    field :type, Ecto.Enum, values: [:personal, :company, :other], default: :personal
     belongs_to :owner, Users.User
     has_many :members, Entities.EntityMember
 
@@ -120,8 +120,6 @@ defmodule Cashtrail.Entities.Entity do
     entity
     |> cast(attrs, [:name, :type, :status])
     |> validate_required([:name, :owner_id])
-    |> validate_inclusion(:type, ["personal", "company", "other"])
-    |> validate_inclusion(:status, ["active", "archived"])
     |> foreign_key_constraint(:owner_id)
   end
 

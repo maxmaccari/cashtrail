@@ -31,21 +31,21 @@ defmodule Cashtrail.EntitiesTest do
     end
 
     test "list_entities/1 filtering by type" do
-      insert(:entity, type: "personal") |> forget(:owner)
-      entity = insert(:entity, type: "company") |> forget(:owner)
-      assert Entities.list_entities(filter: %{type: "company"}).entries == [entity]
+      insert(:entity, type: :personal) |> forget(:owner)
+      entity = insert(:entity, type: :company) |> forget(:owner)
+      assert Entities.list_entities(filter: %{type: :company}).entries == [entity]
       assert Entities.list_entities(filter: %{"type" => "company"}).entries == [entity]
     end
 
     test "list_entities/1 filtering by status" do
-      insert(:entity, status: "active")
-      entity = insert(:entity, status: "archived") |> forget(:owner)
-      assert Entities.list_entities(filter: %{status: "archived"}).entries == [entity]
+      insert(:entity, status: :active)
+      entity = insert(:entity, status: :archived) |> forget(:owner)
+      assert Entities.list_entities(filter: %{status: :archived}).entries == [entity]
       assert Entities.list_entities(filter: %{"status" => "archived"}).entries == [entity]
     end
 
     test "list_entities/1 filtering by invalid key" do
-      entity = insert(:entity, type: "company") |> forget(:owner)
+      entity = insert(:entity, type: :company) |> forget(:owner)
       assert Entities.list_entities(filter: %{invalid: nil}).entries == [entity]
     end
 
@@ -88,18 +88,18 @@ defmodule Cashtrail.EntitiesTest do
 
     test "list_entities_for/2 filtering by type" do
       owner = insert(:user)
-      insert(:entity, type: "personal", owner: owner) |> forget(:owner)
-      entity = insert(:entity, type: "company", owner: owner) |> forget(:owner)
-      assert Entities.list_entities_for(owner, filter: %{type: "company"}).entries == [entity]
+      insert(:entity, type: :personal, owner: owner) |> forget(:owner)
+      entity = insert(:entity, type: :company, owner: owner) |> forget(:owner)
+      assert Entities.list_entities_for(owner, filter: %{type: :company}).entries == [entity]
       assert Entities.list_entities_for(owner, filter: %{"type" => "company"}).entries == [entity]
     end
 
     test "list_entities_for/2 filtering by status" do
       owner = insert(:user)
-      insert(:entity, status: "active", owner: owner)
-      entity = insert(:entity, status: "archived", owner: owner) |> forget(:owner)
+      insert(:entity, status: :active, owner: owner)
+      entity = insert(:entity, status: :archived, owner: owner) |> forget(:owner)
 
-      assert Entities.list_entities_for(owner, filter: %{status: "archived"}).entries == [entity]
+      assert Entities.list_entities_for(owner, filter: %{status: :archived}).entries == [entity]
 
       assert Entities.list_entities_for(owner, filter: %{"status" => "archived"}).entries == [
                entity
@@ -209,8 +209,8 @@ defmodule Cashtrail.EntitiesTest do
       entity = insert(:entity)
       assert {:ok, %Entity{} = entity} = Entities.update_entity(entity, @update_attrs)
       assert entity.name == "some updated name"
-      assert entity.status == "archived"
-      assert entity.type == "company"
+      assert entity.status == :archived
+      assert entity.type == :company
     end
 
     test "update_entity/2 does not allow to change the owner" do
@@ -286,7 +286,7 @@ defmodule Cashtrail.EntitiesTest do
       assert {:ok, %Entity{} = entity} = Entities.transfer_ownership(entity, from_user, to_user)
       assert %EntityMember{} = member = Entities.member_from_user(entity, from_user)
       assert member.user_id == from_user.id
-      assert member.permission == "admin"
+      assert member.permission == :admin
     end
 
     test "belongs_to?/2 checks if the entity belongs to user" do
@@ -331,16 +331,16 @@ defmodule Cashtrail.EntitiesTest do
     test "list_members/2 filtering by permission" do
       entity = insert(:entity)
 
-      insert(:entity_member, entity: entity, permission: "read")
+      insert(:entity_member, entity: entity, permission: :read)
       |> forget(:user)
       |> forget(:entity)
 
       entity_member =
-        insert(:entity_member, entity: entity, permission: "admin")
+        insert(:entity_member, entity: entity, permission: :admin)
         |> forget(:user)
         |> forget(:entity)
 
-      assert Entities.list_members(entity, filter: %{permission: "admin"}).entries == [
+      assert Entities.list_members(entity, filter: %{permission: :admin}).entries == [
                entity_member
              ]
 
@@ -408,7 +408,7 @@ defmodule Cashtrail.EntitiesTest do
                  permission: "read"
                })
 
-      assert entity_member.permission == "read"
+      assert entity_member.permission == :read
       assert entity_member.user_id == user.id
     end
 
@@ -452,14 +452,14 @@ defmodule Cashtrail.EntitiesTest do
       user = insert(:user)
       entity = insert(:entity)
       assert {:ok, %EntityMember{} = entity_member} = Entities.add_member(entity, user)
-      assert entity_member.permission == "read"
+      assert entity_member.permission == :read
     end
 
     test "add_member/3 adds a user as a member with the given permission" do
       user = insert(:user)
       entity = insert(:entity)
       assert {:ok, %EntityMember{} = entity_member} = Entities.add_member(entity, user, "write")
-      assert entity_member.permission == "write"
+      assert entity_member.permission == :write
     end
 
     test "add_member/3 twice with the same user returns error changeset" do
@@ -497,16 +497,16 @@ defmodule Cashtrail.EntitiesTest do
       member = insert(:entity_member, permission: "read")
 
       assert {:ok, %EntityMember{} = entity_member} =
-               Entities.update_member_permission(member.entity, member.user, "write")
+               Entities.update_member_permission(member.entity, member.user, :write)
 
-      assert entity_member.permission == "write"
+      assert entity_member.permission == :write
     end
 
     test "update_member_permission/3 with invalid permission returns error" do
       member = insert(:entity_member)
 
       assert {:error, %Ecto.Changeset{}} =
-               Entities.update_member_permission(member.entity, member.user, "invalid")
+               Entities.update_member_permission(member.entity, member.user, :invalid)
     end
 
     test "update_member_permission/3 with a owner returns error" do

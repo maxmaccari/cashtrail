@@ -8,8 +8,8 @@ defmodule Cashtrail.Factory.EntitiesFactory do
       def entity_factory(attrs \\ %{}) do
         entity = %Entities.Entity{
           name: "personal finances",
-          status: "active",
-          type: Enum.random(["personal", "company", "other"]),
+          status: :active,
+          type: Enum.random([:personal, :company, :other]),
           owner: unless(Map.has_key?(attrs, :entity_id), do: build(:user), else: nil)
         }
 
@@ -18,7 +18,7 @@ defmodule Cashtrail.Factory.EntitiesFactory do
 
       def entity_member_factory(attrs \\ %{}) do
         entity_member = %Entities.EntityMember{
-          permission: Enum.random(["read", "write", "admin"]),
+          permission: Enum.random([:read, :write, :admin]),
           entity: unless(Map.has_key?(attrs, :entity_id), do: build(:entity), else: nil),
           user: unless(Map.has_key?(attrs, :user_id), do: build(:user), else: nil)
         }

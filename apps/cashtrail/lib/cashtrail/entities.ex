@@ -8,8 +8,10 @@ defmodule Cashtrail.Entities do
   See `Cashtrail.Entities.Entity` to have more info about entity.
   """
 
+  @type user :: Cashtrail.Users.User.t()
   @type entity :: Cashtrail.Entities.Entity.t()
   @type entity_member :: Cashtrail.Entities.EntityMember.t()
+  @type entity_member_permission :: Cashtrail.Entities.EntityMember.permission()
 
   import Ecto.Query, warn: false
   alias Cashtrail.Repo
@@ -39,8 +41,8 @@ defmodule Cashtrail.Entities do
       iex> list_entities()
       %Cashtrail.Paginator.Page{entries: [%Cashtrail.Entities.Entity{}, ...]}
 
-      iex> list_entities(filter: %{type: "company"})
-      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Entities.Entity{type: "company"}, ...]}
+      iex> list_entities(filter: %{type: :company})
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Entities.Entity{type: :company}, ...]}
 
       iex> list_entities(search: "my")
       %Cashtrail.Paginator.Page{entries: [%Cashtrail.Entities.Entity{name: "My company"}, ...]}
@@ -85,7 +87,7 @@ defmodule Cashtrail.Entities do
       %Cashtrail.Paginator.Page{entries: [%Cashtrail.Entities.Entity{}, ...]}
 
   """
-  @spec list_entities_for(Users.User.t(), keyword) :: Paginator.Page.t(entity())
+  @spec list_entities_for(user, keyword) :: Paginator.Page.t(entity())
   def list_entities_for(%Users.User{id: user_id}, options \\ []) do
     from(e in Entities.Entity)
     |> build_filter(Keyword.get(options, :filter), [:type, :status])
@@ -141,8 +143,8 @@ defmodule Cashtrail.Entities do
 
   * params - A `map` with the params of the entity to be created:
     * `:name` (required) - A `string` with the name or description of the entity.
-    * `:type` - A `string` with the type of the entity. It can be `"personal"`,
-    `"company"` or `"other"`. Defaults to `"personal"`.
+    * `:type` - A `string` with the type of the entity. It can be `:personal`,
+    `:company` or `:other`. Defaults to `:personal`.
     * `:owner_id` - A `string` that references to the `Cashtrail.Users.User` that
     is the owner of the entity.
 
@@ -162,7 +164,7 @@ defmodule Cashtrail.Entities do
       {:error, %Ecto.Changeset{}}
 
   """
-  @spec create_entity(Users.User.t(), map, boolean) ::
+  @spec create_entity(user, map, boolean) ::
           {:ok, entity()} | {:error, Ecto.Changeset.t(entity())}
   def create_entity(user, attrs, create_tenants \\ true)
 
@@ -294,7 +296,7 @@ defmodule Cashtrail.Entities do
       iex> transfer_ownership(entity, invalid_from, to_user)
       {:error, :unauthorized}
   """
-  @spec transfer_ownership(entity(), User.t(), User.t()) ::
+  @spec transfer_ownership(entity, user, user) ::
           {:error, :unauthorized} | {:ok, entity()}
   def transfer_ownership(
         %Entities.Entity{} = entity,
@@ -306,7 +308,7 @@ defmodule Cashtrail.Entities do
 
       with {:ok, entity} <- Repo.update(changeset) do
         remove_member(entity, to_user)
-        add_member(entity, from_user, "admin")
+        add_member(entity, from_user, :admin)
 
         {:ok, entity}
       end
@@ -330,7 +332,7 @@ defmodule Cashtrail.Entities do
       iex> belongs_to?(%Cashtrail.Entities.Entity{owner_id: "bbb"}, %Cashtrail.Users.User{id: "aaa"})
       false
   """
-  @spec belongs_to?(entity(), User.t()) :: boolean
+  @spec belongs_to?(entity, user) :: boolean
   def belongs_to?(%Entities.Entity{owner_id: owner_id}, %Users.User{id: user_id}) do
     owner_id == user_id
   end
@@ -355,8 +357,8 @@ defmodule Cashtrail.Entities do
       iex> list_entity_members(entity)
       %Cashtrail.Paginator.Page{entries: [%Cashtrail.Entities.EntityMember{}, ...]}
 
-      iex> list_entity_members(entity, filter: %{permission: "read"})
-      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Entities.EntityMember{permission: "read"}, ...]}
+      iex> list_entity_members(entity, filter: %{permission: :read})
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Entities.EntityMember{permission: :read}, ...]}
 
       iex> list_entity_members(entity, search: "my")
       %Cashtrail.Paginator.Page{entries: [%Cashtrail.Entities.EntityMember{user: %Cashtrail.Users.User{name: "My Name"}}, ...]}
@@ -388,7 +390,7 @@ defmodule Cashtrail.Entities do
   * entity - The `%Cashtrail.Entities.Entity{}` that the member will be created.
   * params - A `map` with the params of the user to be created:
     * `:permission` (required) - a `string` with the permission that will be given
-    to the member. It can be: `"read"`, `"write"` or `"admin"`.
+    to the member. It can be: `:read`, `:write` or `:admin`.
     * `:user_id` - A `string` with a reference to one `Cashtrail.Users.User` to
     be added as a member to the entity.
     * `:user` - A `map` of the `Cashtrail.Users.User` that should be created as a
@@ -440,7 +442,7 @@ defmodule Cashtrail.Entities do
   * user - A `%Cashtrail.Users.User{}` that is the user to be added as a member.
   The user cannot be the owner of the entity, otherwise, it will return an error.
   * permission - A `string` with the permission that will be given to the member.
-  It can be: `"read"`, `"write"` or `"admin"`.
+  It can be: `:read`, `:write` or `:admin`.
 
   See `Cashtrail.Entities.EntityMember` to have more detailed info about the
   permissions.
@@ -460,9 +462,9 @@ defmodule Cashtrail.Entities do
       {:error, %Ecto.Changeset{}}
 
   """
-  @spec add_member(entity, User.t(), String.t()) ::
+  @spec add_member(entity, user, String.t() | entity_member_permission) ::
           {:ok, entity_member} | {:error, :invalid | Ecto.Changeset.t(entity)}
-  def add_member(entity, user, permission \\ "read")
+  def add_member(entity, user, permission \\ :read)
 
   def add_member(%Entities.Entity{owner_id: owner_id}, %Users.User{id: user_id}, _)
       when owner_id == user_id do
@@ -499,7 +501,7 @@ defmodule Cashtrail.Entities do
       {:error, :not_found}
 
   """
-  @spec remove_member(entity, User.t()) ::
+  @spec remove_member(entity, user) ::
           {:ok, entity_member} | {:error, :not_found}
   def remove_member(%Entities.Entity{} = entity, %Users.User{} = user) do
     case member_from_user(entity, user) do
@@ -521,7 +523,7 @@ defmodule Cashtrail.Entities do
   * user - A `%Cashtrail.Users.User{}` that is the user to have the permissions
   updated.
   * permission - A `string` with the permission that will be given
-    to the member. It can be: `"read"`, `"write"` or `"admin"`.
+    to the member. It can be: `:read`, `:write` or `:admin`.
 
   ## Returns
 
@@ -536,16 +538,19 @@ defmodule Cashtrail.Entities do
       iex> update_member_permission(entity, user, "write")
       {:ok, %EntityMember{}}
 
-      iex> update_member_permission(entity, user, "invalid")
+      iex> update_member_permission(entity, user, :write)
+      {:ok, %EntityMember{}}
+
+      iex> update_member_permission(entity, user, :invalid)
       {:error, %Ecto.Changeset{}}
 
-      iex> update_member_permission(entity, owner, "write")
+      iex> update_member_permission(entity, owner, :write)
       {:error, :invalid}
 
-      iex> update_member_permission(entity, another_user, "write)
+      iex> update_member_permission(entity, another_user, :write)
       {:error, :not_found}
   """
-  @spec update_member_permission(entity, User.t(), String.t()) ::
+  @spec update_member_permission(entity, user, String.t() | entity_member_permission) ::
           {:ok, entity_member} | {:error, Ecto.Changeset.t(entity_member) | :invalid | :not_found}
   def update_member_permission(
         %Entities.Entity{owner_id: owner_id} = entity,
@@ -583,16 +588,14 @@ defmodule Cashtrail.Entities do
       iex> get_member_permission(entity, another_user)
       :unauthorized
   """
-  @spec get_member_permission(entity(), Users.User.t()) :: atom()
+  @spec get_member_permission(entity, user) :: atom
   def get_member_permission(
         %Entities.Entity{owner_id: owner_id} = entity,
         %Users.User{id: user_id} = user
       ) do
     case member_from_user(entity, user) do
       %Entities.EntityMember{} = entity_member ->
-        # For security reasons to avoid reach the atom limit
-        _trusted_values = [:read, :write, :admin]
-        String.to_existing_atom(entity_member.permission)
+        entity_member.permission
 
       _ when owner_id == user_id ->
         :admin
@@ -622,7 +625,7 @@ defmodule Cashtrail.Entities do
       iex> member_from_user(entity, non_member_user)
       nil
   """
-  @spec member_from_user(entity(), User.t()) ::
+  @spec member_from_user(entity, user) ::
           entity_member | nil
   def member_from_user(%Entities.Entity{id: entity_id}, %Users.User{id: user_id}) do
     Repo.get_by(Entities.EntityMember, entity_id: entity_id, user_id: user_id)
@@ -641,7 +644,7 @@ defmodule Cashtrail.Entities do
       %Ecto.Changeset{source: %Cashtrail.Entities.EntityMember{}}
 
   """
-  @spec change_member(entity_member()) :: Ecto.Changeset.t(entity_member())
+  @spec change_member(entity_member) :: Ecto.Changeset.t(entity_member)
   def change_member(%Entities.EntityMember{} = entity_member) do
     Entities.EntityMember.changeset(entity_member, %{})
   end
