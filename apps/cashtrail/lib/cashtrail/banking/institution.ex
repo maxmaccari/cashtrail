@@ -11,9 +11,9 @@ defmodule Cashtrail.Banking.Institution do
   ## Fields
   * `:id` - The unique id of the institution.
   * `:country` - The country where the institution is located.
-  * `:local_code` - The code of the institution in the country that the institution
+  * `:bank_code` - The code of the institution in the country that the institution
   is located.
-  * `:swift_code` - The SWIFT code that identifies a particular bank worldwide.
+  * `:swift` - The SWIFT code that identifies a particular bank worldwide.
   * `:logo_url` - The url with the logo of the institution.
   * `:contact_id` - The unique id of contact that the institution refers. As an
   institution is a contact, this id must be informed. See `Cashtrail.Contacts.Contact`
@@ -31,8 +31,8 @@ defmodule Cashtrail.Banking.Institution do
   @type t :: %Cashtrail.Banking.Institution{
           id: Ecto.UUID.t() | nil,
           country: String.t() | nil,
-          local_code: String.t() | nil,
-          swift_code: String.t() | nil,
+          bank_code: String.t() | nil,
+          swift: String.t() | nil,
           logo_url: String.t() | nil,
           contact_id: Ecto.UUID.t() | nil,
           contact: Cashtrail.Contacts.Contact.t() | nil,
@@ -45,9 +45,9 @@ defmodule Cashtrail.Banking.Institution do
   @foreign_key_type :binary_id
   schema "institutions" do
     field :country, :string
-    field :local_code, :string
+    field :bank_code, :string
     field :logo_url, :string
-    field :swift_code, :string
+    field :swift, :string
 
     belongs_to :contact, Contacts.Contact, on_replace: :update
 
@@ -60,8 +60,8 @@ defmodule Cashtrail.Banking.Institution do
   @doc false
   def changeset(institution, attrs) do
     institution
-    |> cast(attrs, [:country, :local_code, :swift_code, :logo_url, :contact_id])
-    |> validate_format(:swift_code, @swift_regex, message: "is not a valid swift code")
+    |> cast(attrs, [:country, :bank_code, :swift, :logo_url, :contact_id])
+    |> validate_format(:swift, @swift_regex, message: "is not a valid swift code")
     |> validate_format(:logo_url, @url_regex, message: "is not a valid url")
     |> ensure_associated_contact()
   end

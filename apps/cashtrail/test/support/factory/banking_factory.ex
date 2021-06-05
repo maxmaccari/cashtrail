@@ -41,8 +41,8 @@ defmodule Cashtrail.Factory.BankingFactory do
 
         %Banking.Institution{
           country: Faker.Address.country(),
-          local_code: generate_bank_code(),
-          swift_code: generate_swift(),
+          bank_code: generate_bank_code(),
+          swift: generate_swift(),
           logo_url: logo_url,
           contact: build(:contact)
         }

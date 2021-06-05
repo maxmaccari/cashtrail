@@ -280,9 +280,9 @@ defmodule Cashtrail.Banking do
       by the institution. See `Cashtrail.Contacts.Contact` or `Cashtrail.Contacts.create_contact/2`
       to have more information about accepted fields.
     * `:country` - A `string` with the country where the institution is located.
-    * `:local_code` - A `string` with the code of the institution in the country
+    * `:bank_code` - A `string` with the code of the institution in the country
     that the institution is located.
-    * `:swift_code` - A `string` with the SWIFT code that identifies a particular
+    * `:swift` - A `string` with the SWIFT code that identifies a particular
     bank worldwide.
     * `:logo_url` - A `string` with the url with the logo of the institution.
 

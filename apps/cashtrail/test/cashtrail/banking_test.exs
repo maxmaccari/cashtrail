@@ -308,8 +308,8 @@ defmodule Cashtrail.BankingTest do
                Banking.create_institution(tenant, institution_params)
 
       assert institution.country == institution_params.country
-      assert institution.local_code == institution_params.local_code
-      assert institution.swift_code == institution_params.swift_code
+      assert institution.bank_code == institution_params.bank_code
+      assert institution.swift == institution_params.swift
       assert institution.logo_url == institution_params.logo_url
       assert institution.contact.name == institution_params.contact.name
     end
@@ -324,22 +324,22 @@ defmodule Cashtrail.BankingTest do
                Banking.create_institution(tenant, institution_params)
 
       assert institution.country == institution_params.country
-      assert institution.local_code == institution_params.local_code
-      assert institution.swift_code == institution_params.swift_code
+      assert institution.bank_code == institution_params.bank_code
+      assert institution.swift == institution_params.swift
       assert institution.logo_url == institution_params.logo_url
       assert institution.contact.id == contact.id
     end
 
-    @invalid_attrs %{logo_url: "invalid url", swift_code: "invalid swift"}
+    @invalid_attrs %{logo_url: "invalid url", swift: "invalid swift"}
     test "create_institution/2 with invalid data returns error changeset", %{tenant: tenant} do
       assert {:error, %Ecto.Changeset{}} = Banking.create_institution(tenant, @invalid_attrs)
     end
 
     @update_attrs %{
       country: "Brazil",
-      local_code: "875",
+      bank_code: "875",
       logo_url: "http://some-url.com/logo.png",
-      swift_code: "JEKPQS9478"
+      swift: "JEKPQS9478"
     }
     test "update_institution/2 with valid data updates the institution", %{tenant: tenant} do
       institution = insert(:institution, tenant: tenant)
@@ -348,9 +348,9 @@ defmodule Cashtrail.BankingTest do
                Banking.update_institution(institution, @update_attrs)
 
       assert institution.country == "Brazil"
-      assert institution.local_code == "875"
+      assert institution.bank_code == "875"
       assert institution.logo_url == "http://some-url.com/logo.png"
-      assert institution.swift_code == "JEKPQS9478"
+      assert institution.swift == "JEKPQS9478"
     end
 
     test "update_institution/2 with invalid data returns error changeset", %{tenant: tenant} do
