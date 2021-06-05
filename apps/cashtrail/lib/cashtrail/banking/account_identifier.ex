@@ -32,9 +32,13 @@ defmodule Cashtrail.Banking.AccountIdentifier do
     field :iban, :string
   end
 
+  @swift_regex ~r/[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?/i
+  @iban_regex ~r/^([A-Z]{2}[ \-]?[0-9]{2})(?=(?:[ \-]?[A-Z0-9]){9,30}$)((?:[ \-]?[A-Z0-9]{3,5}){2,7})([ \-]?[A-Z0-9]{1,3})?$/i
   @doc false
   def changeset(account_identifier, attrs) do
     account_identifier
     |> cast(attrs, [:bank_code, :branch, :number, :swift, :iban])
+    |> validate_format(:swift, @swift_regex, message: "is not a valid swift")
+    |> validate_format(:iban, @iban_regex, message: "is not a valid iban")
   end
 end

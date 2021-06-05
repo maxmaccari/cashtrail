@@ -41,7 +41,10 @@ defmodule Cashtrail.BankingTest do
       currency = insert(:currency, tenant: tenant, status: :archived)
 
       assert Banking.list_currencies(tenant, filter: %{status: :archived}).entries == [currency]
-      assert Banking.list_currencies(tenant, filter: %{"status" => "archived"}).entries == [currency]
+
+      assert Banking.list_currencies(tenant, filter: %{"status" => "archived"}).entries == [
+               currency
+             ]
     end
 
     test "list_currencies/2 filtering by invalid filters show all results", %{tenant: tenant} do
@@ -513,7 +516,7 @@ defmodule Cashtrail.BankingTest do
 
     @invalid_attrs %{
       description: nil,
-      identifier: %{"invalid" => "map"},
+      identifier: %{"swift" => "invalid", "iban" => "invalid"},
       initial_balance_amount: "abc",
       initial_balance_date: "2019",
       restricted_transaction_types: ["invalid"],
@@ -531,7 +534,11 @@ defmodule Cashtrail.BankingTest do
                initial_balance_amount: ["is invalid"],
                initial_balance_date: ["is invalid"],
                restricted_transaction_types: ["is invalid"],
-               type: ["is invalid"]
+               type: ["is invalid"],
+               identifier: %{
+                 swift: ["is not a valid swift"],
+                 iban: ["is not a valid iban"]
+               }
              } = errors_on(changeset)
     end
 
@@ -542,8 +549,8 @@ defmodule Cashtrail.BankingTest do
         bank_code: "000",
         branch: "0000",
         number: "000000",
-        swift: "0000000000",
-        iban: "0000000000"
+        swift: "JEKPQS9478",
+        iban: "NL49DLNW6040434458"
       },
       initial_balance_amount: "123.4",
       status: "archived"
@@ -562,8 +569,8 @@ defmodule Cashtrail.BankingTest do
                bank_code: "000",
                branch: "0000",
                number: "000000",
-               swift: "0000000000",
-               iban: "0000000000"
+               swift: "JEKPQS9478",
+               iban: "NL49DLNW6040434458"
              } = account.identifier
     end
 
