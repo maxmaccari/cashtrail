@@ -26,10 +26,10 @@ defmodule Cashtrail.BankingTest do
     end
 
     test "list_currencies/2 filtering by type", %{tenant: tenant} do
-      insert(:currency, tenant: tenant, type: "virtual")
-      currency = insert(:currency, tenant: tenant, type: "money")
+      insert(:currency, tenant: tenant, type: :virtual)
+      currency = insert(:currency, tenant: tenant, type: :money)
 
-      assert Banking.list_currencies(tenant, filter: %{type: "money"}).entries == [currency]
+      assert Banking.list_currencies(tenant, filter: %{type: :money}).entries == [currency]
 
       assert Banking.list_currencies(tenant, filter: %{"type" => "money"}).entries == [
                currency
@@ -99,7 +99,7 @@ defmodule Cashtrail.BankingTest do
       assert {:ok, %Banking.Currency{} = currency} =
                Banking.create_currency(tenant, currency_params)
 
-      assert currency.type == "money"
+      assert currency.type == :money
       assert currency.active == true
       assert currency.separator == "."
       assert currency.format == "%s%n"
@@ -231,7 +231,7 @@ defmodule Cashtrail.BankingTest do
       assert currency.format == "%n"
       assert currency.iso_code == "ABC"
       assert currency.symbol == "M$"
-      assert currency.type == "virtual"
+      assert currency.type == :virtual
       assert currency.precision == 3
       assert currency.separator == ","
       assert currency.delimiter == "."

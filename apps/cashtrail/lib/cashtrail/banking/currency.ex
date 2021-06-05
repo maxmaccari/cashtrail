@@ -35,13 +35,13 @@ defmodule Cashtrail.Banking.Currency do
   * `:id` - The unique id of the currency.
   * `:description` - The description of the currency.
   * `:type` - The type of currency. Can be:
-    * `"money"` - ordinary currencies like dollars, euro, yen, etc. This is the
+    * `:money` - ordinary currencies like dollars, euro, yen, etc. This is the
     default value if no type is chosen.
-    * `"cryptocurrency"` - digital currencies that use cryptographical functions
+    * `:cryptocurrency` - digital currencies that use cryptographical functions
     to conduct financial transactions.
-    * `"virtual"` - unregulated digital currencies, used and accepted
+    * `:virtual` - unregulated digital currencies, used and accepted
     among the members of a specific virtual community. For example loyalty points, game points, etc.
-    * `"other"` - other types of currencies that don't match the previous categories.
+    * `:other` - other types of currencies that don't match the previous categories.
   * `:iso_code` - The [ISO 4217](https://pt.wikipedia.org/wiki/ISO_4217) code of the currency.
   * `:active` - Says if the currency is active or not. This field can be used only
   to hide the currency in currencies listing. This doesn't archive accounts that use
@@ -69,11 +69,12 @@ defmodule Cashtrail.Banking.Currency do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @type type :: :money | :cryptocurrency | :virtual | :other
   @type t :: %Cashtrail.Banking.Currency{
           id: Ecto.UUID.t() | nil,
           description: String.t() | nil,
           iso_code: String.t() | nil,
-          type: String.t() | nil,
+          type: type() | nil,
           active: boolean | nil,
           symbol: String.t() | nil,
           precision: integer() | nil,
@@ -90,7 +91,7 @@ defmodule Cashtrail.Banking.Currency do
   schema "currencies" do
     field :description, :string
     field :iso_code, :string
-    field :type, :string, default: "money"
+    field :type, Ecto.Enum, values: [:money, :cryptocurrency, :virtual, :other], default: :money
     field :active, :boolean, default: true
     field :symbol, :string, default: ""
     field :precision, :integer, default: 0
@@ -119,7 +120,6 @@ defmodule Cashtrail.Banking.Currency do
       :delimiter
     ])
     |> validate_required([:description])
-    |> validate_inclusion(:type, ["money", "cryptocurrency", "digital", "virtual", "other"])
     |> validate_length(:iso_code, is: 3)
     |> validate_format(:iso_code, @iso_code_regex, message: "is not a valid ISO 4217 code")
     |> unique_constraint(:iso_code)

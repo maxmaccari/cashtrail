@@ -47,7 +47,7 @@ defmodule Cashtrail.Banking do
       %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Currency{}, ...], page: 2}
 
       iex> list_currencies(entity, filter: %{type: "money"})
-      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Currency{type: "money"}, ...]}
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Currency{type: :money}, ...]}
 
       iex> list_currencies(entity, filter: %{search: "my"})
       %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Currency{description: "my money"}, ...]}
@@ -97,9 +97,9 @@ defmodule Cashtrail.Banking do
   * entity - The `%Cashtrail.Entities.Entity{}` that the currency references.
   * params - A `map` with the params of the currency to be created:
     * `:description` (required) - A `string` that is the description of the currency.
-    * `:type` - A `string` that is the type of currency. It can receive "money",
-    "digital_currency", "miles", "cryptocurrency" or "other". Defaults to
-    "money".
+    * `:type` - A `string` or `atom` that is the type of currency. It can receive `:money`,
+    `:digital_currency`, `:virtual`, `:cryptocurrency` or `:other`. Defaults to
+    `:money`.
     * `:iso_code` - A `string` that is the [ISO 4217](https://pt.wikipedia.org/wiki/ISO_4217)
     code of the currency. Must be unique for the entity and have the exact 3 characters.
     * `:symbol` - A `string` that is the symbol of the currency.
@@ -222,28 +222,28 @@ defmodule Cashtrail.Banking do
 
   ## Expected arguments
 
-  * entity - The `%Cashtrail.Entities.Entity{}` that the currency references.
+  * entity - The `%Cashtrail.Entities.Entity{}` that the institution references.
   * options - A `keyword` list of the following options:
     * `:search` - search institutions by :country, or by the contact `:name`, or
     `:legal_name`.
     * See `Cashtrail.Paginator.paginate/2` to know about the pagination options.
 
-  See `Cashtrail.Banking.Currency` to have more detailed info about
+  See `Cashtrail.Banking.Institution` to have more detailed info about
   each field to be filtered or searched.
 
   ## Examples
 
       iex> list_institutions(entity)
-      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Currency{}, ...], ...}
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Institution{}, ...], ...}
 
       iex> list_institutions(entity, page: 2)
-      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Currency{}, ...], page: 2}
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Institution{}, ...], page: 2}
 
-      iex> list_institutions(entity, filter: %{type: "money"})
-      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Currency{type: "money"}, ...]}
+      iex> list_institutions(entity, search: "My Bank")
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Institution{name: "My Bank"}, ...]}
 
-      iex> list_institutions(entity, filter: %{search: "my"})
-      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Currency{description: "my money"}, ...]}
+      iex> list_institutions(entity, search: "My Legal Bank"})
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Institution{legal_name: "My Legal Bank"}, ...]}
   """
   @spec list_institutions(Entities.Entity.t(), keyword()) :: Paginator.Page.t()
   def list_institutions(%Entities.Entity{} = entity, options \\ []) do
