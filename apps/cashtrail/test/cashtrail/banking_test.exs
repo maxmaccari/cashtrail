@@ -36,12 +36,12 @@ defmodule Cashtrail.BankingTest do
              ]
     end
 
-    test "list_currencies/2 filtering by active", %{tenant: tenant} do
-      insert(:currency, tenant: tenant, active: false)
-      currency = insert(:currency, tenant: tenant, active: true)
+    test "list_currencies/2 filtering by status", %{tenant: tenant} do
+      insert(:currency, tenant: tenant, status: :active)
+      currency = insert(:currency, tenant: tenant, status: :archived)
 
-      assert Banking.list_currencies(tenant, filter: %{active: true}).entries == [currency]
-      assert Banking.list_currencies(tenant, filter: %{"active" => true}).entries == [currency]
+      assert Banking.list_currencies(tenant, filter: %{status: :archived}).entries == [currency]
+      assert Banking.list_currencies(tenant, filter: %{"status" => "archived"}).entries == [currency]
     end
 
     test "list_currencies/2 filtering by invalid filters show all results", %{tenant: tenant} do
@@ -72,7 +72,7 @@ defmodule Cashtrail.BankingTest do
       assert {:ok, %Banking.Currency{} = currency} =
                Banking.create_currency(tenant, currency_params)
 
-      assert currency.active == true
+      assert currency.status == :active
       assert currency.description == currency_params.description
       assert currency.format == currency_params.format
       assert currency.iso_code == currency_params.iso_code
@@ -94,19 +94,19 @@ defmodule Cashtrail.BankingTest do
 
     test "create_currency/2 with allowed empty values sets defaults values", %{tenant: tenant} do
       currency_params =
-        params_for(:currency, tenant: tenant, separator: "", format: "", type: "", active: nil)
+        params_for(:currency, tenant: tenant, separator: "", format: "", type: "", status: :active)
 
       assert {:ok, %Banking.Currency{} = currency} =
                Banking.create_currency(tenant, currency_params)
 
       assert currency.type == :money
-      assert currency.active == true
+      assert currency.status == :active
       assert currency.separator == "."
       assert currency.format == "%s%n"
     end
 
     @invalid_attrs %{
-      active: nil,
+      status: :invalid,
       description: nil,
       format: nil,
       iso_code: nil,
@@ -210,7 +210,7 @@ defmodule Cashtrail.BankingTest do
     end
 
     @update_attrs %{
-      active: false,
+      status: "archived",
       description: "some updated description",
       format: "%n",
       iso_code: "ABC",
@@ -226,7 +226,7 @@ defmodule Cashtrail.BankingTest do
       assert {:ok, %Banking.Currency{} = currency} =
                Banking.update_currency(currency, @update_attrs)
 
-      assert currency.active == false
+      assert currency.status == :archived
       assert currency.description == "some updated description"
       assert currency.format == "%n"
       assert currency.iso_code == "ABC"

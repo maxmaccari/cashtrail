@@ -7,7 +7,7 @@ defmodule Cashtrail.Repo.Migrations.CreateCurrencies do
       add :description, :string, null: false
       add :iso_code, :string, size: 3
       add :type, :string, null: false, default: "money"
-      add :active, :boolean, null: false, default: true
+      add :status, :string, null: false, default: "active"
       add :symbol, :string, null: false, default: ""
       add :precision, :smallint, null: false, default: 0
       add :separator, :string, null: false, default: ","

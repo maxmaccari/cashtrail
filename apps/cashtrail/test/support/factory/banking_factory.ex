@@ -21,7 +21,7 @@ defmodule Cashtrail.Factory.BankingFactory do
         iso_code = iso_code_1 <> iso_code_2_3
 
         %Banking.Currency{
-          active: true,
+          status: :active,
           description: "#{iso_code} Currency",
           iso_code: iso_code,
           type: Enum.random([:money, :cryptocurrency, :virtual, :other]),

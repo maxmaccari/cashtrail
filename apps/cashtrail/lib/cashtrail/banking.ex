@@ -31,7 +31,7 @@ defmodule Cashtrail.Banking do
   * options - A `keyword` list of the following options:
     * `:filter` - filters by following attributes:
       * `:type` or `"type"`
-      * `:active` or `"active"`
+      * `:status` or `"status"`
     * `:search` - search currencies by `:description`, `:iso_code` and `:symbol`.
     * See `Cashtrail.Paginator.paginate/2` to know about the pagination options.
 
@@ -55,7 +55,7 @@ defmodule Cashtrail.Banking do
   @spec list_currencies(Entities.Entity.t(), keyword) :: Paginator.Page.t()
   def list_currencies(%Entities.Entity{} = entity, options \\ []) do
     Banking.Currency
-    |> build_filter(Keyword.get(options, :filter), [:type, :active])
+    |> build_filter(Keyword.get(options, :filter), [:type, :status])
     |> build_search(Keyword.get(options, :search), [:description, :iso_code, :symbol])
     |> Ecto.Queryable.to_query()
     |> Map.put(:prefix, to_prefix(entity))
@@ -111,8 +111,8 @@ defmodule Cashtrail.Banking do
     Defaults to ".".
     * `:delimiter` - A `string` that is used to separate the thousands parts of
     the currency. Defaults to ".".
-    * `:active` - A `boolean` that says if the currency is active and should be
-    displayed in lists of the application. Defaults to true.
+    * `:status` - A `string` or `atom` value that says if the currency is status and should be
+    displayed in lists of the application. Can be `:active` or `:archived`. Defaults to `:active`.
 
   See `Cashtrail.Banking.Currency` to have more detailed info about
   the fields.
