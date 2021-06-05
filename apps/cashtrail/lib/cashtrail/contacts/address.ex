@@ -2,19 +2,6 @@ defmodule Cashtrail.Contacts.Address do
   @moduledoc """
   This is an `Ecto.Schema` struct that represents an address of the contact.
 
-  **Warning**: Don't use the functions of this module. Only use this module as a
-  struct to represent an address. The functions of this module are internal and
-  can change over time. Only manipulate addresses through the `Cashtrail.Contacts`
-  that is the context for this.
-
-  The address is stored in a `json` field of the contact, and not in a specific
-  table in the database. This struct is used to force the address to a specific
-  schema in this JSON field.
-
-  Each country has its type of address. So, no fields are required. You
-  can choose to allow only to fill `:line_1` and `:line_2` in your frontend,
-  or allow fill the other fields instead.
-
   ## Fields
 
   * `:id` - The unique id of the address.
@@ -53,16 +40,16 @@ defmodule Cashtrail.Contacts.Address do
         }
 
   embedded_schema do
-    field :street
-    field :number
-    field :complement
-    field :district
-    field :city
-    field :state
-    field :country
-    field :zip
-    field :line_1
-    field :line_2
+    field :street, :string
+    field :number, :string
+    field :complement, :string
+    field :district, :string
+    field :city, :string
+    field :state, :string
+    field :country, :string
+    field :zip, :string
+    field :line_1, :string
+    field :line_2, :string
   end
 
   @doc false

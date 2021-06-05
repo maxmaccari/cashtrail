@@ -1,6 +1,6 @@
 defmodule Cashtrail.Entities.Tenants do
   @moduledoc """
-  Deals with tenants creation for Entity.
+  Create or drop tenants for one Entity.
 
   Every created Entity should be a tenant and have its data. Tenants are schemas
   in the Postgres having the data related to the Entity.

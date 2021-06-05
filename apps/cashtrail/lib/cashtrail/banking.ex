@@ -25,7 +25,7 @@ defmodule Cashtrail.Banking do
 
   If no currencies are found, return an empty list in the `:entries` field.
 
-  ## Expected arguments
+  ## Arguments
 
   * entity - The `%Cashtrail.Entities.Entity{}` that the currency references.
   * options - A `keyword` list of the following options:
@@ -67,10 +67,9 @@ defmodule Cashtrail.Banking do
 
   Raises `Ecto.NoResultsError` if the Currency does not exist.
 
-  See `Cashtrail.Banking.Currency` to have more detailed info about
-  the returned struct.
+  See `Cashtrail.Banking.Currency` to have more detailed info about the struct returned.
 
-  ## Expected Arguments
+  ## Arguments
 
   * entity - The `%Cashtrail.Entities.Entity{}` that the currency references.
   * id - A `string` that is the unique id of the currency to be found.
@@ -118,11 +117,6 @@ defmodule Cashtrail.Banking do
   See `Cashtrail.Banking.Currency` to have more detailed info about
   the fields.
 
-  ## Returns
-
-  * `{:ok, %Cashtrail.Banking.Currency{}}` in case of success.
-  * `{:error, %Ecto.Changeset{}}` in case of error.
-
   ## Examples
 
       iex> create_currency(entity, %{field: value})
@@ -143,16 +137,11 @@ defmodule Cashtrail.Banking do
   @doc """
   Updates a currency.
 
-  ## Expected Arguments
+  ## Arguments
 
   * currency - The `%Cashtrail.Banking.Currency{}` to be updated.
   * params - A `map` with the field of the currency to be updated. See
   `create_currency/2` to know about the params that can be given.
-
-  ## Returns
-
-  * `{:ok, %Cashtrail.Banking.Currency{}}` in case of success.
-  * `{:error, %Ecto.Changeset{}}` in case of error.
 
   ## Examples
 
@@ -177,11 +166,6 @@ defmodule Cashtrail.Banking do
 
   * currency - The `%Cashtrail.Banking.Currency{}` to be deleted.
 
-  ## Returns
-
-  * `{:ok, %Cashtrail.Banking.Currency{}}` in case of success.
-  * `{:error, %Ecto.Changeset{}}` in case of error.
-
   ## Examples
 
       iex> delete_currency(currency)
@@ -199,7 +183,7 @@ defmodule Cashtrail.Banking do
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking currency changes.
 
-  ## Expected Arguments
+  ## Arguments
 
   * currency - The `%Cashtrail.Banking.Currency{}` to be tracked.
 
@@ -220,7 +204,7 @@ defmodule Cashtrail.Banking do
 
   If no institutions are found, return an empty list in the `:entries` field.
 
-  ## Expected arguments
+  ## Arguments
 
   * entity - The `%Cashtrail.Entities.Entity{}` that the institution references.
   * options - A `keyword` list of the following options:
@@ -263,7 +247,7 @@ defmodule Cashtrail.Banking do
   See `Cashtrail.Banking.Institution` to have more detailed info about
   the returned struct.
 
-  ## Expected Arguments
+  ## Arguments
 
   * entity - The `%Cashtrail.Entities.Entity{}` that the institution references.
   * id - A `string` that is the unique id of the institution to be found.
@@ -286,7 +270,7 @@ defmodule Cashtrail.Banking do
   @doc """
   Creates a institution.
 
-  ## Expected Arguments
+  ## Arguments
 
   * entity - The `%Cashtrail.Entities.Entity{}` that the institution references.
   * params - A `map` with the params of the currency to be created:
@@ -304,11 +288,6 @@ defmodule Cashtrail.Banking do
 
   See `Cashtrail.Banking.Institution` to have more detailed info about
   the fields.
-
-  ## Returns
-
-  * `{:ok, %Cashtrail.Banking.Institution{}}` in case of success.
-  * `{:error, %Ecto.Changeset{}}` in case of error.
 
   ## Examples
 
@@ -339,16 +318,11 @@ defmodule Cashtrail.Banking do
   @doc """
   Updates a institution.
 
-  ## Expected Arguments
+  ## Arguments
 
   * institution - The `%Cashtrail.Banking.Institution{}` to be updated.
   * params - A `map` with the field of the institution to be updated. See
   `create_institution/2` to know about the params that can be given.
-
-  ## Returns
-
-  * `{:ok, %Cashtrail.Banking.Institution{}}` in case of success.
-  * `{:error, %Ecto.Changeset{}}` in case of error.
 
   ## Examples
 
@@ -370,14 +344,9 @@ defmodule Cashtrail.Banking do
   @doc """
   Deletes a institution.
 
-  ## Expected Arguments
+  ## Arguments
 
   * institution - The `%Cashtrail.Banking.Institution{}` to be deleted.
-
-  ## Returns
-
-  * `{:ok, %Cashtrail.Banking.Institution{}}` in case of success.
-  * `{:error, %Ecto.Changeset{}}` in case of error.
 
   ## Examples
 
@@ -397,7 +366,7 @@ defmodule Cashtrail.Banking do
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking institution changes.
 
-  ## Expected Arguments
+  ## Arguments
 
   * institution - The `%Cashtrail.Banking.Institution{}` to be tracked.
 
@@ -414,12 +383,38 @@ defmodule Cashtrail.Banking do
   end
 
   @doc """
-  Returns the list of accounts.
+  Returns a `%Cashtrail.Paginator.Page{}` struct with a list of accounts in the `:entries` field.
+
+  If no accounts are found, return an empty list in the `:entries` field.
+
+  ## Arguments
+
+  * entity - The `%Cashtrail.Entities.Entity{}` that the account references.
+  * options - A `keyword` list of the following options:
+    * `:filter` - filters by following attributes:
+      * `:type` or `"type"`
+      * `:status` or `"status"`
+      * `:currency_id` or `"currency_id"`
+      * `:institution_id` or `"institution_id"`
+    * `:search` - search accounts by `:description`.
+    * See `Cashtrail.Paginator.paginate/2` to know about the pagination options.
+
+  See `Cashtrail.Banking.Account` to have more detailed info about each field to be filtered or
+  searched.
 
   ## Examples
 
-      iex> list_accounts()
-      [%Account{}, ...]
+       iex> list_accounts(entity)
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Account{}, ...], ...}
+
+      iex> list_accounts(entity, page: 2)
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Account{}, ...], page: 2}
+
+      iex> list_accounts(entity, filter: %{type: "cash"})
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Account{type: :cash}, ...]}
+
+      iex> list_accounts(entity, filter: %{search: "my"})
+      %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Account{description: "my cash"}, ...]}
 
   """
   def list_accounts(%Entities.Entity{} = entity, options \\ []) do
@@ -436,12 +431,14 @@ defmodule Cashtrail.Banking do
 
   Raises `Ecto.NoResultsError` if the Account does not exist.
 
+  See `Cashtrail.Banking.Account` to have more detailed info about the struct returned.
+
   ## Examples
 
-      iex> get_account!(123)
-      %Account{}
+      iex> get_account!(entity, 123)
+      %Cashtrail.Banking.Account{}
 
-      iex> get_account!(456)
+      iex> get_account!(entity, 456)
       ** (Ecto.NoResultsError)
 
   """
@@ -452,10 +449,33 @@ defmodule Cashtrail.Banking do
   @doc """
   Creates a account.
 
+  * entity - The `%Cashtrail.Entities.Entity{}` that the account references.
+  * params - A `map` with the params of the account to be created:
+    * `:description` (required)
+    * `:type` - A `string` or `atom` that is the type of account. It can receive `:cash`,
+    `:checking`, `:saving`, `:digital`, `:credit`, `:investment` or `:other`. Defaults to
+    `:cash`.
+    * `:type` - A `string` or `atom` that is the status of account. It can receive `:cash`,
+    `:checking`, `:saving`, `:digital`, `:credit`, `:investment` or `:other`. Defaults to
+    `:cash`.
+    * `:initial_balance_amount` - A `number` with the initial balance value of the account.
+    * `:initial_balance_date` - A `date` with the initial balance date of the account. This cannot
+    be changed.
+    * `:avatar_url` - A `string` with the avatar url of the account.
+    * `:restricted_transaction_types` - A `list` of `string` or `atoms` with transaction types that
+    are allowed. Can receive `:income`, `:expense`, `:tax`, `:transfer`, `:exchange` or `:refund`.
+    * `:identifier` - A `map` with the data that identifies the account in real world. The fields
+    are `:bank_code`, `:branch`, `:number`, `:swift` and `:iban`.
+    * `:currency_id` - The id of the currency of the account. This cannot be changed.
+    * `:institution_id` - The id of the institution of the account.
+    * `:predicted_account_id` - The id of the account that will be predicted.
+
+  See `Cashtrail.Banking.Account` to have more detailed info about the fields.
+
   ## Examples
 
-      iex> create_account(%{field: value})
-      {:ok, %Account{}}
+      iex> create_account(entity, %{field: value})
+      {:ok, %Cashtrail.Banking.Account{}}
 
       iex> create_account(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
@@ -469,6 +489,9 @@ defmodule Cashtrail.Banking do
 
   @doc """
   Updates a account.
+
+  * params - A `map` with the field of the account to be updated. See
+  `create_account/2` to know about the params that can be given.
 
   ## Examples
 
@@ -488,6 +511,10 @@ defmodule Cashtrail.Banking do
   @doc """
   Deletes a account.
 
+  ## Arguments
+
+  * account - The `%Cashtrail.Banking.Account{}` to be deleted.
+
   ## Examples
 
       iex> delete_account(account)
@@ -503,6 +530,10 @@ defmodule Cashtrail.Banking do
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking account changes.
+
+  ## Arguments
+
+  * account - The `%Cashtrail.Banking.Account{}` to be tracked.
 
   ## Examples
 

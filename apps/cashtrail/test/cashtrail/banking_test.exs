@@ -521,7 +521,7 @@ defmodule Cashtrail.BankingTest do
       type: :invalid
     }
 
-    test "create_account/1 with invalid data returns error changeset", %{tenant: tenant} do
+    test "create_account/2 with invalid data returns error changeset", %{tenant: tenant} do
       assert {:error, %Ecto.Changeset{} = changeset} =
                Banking.create_account(tenant, @invalid_attrs)
 

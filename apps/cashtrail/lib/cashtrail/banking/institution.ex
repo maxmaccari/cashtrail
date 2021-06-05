@@ -2,11 +2,6 @@ defmodule Cashtrail.Banking.Institution do
   @moduledoc """
   This is an `Ecto.Schema` struct that represents a financial institution of the entity.
 
-  **Warning**: Don't use the functions of this module. Only use this module as a
-  struct to represent a institution. The functions of this module are internal and
-  can change over time. Only manipulate institutions through the `Cashtrail.Banking`
-  that is the context for this.
-
   ## Definition
   According with [Investopedia](https://www.investopedia.com/terms/f/financialinstitution.asp),
   the financial institution is a company engaged in the business of dealing with financial

@@ -2,11 +2,6 @@ defmodule Cashtrail.Contacts.Contact do
   @moduledoc """
   This is an `Ecto.Schema` struct that represents a contact of the entity.
 
-  **Warning**: Don't use the functions of this module. Only use this module as a
-  struct to represent a contact. The functions of this module are internal and
-  can change over time. Only manipulate contacts through the
-  `Cashtrail.Contacts` that is the context for this.
-
   ## Definition
 
   According to the [BusinessDictionary.com](http://www.businessdictionary.com/definition/contact.html),
@@ -14,7 +9,6 @@ defmodule Cashtrail.Contacts.Contact do
   person, business, or entity. So you can use this module to relate transactions to
   a person, business, or entity only to know who you received money from or to whom
   you paid some money, and contact them if necessary.
-
 
   ## Fields
 

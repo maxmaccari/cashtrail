@@ -2,11 +2,6 @@ defmodule Cashtrail.Banking.Currency do
   @moduledoc """
   This is an `Ecto.Schema` struct that represents a currency of the entity.
 
-  **Warning**: Don't use the functions of this module. Only use this module as a
-  struct to represent a currency. The functions of this module are internal and
-  can change over time. Only manipulate currencies through the `Cashtrail.Banking`
-  that is the context for this.
-
   ## Definition
 
   According to [Investopedia](https://www.investopedia.com/terms/c/currency.asp),
