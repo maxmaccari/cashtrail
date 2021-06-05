@@ -23,9 +23,9 @@ defmodule Cashtrail.Contacts.Contact do
   name of the contact, like the trade name of the company, or a nickname by which
   the person is well known.
   * `:type` - The type of contact. This can be:
-    * `"company"` - Used if the contact is a company. This is the default value if
+    * `:company` - Used if the contact is a company. This is the default value if
     no type is chosen
-    * `"person"` - Used if the contact is an individual.
+    * `:person` - Used if the contact is an individual.
   * `:legal_name` - This is the name of register in government agencies. This can
   be the registered name of people or the legal name of companies.
   * `:tax_id` - This is a number used by governments to as unique identifier of
@@ -50,10 +50,11 @@ defmodule Cashtrail.Contacts.Contact do
 
   alias Cashtrail.Contacts
 
+  @type type :: :company | :person
   @type t :: %Cashtrail.Contacts.Contact{
           id: Ecto.UUID.t() | nil,
           name: String.t() | nil,
-          type: String.t() | nil,
+          type: type() | nil,
           legal_name: String.t() | nil,
           tax_id: String.t() | nil,
           customer: boolean | nil,
@@ -62,7 +63,7 @@ defmodule Cashtrail.Contacts.Contact do
           phone: String.t() | nil,
           category: Ecto.Association.NotLoaded.t() | Contacts.Category.t() | nil,
           category_id: Ecto.UUID.t() | nil,
-          address: Address.t() | nil,
+          address: Contacts.Address.t() | nil,
           inserted_at: NaiveDateTime.t() | nil,
           updated_at: NaiveDateTime.t() | nil,
           __meta__: Ecto.Schema.Metadata.t()
@@ -72,7 +73,7 @@ defmodule Cashtrail.Contacts.Contact do
   @foreign_key_type :binary_id
   schema "contacts" do
     field :name, :string
-    field :type, :string, default: "company"
+    field :type, Ecto.Enum, values: [:company, :person], default: :company
     field :legal_name, :string
     field :tax_id, :string
     field :customer, :boolean, default: false
