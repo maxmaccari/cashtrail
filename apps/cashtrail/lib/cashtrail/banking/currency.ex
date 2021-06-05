@@ -40,7 +40,7 @@ defmodule Cashtrail.Banking.Currency do
   * `:iso_code` - The [ISO 4217](https://pt.wikipedia.org/wiki/ISO_4217) code of the currency.
   * `:status` - The status of the currency, that can be:
     * `:active` - if the currency is used.
-    * `:archived` -if the currency is no longer used and should be hidden, but want to keep
+    * `:archived` - if the currency is no longer used and should be hidden, but want to keep
     the data history.
   * `:symbol` -  The symbol of the currency, like R$, US$, €, ¥, or £ for example.
   * `:precision` - Every currency can have a different number of decimal places.

@@ -46,7 +46,7 @@ defmodule Cashtrail.Banking.Account do
   * `:inserted_at` - When the account was inserted at the first time.
   * `:updated_at` - When the account was updated at the last time.
 
-  See `Cashtrail.Banking` to know how to list, get, insert, update, and delete currencies.
+  See `Cashtrail.Banking` to know how to list, get, insert, update, and delete accounts.
   """
 
   use Ecto.Schema
