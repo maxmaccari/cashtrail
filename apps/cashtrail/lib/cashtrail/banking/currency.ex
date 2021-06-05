@@ -2,11 +2,6 @@ defmodule Cashtrail.Banking.Currency do
   @moduledoc """
   This is an `Ecto.Schema` struct that represents a currency of the entity.
 
-  **Warning**: Don't use the functions of this module. Only use this module as a
-  struct to represent a currency. The functions of this module are internal and
-  can change over time. Only manipulate currencies through the `Cashtrail.Banking`
-  that is the context for this.
-
   ## Definition
 
   According to [Investopedia](https://www.investopedia.com/terms/c/currency.asp),
@@ -43,9 +38,10 @@ defmodule Cashtrail.Banking.Currency do
     among the members of a specific virtual community. For example loyalty points, game points, etc.
     * `:other` - other types of currencies that don't match the previous categories.
   * `:iso_code` - The [ISO 4217](https://pt.wikipedia.org/wiki/ISO_4217) code of the currency.
-  * `:active` - Says if the currency is active or not. This field can be used only
-  to hide the currency in currencies listing. This doesn't archive accounts that use
-  this currency, and not prevents the currency using.
+  * `:status` - The status of the currency, that can be:
+    * `:active` - if the currency is used.
+    * `:archived` - if the currency is no longer used and should be hidden, but want to keep
+    the data history.
   * `:symbol` -  The symbol of the currency, like R$, US$, €, ¥, or £ for example.
   * `:precision` - Every currency can have a different number of decimal places.
   For example, the dinar has three decimal places, dollar two, and yen zero.
@@ -70,12 +66,13 @@ defmodule Cashtrail.Banking.Currency do
   import Ecto.Changeset
 
   @type type :: :money | :cryptocurrency | :virtual | :other
+  @type status :: :active | :archived
   @type t :: %Cashtrail.Banking.Currency{
           id: Ecto.UUID.t() | nil,
           description: String.t() | nil,
           iso_code: String.t() | nil,
           type: type() | nil,
-          active: boolean | nil,
+          status: status | nil,
           symbol: String.t() | nil,
           precision: integer() | nil,
           separator: String.t() | nil,
@@ -92,7 +89,7 @@ defmodule Cashtrail.Banking.Currency do
     field :description, :string
     field :iso_code, :string
     field :type, Ecto.Enum, values: [:money, :cryptocurrency, :virtual, :other], default: :money
-    field :active, :boolean, default: true
+    field :status, Ecto.Enum, values: [:active, :archived], default: :active
     field :symbol, :string, default: ""
     field :precision, :integer, default: 0
     field :separator, :string, default: "."
@@ -114,7 +111,7 @@ defmodule Cashtrail.Banking.Currency do
       :symbol,
       :format,
       :type,
-      :active,
+      :status,
       :precision,
       :separator,
       :delimiter

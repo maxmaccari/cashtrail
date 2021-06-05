@@ -5,8 +5,8 @@ defmodule Cashtrail.Repo.Migrations.CreateInstitutions do
     create table(:institutions, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :country, :string
-      add :local_code, :string
-      add :swift_code, :string
+      add :bank_code, :string
+      add :swift, :string
       add :logo_url, :string
       add :contact_id, references(:contacts, on_delete: :nothing, type: :binary_id)
 

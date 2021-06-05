@@ -2,18 +2,7 @@ defmodule Cashtrail.Entities.Entity do
   @moduledoc """
   This is an `Ecto.Schema` struct that represents an entity of the application.
 
-  **Warning**: Don't use the functions of this module. Only use this module as a
-  struct to represent a contact. The functions of this module are internal and
-  can change over time. Only manipulate contacts through the `Cashtrail.Entities`
-  that is the context for this.
-
   ## Definition
-
-  According to [AccountingTools](https://www.accountingtools.com/articles/what-is-an-entity.html),
-  an entity is something that maintains a separate and distinct existence. In
-  business, an entity is an organizational structure that has its own goals,
-  processes, and records.
-
   According to [Techopedia](https://www.techopedia.com/definition/14360/entity-computing),
   an entity is any singular, identifiable, and separate object. It refers to individuals,
   organizations, systems, bits of data, or even distinct system components that are
@@ -36,21 +25,8 @@ defmodule Cashtrail.Entities.Entity do
   Each Entity generates a tenant through new schemas in the Postgres database.
   This happens to separate logically the data of entities. This can help to maintain
   data integrity and security, as this makes it harder to one data from one entity
-  flow to another entity, like one account trying to relate a  currency from another
+  flow to another entity, like one account trying to relate a currency from another
   entity, for instance.
-
-  In this way, I can maintain the database design inside tenants simpler,
-  so I can perform the queries without having to relate two fields, and I can
-  ensure the consistency without recurring to things like composite foreign keys.
-
-  The downside is that this methodology doesn't scale well if you want to use this
-  application as a "big and scalable SASS application". This happens because if I
-  change the database through new migrations, I have to migrate all schemas, and this
-  takes time. This is the same for backups.
-
-  As the purpose of this application is not to be scalable, but to be safe and
-  flexible, this is not a problem. I recommend you maintain the number of entities
-  at a maximum of 100 per instance of this application.
 
   You can manually generate or drop tenants using the `Cashtrail.Entities.Tenants`
   module.
@@ -61,9 +37,7 @@ defmodule Cashtrail.Entities.Entity do
   * `:name` - The name (or description) of the entity.
   * `:status` - The status of the entity, that can be:
     * `:active` - if the entity is used.
-    * `:archived` -if the entity is no longer used, but you want to keep the
-    data history. This can be used to hide the entity in entity listing, or to
-    unauthorized other users to edit the entity data.
+    * `:archived` -if the entity is no longer used, but want to keep the data history.
   * `:type` - The type of the entity, that can be:
     * `:personal` - if the entity is used for personal reasons, like control
     your finances, your family finances, personal project finances,

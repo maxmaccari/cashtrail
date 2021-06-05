@@ -4,11 +4,6 @@ defmodule Cashtrail.Entities.EntityMember do
   `Cashtrail.Entity` that links authorized users to the `Cashtrail.Entity`,
   except the owner.
 
-  **Warning**: Don't use the functions of this module. Only use this module as a
-  struct to represent a contact. The functions of this module are internal and
-  can change over time. Only manipulate contacts through the `Cashtrail.Entities`
-  that is the context for this.
-
   The EntityMember is a member of the entity. As a member of the entity, the user
   can have permission to read, create and update records, or even admin the entity.
 

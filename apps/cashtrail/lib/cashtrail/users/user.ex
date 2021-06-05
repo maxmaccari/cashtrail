@@ -2,11 +2,6 @@ defmodule Cashtrail.Users.User do
   @moduledoc """
   This is an `Ecto.Schema` struct that represents a user of the application.
 
-  **Warning**: Don't use the functions of this module. Only use this module as a
-  struct to represent a contact. The functions of this module are internal and
-  can change over time. Only manipulate contacts through the `Cashtrail.Users`
-  that is the context for this.
-
   The user is any individual that uses the application. They can create their
   entities or be assigned to an entity as a member. See `Cashtrail.Entities.Entity`
   to know more about what is an Entity.

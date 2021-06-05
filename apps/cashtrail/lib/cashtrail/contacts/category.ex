@@ -3,11 +3,6 @@ defmodule Cashtrail.Contacts.Category do
   This is an `Ecto.Schema` struct that represents a category of one contact and
   the entity.
 
-  **Warning**: Don't use the functions of this module. Only use this module as a
-  struct to represent a category. The functions of this module are internal and
-  can change over time. Only manipulate categories through the
-  `Cashtrail.Contacts` that is the context for this.
-
   The category is a way to divide your contacts that have shared characteristics.
   You may want to divide your contacts into "Friends", "Family", "Store",
   "Restaurant", "Bank" and whatever category you want. This can be used to generate
