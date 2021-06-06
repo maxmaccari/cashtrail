@@ -14,8 +14,7 @@ The requirement to be done are:
   - [x] Authentication;
   - [x] Entities management;
   - [x] Contacts management;
-  - [x] Currencies management
-  - [ ] Bank Accounts management;
+  - [X] Bank Accounts management;
   - [ ] Transactions management;
   - [ ] Credit card business rules;
   - [ ] Default data creation;

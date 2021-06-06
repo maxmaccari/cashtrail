@@ -5,259 +5,6 @@ defmodule Cashtrail.BankingTest do
 
   alias Cashtrail.{Banking, Paginator}
 
-  describe "currencies" do
-    test "list_currencies/2 returns all currencies", %{tenant: tenant} do
-      currency = insert(:currency, tenant: tenant)
-      assert Banking.list_currencies(tenant).entries == [currency]
-    end
-
-    test "list_currencies/2 works with pagination", %{tenant: tenant} do
-      currencies =
-        insert_list(25, :currency, tenant: tenant)
-        |> Enum.slice(20, 5)
-
-      assert Banking.list_currencies(tenant, page: 2) == %Paginator.Page{
-               entries: currencies,
-               page_number: 2,
-               page_size: 20,
-               total_entries: 25,
-               total_pages: 2
-             }
-    end
-
-    test "list_currencies/2 filtering by type", %{tenant: tenant} do
-      insert(:currency, tenant: tenant, type: :virtual)
-      currency = insert(:currency, tenant: tenant, type: :money)
-
-      assert Banking.list_currencies(tenant, filter: %{type: :money}).entries == [currency]
-
-      assert Banking.list_currencies(tenant, filter: %{"type" => "money"}).entries == [
-               currency
-             ]
-    end
-
-    test "list_currencies/2 filtering by status", %{tenant: tenant} do
-      insert(:currency, tenant: tenant, status: :active)
-      currency = insert(:currency, tenant: tenant, status: :archived)
-
-      assert Banking.list_currencies(tenant, filter: %{status: :archived}).entries == [currency]
-
-      assert Banking.list_currencies(tenant, filter: %{"status" => "archived"}).entries == [
-               currency
-             ]
-    end
-
-    test "list_currencies/2 filtering by invalid filters show all results", %{tenant: tenant} do
-      currency = insert(:currency, tenant: tenant)
-
-      assert Banking.list_currencies(tenant, filter: %{invalid: "123"}).entries == [currency]
-    end
-
-    test "list_currencies/2 searching by iso_code, symbol and description", %{tenant: tenant} do
-      insert(:currency, tenant: tenant, description: "abc", iso_code: "cde", symbol: "ef$")
-
-      currency =
-        insert(:currency, tenant: tenant, description: "ghijk", iso_code: "lmn", symbol: "op$")
-
-      assert Banking.list_currencies(tenant, search: "hij").entries == [currency]
-      assert Banking.list_currencies(tenant, search: "lm").entries == [currency]
-      assert Banking.list_currencies(tenant, search: "p$").entries == [currency]
-    end
-
-    test "get_currency!/2 returns the currency with given id", %{tenant: tenant} do
-      currency = insert(:currency, tenant: tenant)
-      assert Banking.get_currency!(tenant, currency.id) == currency
-    end
-
-    test "create_currency/2 with valid data creates a currency", %{tenant: tenant} do
-      currency_params = params_for(:currency, tenant: tenant)
-
-      assert {:ok, %Banking.Currency{} = currency} =
-               Banking.create_currency(tenant, currency_params)
-
-      assert currency.status == :active
-      assert currency.description == currency_params.description
-      assert currency.format == currency_params.format
-      assert currency.iso_code == currency_params.iso_code
-      assert currency.symbol == currency_params.symbol
-      assert currency.type == currency_params.type
-      assert currency.precision == currency_params.precision
-      assert currency.separator == currency_params.separator
-      assert currency.delimiter == currency_params.delimiter
-    end
-
-    test "create_currency/2 with downcased iso_code upcases the value", %{tenant: tenant} do
-      currency_params = params_for(:currency, tenant: tenant, iso_code: "abc")
-
-      assert {:ok, %Banking.Currency{} = currency} =
-               Banking.create_currency(tenant, currency_params)
-
-      assert currency.iso_code == "ABC"
-    end
-
-    test "create_currency/2 with allowed empty values sets defaults values", %{tenant: tenant} do
-      currency_params =
-        params_for(:currency, tenant: tenant, separator: "", format: "", type: "", status: :active)
-
-      assert {:ok, %Banking.Currency{} = currency} =
-               Banking.create_currency(tenant, currency_params)
-
-      assert currency.type == :money
-      assert currency.status == :active
-      assert currency.separator == "."
-      assert currency.format == "%s%n"
-    end
-
-    @invalid_attrs %{
-      status: :invalid,
-      description: nil,
-      format: nil,
-      iso_code: nil,
-      symbol: nil,
-      type: "abcd",
-      precision: -1
-    }
-    test "create_currency/2 with invalid data returns error changeset", %{tenant: tenant} do
-      assert {:error, %Ecto.Changeset{}} = Banking.create_currency(tenant, @invalid_attrs)
-    end
-
-    test "create_currency/2 with invalid type returns error changeset", %{tenant: tenant} do
-      assert {:error,
-              %Ecto.Changeset{
-                errors: [
-                  type: {"is invalid", _}
-                ]
-              }} = Banking.create_currency(tenant, params_for(:currency, type: "invalid"))
-    end
-
-    test "create_currency/2 with invalid precission returns error changeset", %{tenant: tenant} do
-      assert {:error,
-              %Ecto.Changeset{
-                errors: [
-                  precision:
-                    {"must be greater than or equal to %{number}",
-                     [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
-                ]
-              }} = Banking.create_currency(tenant, params_for(:currency, precision: -1))
-    end
-
-    test "create_currency/2 with invalid iso_code returns error changeset", %{tenant: tenant} do
-      {:error,
-       %Ecto.Changeset{
-         errors: [
-           iso_code: {"is not a valid ISO 4217 code", _},
-           iso_code: {"should be %{count} character(s)", _}
-         ]
-       }} = Banking.create_currency(tenant, params_for(:currency, iso_code: "ab"))
-
-      {:error,
-       %Ecto.Changeset{
-         errors: [
-           iso_code: {"should be %{count} character(s)", _}
-         ]
-       }} = Banking.create_currency(tenant, params_for(:currency, iso_code: "abcd"))
-
-      {:error,
-       %Ecto.Changeset{
-         errors: [
-           iso_code: {"is not a valid ISO 4217 code", _}
-         ]
-       }} = Banking.create_currency(tenant, params_for(:currency, iso_code: "a b"))
-
-      {:error,
-       %Ecto.Changeset{
-         errors: [
-           iso_code: {"is not a valid ISO 4217 code", _}
-         ]
-       }} = Banking.create_currency(tenant, params_for(:currency, iso_code: "a1b"))
-    end
-
-    test "create_currency/2 with same iso_code returns a error changeset", %{tenant: tenant} do
-      currency_params = params_for(:currency, tenant: tenant, iso_code: "ABC")
-
-      assert {:ok, %Banking.Currency{}} = Banking.create_currency(tenant, currency_params)
-
-      assert {:error, %Ecto.Changeset{errors: [iso_code: _]}} =
-               Banking.create_currency(tenant, currency_params)
-    end
-
-    test "create_currency/2 with invalid separator returns error changeset", %{tenant: tenant} do
-      assert {:error,
-              %Ecto.Changeset{
-                errors: [
-                  separator:
-                    {"should be %{count} character(s)",
-                     [count: 1, validation: :length, kind: :is, type: :string]}
-                ]
-              }} = Banking.create_currency(tenant, params_for(:currency, separator: ".."))
-    end
-
-    test "create_currency/2 with invalid delimiter returns error changeset", %{tenant: tenant} do
-      assert {:error,
-              %Ecto.Changeset{
-                errors: [
-                  delimiter:
-                    {"should be at most %{count} character(s)",
-                     [count: 1, validation: :length, kind: :max, type: :string]}
-                ]
-              }} = Banking.create_currency(tenant, params_for(:currency, delimiter: ".."))
-    end
-
-    test "create_currency/2 with invalid format returns error changeset", %{tenant: tenant} do
-      assert {:error,
-              %Ecto.Changeset{
-                errors: [
-                  format: {"Should have one %n to display the number, or be empty", []}
-                ]
-              }} = Banking.create_currency(tenant, params_for(:currency, format: "%s"))
-    end
-
-    @update_attrs %{
-      status: "archived",
-      description: "some updated description",
-      format: "%n",
-      iso_code: "ABC",
-      symbol: "M$",
-      type: "virtual",
-      precision: "3",
-      separator: ",",
-      delimiter: "."
-    }
-    test "update_currency/2 with valid data updates the currency", %{tenant: tenant} do
-      currency = insert(:currency, tenant: tenant)
-
-      assert {:ok, %Banking.Currency{} = currency} =
-               Banking.update_currency(currency, @update_attrs)
-
-      assert currency.status == :archived
-      assert currency.description == "some updated description"
-      assert currency.format == "%n"
-      assert currency.iso_code == "ABC"
-      assert currency.symbol == "M$"
-      assert currency.type == :virtual
-      assert currency.precision == 3
-      assert currency.separator == ","
-      assert currency.delimiter == "."
-    end
-
-    test "update_currency/2 with invalid data returns error changeset", %{tenant: tenant} do
-      currency = insert(:currency, tenant: tenant)
-      assert {:error, %Ecto.Changeset{}} = Banking.update_currency(currency, @invalid_attrs)
-      assert currency == Banking.get_currency!(tenant, currency.id)
-    end
-
-    test "delete_currency/1 deletes the currency", %{tenant: tenant} do
-      currency = insert(:currency, tenant: tenant)
-      assert {:ok, %Banking.Currency{}} = Banking.delete_currency(currency)
-      assert_raise Ecto.NoResultsError, fn -> Banking.get_currency!(tenant, currency.id) end
-    end
-
-    test "change_currency/1 returns a currency changeset", %{tenant: tenant} do
-      currency = insert(:currency, tenant: tenant)
-      assert %Ecto.Changeset{} = Banking.change_currency(currency)
-    end
-  end
-
   describe "institutions" do
     test "list_institutions/2 returns all institutions", %{tenant: tenant} do
       institution = insert(:institution, tenant: tenant)
@@ -422,22 +169,21 @@ defmodule Cashtrail.BankingTest do
              } = Banking.list_accounts(tenant, filter: %{"status" => "active"})
     end
 
-    test "list_accounts/3 filtering by currency_id", %{tenant: tenant} do
+    test "list_accounts/3 filtering by currency", %{tenant: tenant} do
       insert(:account, tenant: tenant)
-      currency = insert(:currency, tenant: tenant)
-      %{id: account_id} = insert(:account, tenant: tenant, currency: currency)
+      %{id: account_id} = insert(:account, tenant: tenant, currency: "BRL")
 
       assert %Paginator.Page{
                entries: [%Banking.Account{id: ^account_id}]
-             } = Banking.list_accounts(tenant, filter: %{currency_id: currency.id})
+             } = Banking.list_accounts(tenant, filter: %{currency: "BRL"})
 
       assert %Paginator.Page{
                entries: [%Banking.Account{id: ^account_id}]
-             } = Banking.list_accounts(tenant, filter: %{"currency_id" => currency.id})
+             } = Banking.list_accounts(tenant, filter: %{"currency" => "BRL"})
 
       assert %Paginator.Page{
                entries: [%Banking.Account{id: ^account_id}]
-             } = Banking.list_accounts(tenant, filter: %{currency_id: [currency.id]})
+             } = Banking.list_accounts(tenant, filter: %{currency: ["BRL"]})
     end
 
     test "list_accounts/3 filtering by institution_id", %{tenant: tenant} do
@@ -495,14 +241,14 @@ defmodule Cashtrail.BankingTest do
     end
 
     test "create_account/2 with valid data creates a account", %{tenant: tenant} do
-      currency = insert(:currency, tenant: tenant)
-      account_params = params_for(:account, tenant: tenant, currency_id: currency.id)
+      account_params = params_for(:account, tenant: tenant)
 
       assert {:ok, %Banking.Account{} = account} = Banking.create_account(tenant, account_params)
       assert account.status == :active
       assert account.type == account_params.type
       assert account.avatar_url == account_params.avatar_url
       assert account.description == account_params.description
+      assert account.currency == account_params.currency
       assert account.initial_balance_amount == account_params.initial_balance_amount
       assert account.initial_balance_date == account_params.initial_balance_date
       assert account.restricted_transaction_types == account_params.restricted_transaction_types
@@ -529,7 +275,6 @@ defmodule Cashtrail.BankingTest do
                Banking.create_account(tenant, @invalid_attrs)
 
       assert %{
-               currency_id: ["can't be blank"],
                description: ["can't be blank"],
                initial_balance_amount: ["is invalid"],
                initial_balance_date: ["is invalid"],

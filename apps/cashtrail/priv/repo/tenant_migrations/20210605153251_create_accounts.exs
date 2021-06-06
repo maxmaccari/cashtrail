@@ -5,6 +5,7 @@ defmodule Cashtrail.Repo.Migrations.CreateAccounts do
     create table(:accounts, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :description, :string, null: false
+      add :currency, :string
       add :type, :string, null: false, default: "cash"
       add :status, :string, null: false, default: "active"
       add :initial_balance_amount, :decimal, null: false, default: 0
@@ -12,14 +13,16 @@ defmodule Cashtrail.Repo.Migrations.CreateAccounts do
       add :restricted_transaction_types, {:array, :string}
       add :avatar_url, :string
       add :identifier, :map
-      add :currency_id, references(:currencies, on_delete: :nothing, type: :binary_id), null: false
       add :institution_id, references(:institutions, on_delete: :nothing, type: :binary_id)
       add :predicted_account_id, references(:accounts, on_delete: :nothing, type: :binary_id)
 
       timestamps()
     end
 
-    create index(:accounts, [:currency_id])
+    create index(:accounts, [:status])
+    create index(:accounts, [:currency])
+    create index(:accounts, [:type])
+
     create index(:accounts, [:institution_id])
     create index(:accounts, [:predicted_account_id])
   end
