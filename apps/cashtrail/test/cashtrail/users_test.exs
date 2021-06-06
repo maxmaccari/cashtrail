@@ -43,6 +43,10 @@ defmodule Cashtrail.UsersTest do
       assert Users.get_user_by(email: user.email) == user
     end
 
+    test "get_user_by/1 with nil email returns error" do
+      assert {:error, :invalid_email} = Users.get_user_by(email: nil)
+    end
+
     test "authenticate_user/2 returns the user with the given id and password" do
       user = insert(:user, password_hash: "my_password123")
       assert {:ok, autenticated} = Users.authenticate(user.email, "my_password123")
@@ -85,15 +89,55 @@ defmodule Cashtrail.UsersTest do
       assert user.email == String.downcase(user_params.email)
     end
 
-    @invalid_attrs %{email: nil, first_name: nil, last_name: nil, password: nil, avatar_url: nil}
+    @invalid_attrs %{
+      email: nil,
+      first_name: nil,
+      last_name: nil,
+      password: nil,
+      avatar_url: "invalid"
+    }
     test "create_user/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Users.create_user(@invalid_attrs)
-    end
+      assert {:error, %Ecto.Changeset{} = changeset} = Users.create_user(@invalid_attrs)
 
-    test "create_user/1 with invalid email returns error changeset" do
-      assert {:error, %Ecto.Changeset{errors: [email: {"is not a valid email", _}]}} =
-               params_for(:user, email: "invalid email", password: "@abc1234")
-               |> Users.create_user()
+      assert %{
+               email: ["can't be blank"],
+               first_name: ["can't be blank"],
+               password: ["can't be blank"],
+               avatar_url: ["is not a valid url"]
+             } = errors_on(changeset)
+
+      # Invalid email, password and url
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Users.create_user(%{
+                 email: "invalid email",
+                 password: "abc12",
+                 avatar_url: "http://maccar'.@example.com/file"
+               })
+
+      assert %{
+               email: ["is not a valid email"],
+               password: ["should be at least 6 character(s)"],
+               avatar_url: ["is not a valid url"]
+             } = errors_on(changeset)
+
+      # Other invalid passwords
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Users.create_user(%{
+                 password: "123456"
+               })
+
+      assert %{
+               password: ["should have at least one number, and one letter"]
+             } = errors_on(changeset)
+
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Users.create_user(%{
+                 password: "abcdefg"
+               })
+
+      assert %{
+               password: ["should have at least one number, and one letter"]
+             } = errors_on(changeset)
     end
 
     test "create_user/1 with an already used email returns error changeset" do
@@ -101,45 +145,18 @@ defmodule Cashtrail.UsersTest do
 
       assert {:ok, %Users.User{}} = Users.create_user(user_params)
 
-      assert {:error, %Ecto.Changeset{errors: [email: {"has already been taken", _}]}} =
-               Users.create_user(user_params)
+      assert {:error, %Ecto.Changeset{} = changeset} = Users.create_user(user_params)
 
-      # To ensure that the email validation is case insensitive
-      assert {:error, %Ecto.Changeset{errors: [email: {"has already been taken", _}]}} =
+      assert %{
+               email: ["has already been taken"]
+             } = errors_on(changeset)
+
+      assert {:error, %Ecto.Changeset{} = changeset} =
                Users.create_user(%{user_params | email: String.upcase(user_params.email)})
-    end
 
-    test "create_user/1 with a invalid password returns error changeset" do
-      assert {:error,
-              %Ecto.Changeset{errors: [password: {"should be at least %{count} character(s)", _}]}} =
-               Users.create_user(params_for(:user, password: "abc12"))
-
-      assert {:error,
-              %Ecto.Changeset{
-                errors: [
-                  password: {"should have at least one number, and one letter", _}
-                ]
-              }} = Users.create_user(params_for(:user, password: "123456"))
-
-      assert {:error,
-              %Ecto.Changeset{
-                errors: [
-                  password: {"should have at least one number, and one letter", _}
-                ]
-              }} = Users.create_user(params_for(:user, password: "abcdef"))
-    end
-
-    test "create_user/1 with invalid avatar_url returns error changeset" do
-      assert {:error, %Ecto.Changeset{errors: [avatar_url: {"is not a valid url", _}]}} =
-               params_for(:user, avatar_url: "invalid_url", password: "@abc1234")
-               |> Users.create_user()
-
-      assert {:error, %Ecto.Changeset{errors: [avatar_url: {"is not a valid url", _}]}} =
-               params_for(:user,
-                 avatar_url: "http://maccar'.@example.com/file",
-                 password: "@abc1234"
-               )
-               |> Users.create_user()
+      assert %{
+               email: ["has already been taken"]
+             } = errors_on(changeset)
     end
 
     @update_attrs %{

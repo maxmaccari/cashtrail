@@ -48,7 +48,12 @@ defmodule Cashtrail.ContactsTest do
 
     @invalid_attrs %{description: nil}
     test "create_category/2 with invalid data returns error changeset", %{tenant: tenant} do
-      assert {:error, %Ecto.Changeset{}} = Contacts.create_category(tenant, @invalid_attrs)
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Contacts.create_category(tenant, @invalid_attrs)
+
+      assert %{
+               description: ["can't be blank"]
+             } = errors_on(changeset)
     end
 
     test "create_category/2 with same description returns error changeset", %{tenant: tenant} do
@@ -56,8 +61,12 @@ defmodule Cashtrail.ContactsTest do
 
       assert {:ok, %Contacts.Category{}} = Contacts.create_category(tenant, category_params)
 
-      assert {:error, %Ecto.Changeset{errors: [description: _]}} =
+      assert {:error, %Ecto.Changeset{} = changeset} =
                Contacts.create_category(tenant, category_params)
+
+      assert %{
+               description: ["has already been taken"]
+             } = errors_on(changeset)
     end
 
     @update_attrs %{description: "some updated description"}
@@ -206,12 +215,18 @@ defmodule Cashtrail.ContactsTest do
       type: nil
     }
     test "create_contact/2 with invalid data returns error changeset", %{tenant: tenant} do
-      assert {:error, %Ecto.Changeset{}} = Contacts.create_contact(tenant, @invalid_attrs)
-    end
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Contacts.create_contact(tenant, @invalid_attrs)
 
-    test "create_contact/2 with invalid category returns error changeset", %{tenant: tenant} do
+      assert %{
+               name: ["can't be blank"],
+               type: ["can't be blank"]
+             } = errors_on(changeset)
+
       params = params_for(:contact, category_id: Ecto.UUID.generate())
-      assert {:error, %Ecto.Changeset{}} = Contacts.create_contact(tenant, params)
+      assert {:error, %Ecto.Changeset{} = changeset} = Contacts.create_contact(tenant, params)
+
+      assert %{category_id: ["does not exist"]} == errors_on(changeset)
     end
 
     @update_attrs %{

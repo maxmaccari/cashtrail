@@ -90,8 +90,9 @@ defmodule Cashtrail.Users do
       nil
 
   """
-  @spec get_user_by(keyword | map) :: nil | user()
-  def get_user_by(params \\ []), do: Repo.get_by(Users.User, params)
+  @spec get_user_by(keyword | map) :: nil | {:error, :invalid_email} | user()
+  def get_user_by(email: nil), do: {:error, :invalid_email}
+  def get_user_by(params), do: Repo.get_by(Users.User, params)
 
   @doc """
   Authenticates a user with its email and password.
