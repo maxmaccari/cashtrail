@@ -219,9 +219,9 @@ defmodule Cashtrail.ContactsTest do
                Contacts.create_contact(tenant, @invalid_attrs)
 
       assert %{
-        name: ["can't be blank"],
-        type: ["can't be blank"]
-      } = errors_on(changeset)
+               name: ["can't be blank"],
+               type: ["can't be blank"]
+             } = errors_on(changeset)
 
       params = params_for(:contact, category_id: Ecto.UUID.generate())
       assert {:error, %Ecto.Changeset{} = changeset} = Contacts.create_contact(tenant, params)

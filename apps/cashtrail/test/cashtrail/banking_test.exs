@@ -82,13 +82,14 @@ defmodule Cashtrail.BankingTest do
 
     @invalid_attrs %{logo_url: "invalid url", swift: "invalid swift"}
     test "create_institution/2 with invalid data returns error changeset", %{tenant: tenant} do
-      assert {:error, %Ecto.Changeset{} = changeset} = Banking.create_institution(tenant, @invalid_attrs)
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Banking.create_institution(tenant, @invalid_attrs)
 
       assert %{
-        contact: ["can't be blank"],
-        logo_url: ["is not a valid url"],
-        swift: ["is not a valid swift code"]
-      } = errors_on(changeset)
+               contact: ["can't be blank"],
+               logo_url: ["is not a valid url"],
+               swift: ["is not a valid swift code"]
+             } = errors_on(changeset)
     end
 
     @update_attrs %{
