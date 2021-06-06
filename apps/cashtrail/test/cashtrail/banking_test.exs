@@ -82,7 +82,13 @@ defmodule Cashtrail.BankingTest do
 
     @invalid_attrs %{logo_url: "invalid url", swift: "invalid swift"}
     test "create_institution/2 with invalid data returns error changeset", %{tenant: tenant} do
-      assert {:error, %Ecto.Changeset{}} = Banking.create_institution(tenant, @invalid_attrs)
+      assert {:error, %Ecto.Changeset{} = changeset} = Banking.create_institution(tenant, @invalid_attrs)
+
+      assert %{
+        contact: ["can't be blank"],
+        logo_url: ["is not a valid url"],
+        swift: ["is not a valid swift code"]
+      } = errors_on(changeset)
     end
 
     @update_attrs %{
@@ -122,14 +128,14 @@ defmodule Cashtrail.BankingTest do
   end
 
   describe "accounts" do
-    test "list_accounts/3 returns all accounts", %{tenant: tenant} do
+    test "list_accounts/2 returns all accounts", %{tenant: tenant} do
       %{id: account_id} = insert(:account, tenant: tenant)
 
       assert %Paginator.Page{entries: [%Banking.Account{id: ^account_id}]} =
                Banking.list_accounts(tenant)
     end
 
-    test "list_accounts/3 works with pagination", %{tenant: tenant} do
+    test "list_accounts/2 works with pagination", %{tenant: tenant} do
       accounts = insert_list(25, :account, tenant: tenant)
 
       assert %Paginator.Page{
@@ -143,7 +149,7 @@ defmodule Cashtrail.BankingTest do
       assert Enum.map(entries, & &1.id) == accounts |> Enum.slice(20, 5) |> Enum.map(& &1.id)
     end
 
-    test "list_accounts/3 filtering by type", %{tenant: tenant} do
+    test "list_accounts/2 filtering by type", %{tenant: tenant} do
       insert(:account, tenant: tenant, type: :cash)
       %{id: account_id} = insert(:account, tenant: tenant, type: :checking)
 
@@ -156,7 +162,7 @@ defmodule Cashtrail.BankingTest do
              } = Banking.list_accounts(tenant, filter: %{"type" => "checking"})
     end
 
-    test "list_accounts/3 filtering by status", %{tenant: tenant} do
+    test "list_accounts/2 filtering by status", %{tenant: tenant} do
       insert(:account, tenant: tenant, status: :archived)
       %{id: account_id} = insert(:account, tenant: tenant, status: :active)
 
@@ -169,7 +175,7 @@ defmodule Cashtrail.BankingTest do
              } = Banking.list_accounts(tenant, filter: %{"status" => "active"})
     end
 
-    test "list_accounts/3 filtering by currency", %{tenant: tenant} do
+    test "list_accounts/2 filtering by currency", %{tenant: tenant} do
       insert(:account, tenant: tenant)
       %{id: account_id} = insert(:account, tenant: tenant, currency: "BRL")
 
@@ -186,7 +192,7 @@ defmodule Cashtrail.BankingTest do
              } = Banking.list_accounts(tenant, filter: %{currency: ["BRL"]})
     end
 
-    test "list_accounts/3 filtering by institution_id", %{tenant: tenant} do
+    test "list_accounts/2 filtering by institution_id", %{tenant: tenant} do
       insert(:account, tenant: tenant)
       institution = insert(:institution, tenant: tenant)
       %{id: account_id} = insert(:account, tenant: tenant, institution: institution)
@@ -204,7 +210,7 @@ defmodule Cashtrail.BankingTest do
              } = Banking.list_accounts(tenant, filter: %{institution_id: [institution.id]})
     end
 
-    test "list_accounts/3 filtering by invalid filters show all results", %{tenant: tenant} do
+    test "list_accounts/2 filtering by invalid filters show all results", %{tenant: tenant} do
       insert(:account, tenant: tenant)
 
       assert %Paginator.Page{
@@ -216,7 +222,7 @@ defmodule Cashtrail.BankingTest do
              } = Banking.list_accounts(tenant, filter: %{"invalid" => "invalid"})
     end
 
-    test "list_accounts/3 searching by description", %{tenant: tenant} do
+    test "list_accounts/2 searching by description", %{tenant: tenant} do
       insert(:account, tenant: tenant, description: "Dummy Description")
       %{id: account_id} = insert(:account, tenant: tenant, description: "Find Me")
 
