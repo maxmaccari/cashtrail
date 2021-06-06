@@ -13,28 +13,6 @@ defmodule Cashtrail.Factory.BankingFactory do
       # unquote the generated sequence
       @iso_code_sequence unquote(sequence)
 
-      def currency_factory(attrs \\ %{}) do
-        # The first letter is randomily generated
-        iso_code_1 = [Enum.random(65..90)] |> to_string()
-        # The second and third letter are a sequence from A to Z and Z to A.
-        iso_code_2_3 = sequence(:iso_code_2, @iso_code_sequence)
-        iso_code = iso_code_1 <> iso_code_2_3
-
-        %Banking.Currency{
-          status: :active,
-          description: "#{iso_code} Currency",
-          iso_code: iso_code,
-          type: Enum.random([:money, :cryptocurrency, :virtual, :other]),
-          symbol: "$",
-          precision: Enum.random(0..4),
-          separator: Enum.random([".", ",", "\\"]),
-          delimiter: Enum.random([".", ",", ""]),
-          format: "%s%n"
-        }
-        |> Helpers.put_tenant(attrs)
-        |> merge_attributes(Helpers.drop_tenant(attrs))
-      end
-
       def institution_factory(attrs \\ %{}) do
         logo_url =
           "#{Faker.Internet.image_url()}#{Enum.random([".png", ".jpg", ".jpeg", ".gif", ""])}"
@@ -76,7 +54,7 @@ defmodule Cashtrail.Factory.BankingFactory do
             swift: generate_swift(),
             iban: Faker.Code.iban()
           },
-          currency: build(:currency)
+          currency: Enum.random(["AAA", "BBB", "XXX"])
         }
         |> Helpers.put_tenant(attrs)
         |> merge_attributes(Helpers.drop_tenant(attrs))

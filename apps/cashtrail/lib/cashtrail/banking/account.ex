@@ -10,8 +10,7 @@ defmodule Cashtrail.Banking.Account do
 
   You should first create an account to track the money or asset. One account could be your
   wallet, your saving account, checking account, or your brookerage account for example. Then you
-  can create transactions to movement the account money or assets. And each account should have one
-  currency linked.
+  can create transactions to movement the account money or assets.
 
   ## Fields
 
@@ -37,8 +36,8 @@ defmodule Cashtrail.Banking.Account do
   If the list is empty this allow all transactions. Cannot be changed after creation.
   * `:identifier` - The data that identifies the account. See `Cashtrail.Banking.AccountIdentifier`
   to have more information.
-  * `:currency` - The currency of the account. See `Cashtrail.Banking.Currency` to have more
-  information. This cannot be  changed after account creation.
+  * `:currency` - The iso code of the currency used by the account. This cannot be  changed after
+  account creation.
   * `:institution` - The institution of the account. See `Cashtrail.Banking.Institution` to have
   more inforation.
   * `:predicted_account` - If this account is a credit card or a loan, the predicted_account is
@@ -67,7 +66,7 @@ defmodule Cashtrail.Banking.Account do
           avatar_url: String.t() | nil,
           restricted_transaction_types: list(transaction_type) | nil,
           identifier: Banking.AccountIdentifier.t() | nil,
-          currency: Banking.Currency.t() | nil,
+          currency: String.t() | nil,
           institution: Banking.Institution.t() | nil,
           predicted_account: Banking.Account.t() | nil,
           updated_at: NaiveDateTime.t() | nil,
@@ -79,6 +78,7 @@ defmodule Cashtrail.Banking.Account do
   @foreign_key_type :binary_id
   schema "accounts" do
     field :description, :string
+    field :currency, :string
 
     field :type, Ecto.Enum,
       values: [:cash, :checking, :saving, :digital, :credit, :investment, :other],
@@ -95,7 +95,6 @@ defmodule Cashtrail.Banking.Account do
 
     embeds_one :identifier, Banking.AccountIdentifier, on_replace: :update
 
-    belongs_to :currency, Banking.Currency
     belongs_to :institution, Banking.Institution
     belongs_to :predicted_account, Banking.Account
 
@@ -107,18 +106,17 @@ defmodule Cashtrail.Banking.Account do
     account
     |> cast(attrs, [
       :description,
+      :currency,
       :type,
       :initial_balance_amount,
       :initial_balance_date,
       :restricted_transaction_types,
       :avatar_url,
-      :currency_id,
       :institution_id,
       :predicted_account_id
     ])
-    |> validate_required([:description, :currency_id])
+    |> validate_required([:description])
     |> cast_embed(:identifier)
-    |> foreign_key_constraint(:currency_id)
     |> foreign_key_constraint(:institution_id)
     |> foreign_key_constraint(:predicted_account_id)
   end
@@ -134,7 +132,7 @@ defmodule Cashtrail.Banking.Account do
       :predicted_account_id,
       :status
     ])
-    |> validate_required([:description, :currency_id])
+    |> validate_required([:description])
     |> cast_embed(:identifier)
     |> foreign_key_constraint(:institution_id)
     |> foreign_key_constraint(:predicted_account_id)
