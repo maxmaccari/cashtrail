@@ -43,6 +43,10 @@ defmodule Cashtrail.UsersTest do
       assert Users.get_user_by(email: user.email) == user
     end
 
+    test "get_user_by/1 with nil email returns error" do
+      assert {:error, :invalid_email } = Users.get_user_by(email: nil)
+    end
+
     test "authenticate_user/2 returns the user with the given id and password" do
       user = insert(:user, password_hash: "my_password123")
       assert {:ok, autenticated} = Users.authenticate(user.email, "my_password123")

@@ -423,6 +423,9 @@ defmodule Cashtrail.Entities do
         %Users.User{} = user ->
           attrs |> Map.delete(:user) |> Map.delete("user") |> Map.put(:user_id, user.id)
 
+        {:error, :invalid_email} ->
+          attrs |> Map.put(:user, %{})
+
         _ ->
           attrs
       end

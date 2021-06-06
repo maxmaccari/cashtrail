@@ -149,12 +149,12 @@ defmodule Cashtrail.EntitiesTest do
       assert Entities.list_entities_for(owner, search: "fgh").entries == [entity]
     end
 
-    test "get_entity!/2 returns the entity with given id" do
+    test "get_entity!/1 returns the entity with given id" do
       entity = insert(:entity) |> forget(:owner)
       assert Entities.get_entity!(entity.id) == entity
     end
 
-    test "create_entity/2 with valid data creates a entity" do
+    test "create_entity/3 with valid data creates a entity" do
       user = insert(:user)
       entity_params = params_for(:entity)
       assert {:ok, %Entity{} = entity} = Entities.create_entity(user, entity_params, false)
@@ -165,39 +165,22 @@ defmodule Cashtrail.EntitiesTest do
       assert entity.owner_id == user.id
     end
 
-    @invalid_attrs %{name: nil, status: nil, type: nil, owner_id: nil}
+    @invalid_attrs %{name: nil, status: "invalid", type: "invalid", owner_id: nil}
     test "create_entity/3 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Entities.create_entity(%User{}, @invalid_attrs, false)
-    end
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Entities.create_entity(%User{}, @invalid_attrs, false)
 
-    test "create_entity/3 with invalid type and status returns error changeset" do
-      owner = insert(:user)
+      assert %{
+               name: ["can't be blank"],
+               owner_id: ["can't be blank"],
+               type: ["is invalid"],
+               status: ["is invalid"]
+             } = errors_on(changeset)
 
-      assert {:error,
-              %Ecto.Changeset{
-                errors: [
-                  type: {"is invalid", _}
-                ]
-              }} = Entities.create_entity(owner, params_for(:entity, type: "invalid"), false)
+      assert {:error, changeset} =
+               Entities.create_entity(%User{id: Ecto.UUID.generate()}, params_for(:entity), false)
 
-      assert {:error,
-              %Ecto.Changeset{
-                errors: [
-                  status: {"is invalid", _}
-                ]
-              }} = Entities.create_entity(owner, params_for(:entity, status: "invalid"), false)
-    end
-
-    test "create_entity/3 with invalid user returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} =
-               Entities.create_entity(%User{}, params_for(:entity), false)
-
-      assert {:error, %Ecto.Changeset{}} =
-               Entities.create_entity(
-                 %User{id: Ecto.UUID.generate()},
-                 params_for(:entity),
-                 false
-               )
+      assert %{owner_id: ["does not exist"]} = errors_on(changeset)
     end
 
     @update_attrs %{
@@ -226,7 +209,7 @@ defmodule Cashtrail.EntitiesTest do
       assert entity == Entities.get_entity!(entity.id)
     end
 
-    test "delete_entity/1 deletes the entity" do
+    test "delete_entity/2 deletes the entity" do
       {:ok, entity} = insert(:user) |> Entities.create_entity(params_for(:entity), false)
       assert {:ok, %Entity{}} = Entities.delete_entity(entity, false)
       assert_raise Ecto.NoResultsError, fn -> Entities.get_entity!(entity.id) end
@@ -360,7 +343,7 @@ defmodule Cashtrail.EntitiesTest do
       assert Entities.list_members(entity, filter: %{invalid: nil}).entries == [member]
     end
 
-    test "list_entities/1 searching by its user name and email" do
+    test "list_members/2 searching by its user name and email" do
       entity = insert(:entity)
 
       insert(:entity_member,
@@ -412,28 +395,30 @@ defmodule Cashtrail.EntitiesTest do
       assert entity_member.user_id == user.id
     end
 
-    @invalid_attrs %{permission: nil, user: %{email: "invalid"}}
+    @invalid_attrs %{permission: "invalid", user: %{email: "invalid"}}
     test "create_member/2 with invalid data returns error changeset" do
       entity = insert(:entity)
-      assert {:error, %Ecto.Changeset{}} = Entities.create_member(entity, @invalid_attrs)
-    end
 
-    test "create_entity/3 with invalid permission returns error changeset" do
-      user = insert(:user)
-      entity = insert(:entity)
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Entities.create_member(entity, @invalid_attrs)
 
-      assert {:error,
-              %Ecto.Changeset{
-                errors: [
-                  permission: {"is invalid", _}
-                ]
-              }} =
-               Entities.create_member(entity, %{
-                 user: %{
-                   email: user.email
-                 },
-                 permission: "invalid"
-               })
+      assert %{
+               user: %{
+                 email: ["is not a valid email"],
+                 first_name: ["can't be blank"],
+                 password: ["can't be blank"]
+               },
+               permission: ["is invalid"]
+             } = errors_on(changeset)
+
+      assert {:error, %Ecto.Changeset{} = changeset} = Entities.create_member(entity, %{})
+
+      assert %{
+               user: %{
+                 email: ["can't be blank"]
+               },
+               permission: ["can't be blank"]
+             } = errors_on(changeset)
     end
 
     test "create_member/2 with same user returns error changeset" do
@@ -444,8 +429,10 @@ defmodule Cashtrail.EntitiesTest do
 
       assert {:ok, %EntityMember{}} = Entities.create_member(entity, entity_member_attrs)
 
-      assert {:error, %Ecto.Changeset{errors: [entity_id: {"has already been added", _}]}} =
+      assert {:error, %Ecto.Changeset{} = changeset} =
                Entities.create_member(entity, entity_member_attrs)
+
+      assert %{entity_id: ["has already been added"]} = errors_on(changeset)
     end
 
     test "add_member/2 adds a user as a member with 'read' permission" do
@@ -505,8 +492,10 @@ defmodule Cashtrail.EntitiesTest do
     test "update_member_permission/3 with invalid permission returns error" do
       member = insert(:entity_member)
 
-      assert {:error, %Ecto.Changeset{}} =
+      assert {:error, %Ecto.Changeset{} = changeset} =
                Entities.update_member_permission(member.entity, member.user, :invalid)
+
+      assert %{permission: ["is invalid"]} = errors_on(changeset)
     end
 
     test "update_member_permission/3 with a owner returns error" do
