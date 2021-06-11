@@ -41,7 +41,6 @@ defmodule Cashtrail.Factory.BankingFactory do
         %Banking.Account{
           description: sequence(:account, &"Account #{&1}"),
           type: Enum.random([:cash, :checking, :saving, :digital, :credit, :investment, :other]),
-          status: :active,
           initial_balance_amount: initial_balance_amount,
           initial_balance_date: ~D[2010-01-01] |> Date.range(Date.utc_today()) |> Enum.random(),
           avatar_url: Faker.Avatar.image_url(),

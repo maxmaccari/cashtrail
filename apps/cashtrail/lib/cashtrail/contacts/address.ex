@@ -53,6 +53,7 @@ defmodule Cashtrail.Contacts.Address do
   end
 
   @doc false
+  @spec changeset(t | Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
   def changeset(contact, attrs) do
     contact
     |> cast(attrs, [

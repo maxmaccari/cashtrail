@@ -35,6 +35,7 @@ defmodule Cashtrail.Banking.AccountIdentifier do
   @swift_regex ~r/[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?/i
   @iban_regex ~r/^([A-Z]{2}[ \-]?[0-9]{2})(?=(?:[ \-]?[A-Z0-9]){9,30}$)((?:[ \-]?[A-Z0-9]{3,5}){2,7})([ \-]?[A-Z0-9]{1,3})?$/i
   @doc false
+  @spec changeset(t | Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
   def changeset(account_identifier, attrs) do
     account_identifier
     |> cast(attrs, [:bank_code, :branch, :number, :swift, :iban])

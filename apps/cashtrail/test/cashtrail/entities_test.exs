@@ -4,6 +4,7 @@ defmodule Cashtrail.EntitiesTest do
   use Cashtrail.DataCase, async: true
 
   alias Cashtrail.{Entities, Users}
+  alias Cashtrail.Statuses
 
   describe "entities" do
     alias Cashtrail.Entities.Entity
@@ -38,8 +39,9 @@ defmodule Cashtrail.EntitiesTest do
     end
 
     test "list_entities/1 filtering by status" do
-      insert(:entity, status: :active)
-      entity = insert(:entity, status: :archived) |> forget(:owner)
+      insert(:entity)
+      entity = insert(:entity, archived_at: DateTime.now!("Etc/UTC")) |> forget(:owner)
+
       assert Entities.list_entities(filter: %{status: :archived}).entries == [entity]
       assert Entities.list_entities(filter: %{"status" => "archived"}).entries == [entity]
     end
@@ -96,8 +98,10 @@ defmodule Cashtrail.EntitiesTest do
 
     test "list_entities_for/2 filtering by status" do
       owner = insert(:user)
-      insert(:entity, status: :active, owner: owner)
-      entity = insert(:entity, status: :archived, owner: owner) |> forget(:owner)
+      insert(:entity, owner: owner)
+
+      entity =
+        insert(:entity, archived_at: DateTime.now!("Etc/UTC"), owner: owner) |> forget(:owner)
 
       assert Entities.list_entities_for(owner, filter: %{status: :archived}).entries == [entity]
 
@@ -160,12 +164,11 @@ defmodule Cashtrail.EntitiesTest do
       assert {:ok, %Entity{} = entity} = Entities.create_entity(user, entity_params, false)
 
       assert entity.name == entity_params.name
-      assert entity.status == entity_params.status
       assert entity.type == entity_params.type
       assert entity.owner_id == user.id
     end
 
-    @invalid_attrs %{name: nil, status: "invalid", type: "invalid", owner_id: nil}
+    @invalid_attrs %{name: nil, type: "invalid", owner_id: nil}
     test "create_entity/3 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{} = changeset} =
                Entities.create_entity(%User{}, @invalid_attrs, false)
@@ -173,8 +176,7 @@ defmodule Cashtrail.EntitiesTest do
       assert %{
                name: ["can't be blank"],
                owner_id: ["can't be blank"],
-               type: ["is invalid"],
-               status: ["is invalid"]
+               type: ["is invalid"]
              } = errors_on(changeset)
 
       assert {:error, changeset} =
@@ -185,14 +187,12 @@ defmodule Cashtrail.EntitiesTest do
 
     @update_attrs %{
       name: "some updated name",
-      status: "archived",
       type: "company"
     }
     test "update_entity/2 with valid data updates the entity" do
       entity = insert(:entity)
       assert {:ok, %Entity{} = entity} = Entities.update_entity(entity, @update_attrs)
       assert entity.name == "some updated name"
-      assert entity.status == :archived
       assert entity.type == :company
     end
 
@@ -207,6 +207,24 @@ defmodule Cashtrail.EntitiesTest do
       entity = insert(:entity) |> forget(:owner)
       assert {:error, %Ecto.Changeset{}} = Entities.update_entity(entity, @invalid_attrs)
       assert entity == Entities.get_entity!(entity.id)
+    end
+
+    test "archive_entity/1 archives the entity" do
+      entity = insert(:entity)
+
+      {:ok, entity} = Entities.archive_entity(entity)
+
+      assert not is_nil(entity.archived_at)
+      assert Statuses.status(entity) == :archived
+    end
+
+    test "unarchive_entity/1 unarchives the entity" do
+      entity = insert(:entity, archived_at: NaiveDateTime.utc_now())
+
+      {:ok, entity} = Entities.unarchive_entity(entity)
+
+      assert is_nil(entity.archived_at)
+      assert Statuses.status(entity) == :active
     end
 
     test "delete_entity/2 deletes the entity" do

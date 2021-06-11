@@ -35,7 +35,7 @@ defmodule Cashtrail.Banking.Institution do
           swift: String.t() | nil,
           logo_url: String.t() | nil,
           contact_id: Ecto.UUID.t() | nil,
-          contact: Cashtrail.Contacts.Contact.t() | nil,
+          contact: Cashtrail.Contacts.Contact.t() | Ecto.Association.NotLoaded.t() | nil,
           inserted_at: NaiveDateTime.t() | nil,
           updated_at: NaiveDateTime.t() | nil,
           __meta__: Ecto.Schema.Metadata.t()
@@ -58,6 +58,7 @@ defmodule Cashtrail.Banking.Institution do
   @swift_regex ~r/[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?/i
 
   @doc false
+  @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(institution, attrs) do
     institution
     |> cast(attrs, [:country, :bank_code, :swift, :logo_url, :contact_id])
