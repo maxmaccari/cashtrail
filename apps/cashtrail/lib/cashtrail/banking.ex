@@ -13,6 +13,7 @@ defmodule Cashtrail.Banking do
   import Cashtrail.Statuses, only: [filter_by_status: 3]
 
   @type institution :: Banking.Institution.t()
+  @type account :: Banking.Account.t()
 
   @doc """
   Returns a `%Cashtrail.Paginator.Page{}` struct with a list of institutions in the
@@ -114,7 +115,7 @@ defmodule Cashtrail.Banking do
       {:error, %Ecto.Changeset{}}
 
   """
-  @spec create_institution(Entities.Entity.t(), map()) ::
+  @spec create_institution(Entities.Entity.t(), map() | nil) ::
           {:ok, institution()} | {:error, Ecto.Changeset.t(institution())}
   def create_institution(%Entities.Entity{} = entity, attrs \\ %{}) do
     %Banking.Institution{}
@@ -233,6 +234,7 @@ defmodule Cashtrail.Banking do
       %Cashtrail.Paginator.Page{entries: [%Cashtrail.Banking.Account{description: "my cash"}, ...]}
 
   """
+  @spec list_accounts(Entities.Entity.t(), keyword) :: Paginator.Page.t(account())
   def list_accounts(%Entities.Entity{} = entity, options \\ []) do
     Banking.Account
     |> build_filter(Keyword.get(options, :filter), [:type, :currency, :institution_id])
@@ -259,6 +261,7 @@ defmodule Cashtrail.Banking do
       ** (Ecto.NoResultsError)
 
   """
+  @spec get_account!(Entities.Entity.t(), Ecto.UUID.t() | String.t()) :: account()
   def get_account!(%Entities.Entity{} = entity, id) do
     Repo.get!(Banking.Account, id, prefix: to_prefix(entity))
   end
@@ -299,7 +302,9 @@ defmodule Cashtrail.Banking do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_account(%Entities.Entity{} = entity, attrs \\ %{}) do
+  @spec create_account(Entities.Entity.t(), map()) ::
+          {:ok, account} | {:error, Ecto.Changeset.t(account())}
+  def create_account(%Entities.Entity{} = entity, attrs) do
     %Banking.Account{}
     |> Banking.Account.changeset(attrs)
     |> Repo.insert(prefix: to_prefix(entity))
@@ -320,6 +325,7 @@ defmodule Cashtrail.Banking do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec update_account(account, map) :: {:ok, account} | {:error, Ecto.Changeset.t(account())}
   def update_account(%Banking.Account{} = account, attrs) do
     account
     |> Banking.Account.update_changeset(attrs)
@@ -335,9 +341,10 @@ defmodule Cashtrail.Banking do
       {:ok, %Account{}}
 
       iex> archive_account(account})
-      {:error, :already_archived}
+      {:error, %Ecto.Changeset{}}
 
   """
+  @spec archive_account(account) :: {:ok, account} | {:error, Ecto.Changeset.t(account())}
   def archive_account(%Banking.Account{} = account) do
     account
     |> Banking.Account.archive_changeset()
@@ -353,9 +360,10 @@ defmodule Cashtrail.Banking do
       {:ok, %Account{}}
 
       iex> unarchive_account(account})
-      {:error, :already_archived}
+      {:error, %Ecto.Changeset{}}
 
   """
+  @spec unarchive_account(account) :: {:ok, account} | {:error, Ecto.Changeset.t(account())}
   def unarchive_account(%Banking.Account{} = account) do
     account
     |> Banking.Account.unarchive_changeset()
@@ -378,6 +386,7 @@ defmodule Cashtrail.Banking do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec delete_account(account) :: {:ok, account} | {:error, Ecto.Changeset.t(account())}
   def delete_account(%Banking.Account{} = account) do
     Repo.delete(account)
   end
@@ -395,6 +404,7 @@ defmodule Cashtrail.Banking do
       %Ecto.Changeset{data: %Account{}}
 
   """
+  @spec change_account(account, map() | nil) :: Ecto.Changeset.t(account())
   def change_account(%Banking.Account{} = account, attrs \\ %{}) do
     case Ecto.get_meta(account, :state) do
       :built -> Banking.Account.changeset(account, attrs)

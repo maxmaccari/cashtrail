@@ -107,10 +107,12 @@ defmodule Cashtrail.Entities.Entity do
     |> foreign_key_constraint(:owner_id)
   end
 
+  @spec archive_changeset(t | Ecto.Changeset.t()) :: Ecto.Changeset.t()
   def archive_changeset(entity) do
     change(entity, %{archived_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)})
   end
 
+  @spec unarchive_changeset(t | Ecto.Changeset.t()) :: Ecto.Changeset.t()
   def unarchive_changeset(entity) do
     change(entity, %{archived_at: nil})
   end

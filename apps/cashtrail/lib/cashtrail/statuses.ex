@@ -27,7 +27,6 @@ defmodule Cashtrail.Statuses do
   defimpl WithStatus, for: Any do
     import Ecto.Query
 
-    @spec status(struct) :: :archived | :active
     def status(%{archived_at: archived_at}) when not is_nil(archived_at) do
       :archived
     end
@@ -36,7 +35,6 @@ defmodule Cashtrail.Statuses do
       :active
     end
 
-    @spec filter_condition(struct, atom) :: Ecto.Query.Dynamic.t() | nil
     def filter_condition(_schema, :active) do
       dynamic([q], is_nil(q.archived_at))
     end
@@ -160,7 +158,7 @@ defmodule Cashtrail.Statuses do
     @doc """
     Build the filter condition for the record and the given status.
     """
-    @spec filter_condition(struct(), atom()) :: Ecto.Query.Dynamic.t() | nil
+    @spec filter_condition(struct(), atom()) :: map() | nil
     def filter_condition(record, status)
   end
 
@@ -180,7 +178,7 @@ defmodule Cashtrail.Statuses do
     end
 
     @doc false
-    @spec filter_condition(struct, atom) :: Ecto.Query.Dynamic.t() | nil
+    @spec filter_condition(struct, atom) :: map() | nil
     def filter_condition(_schema, :active) do
       dynamic([q], is_nil(q.archived_at))
     end

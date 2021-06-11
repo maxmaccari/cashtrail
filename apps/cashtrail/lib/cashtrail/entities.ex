@@ -153,11 +153,6 @@ defmodule Cashtrail.Entities do
 
   See `Cashtrail.Entities.Entity` to have more detailed info about the fields.
 
-  ## Returns
-
-  * `{:ok, %Cashtrail.Entities.Entity{}}` in case of success.
-  * `{:error, %Ecto.Changeset{}}` in case of error.
-
   ## Examples
 
       iex> create_entity(user, %{field: value})
@@ -193,11 +188,6 @@ defmodule Cashtrail.Entities do
   * params - A `map` with the field of the entity to be updated. See
   `create_entity/2` to know about the params that can be given.
 
-  ## Returns
-
-  * `{:ok, %Cashtrail.Entities.Entity{}}` in case of success.
-  * `{:error, %Ecto.Changeset{}}` in case of error.
-
   ## Examples
 
       iex> update_entity(entity, %{field: new_value})
@@ -217,23 +207,17 @@ defmodule Cashtrail.Entities do
   @doc """
   Archives an entity.
 
-  ## Returns
-
-  * `{:ok, %Cashtrail.Entities.Entity{}}` in case of success.
-  * `{:error, %Ecto.Changeset{}}` in case of error.
-  * `{:error, :already_archived}` in case of entity being already archived.
-
   ## Examples
 
       iex> archive_entity(entity)
       {:ok, %Cashtrail.Entities.Entity{}}
 
       iex> archive_entity(entity)
-      {:error, :already_archived}
+      {:error, %Ecto.Changeset{}}
 
   """
   @spec archive_entity(Cashtrail.Entities.Entity.t()) ::
-          {:ok, entity()} | {:error, Ecto.Changeset.t(entity()) | :already_archived}
+          {:ok, entity()} | {:error, Ecto.Changeset.t(entity())}
   def archive_entity(%Entities.Entity{archived_at: nil} = entity) do
     entity
     |> Entities.Entity.archive_changeset()
@@ -257,13 +241,11 @@ defmodule Cashtrail.Entities do
       {:ok, %Cashtrail.Entities.Entity{}}
 
       iex> unarchive_entity(entity)
-      {:error, :already_archived}
+      {:error, %Ecto.Changeset{}}
 
   """
   @spec unarchive_entity(Cashtrail.Entities.Entity.t()) ::
           {:ok, entity()} | {:error, Ecto.Changeset.t(entity())}
-  def unarchive_entity(%Entities.Entity{archived_at: nil}), do: {:error, :already_unarchived}
-
   def unarchive_entity(%Entities.Entity{} = entity) do
     entity
     |> Entities.Entity.unarchive_changeset()
@@ -276,11 +258,6 @@ defmodule Cashtrail.Entities do
   ## Arguments
 
   * entity - The `%Cashtrail.Entities.Entity{}` to be deleted.
-
-  ## Returns
-
-  * `{:ok, %Cashtrail.Entities.Entity{}}` in case of success.
-  * `{:error, %Ecto.Changeset{}}` in case of error.
 
   ## Examples
 
