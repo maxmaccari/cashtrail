@@ -366,6 +366,7 @@ defmodule Cashtrail.BankingTest do
     test "change_account/1 returns a account changeset", %{tenant: tenant} do
       account = insert(:account, tenant: tenant)
       assert %Ecto.Changeset{} = Banking.change_account(account)
+      assert %Ecto.Changeset{} = Banking.change_account(%Banking.Account{})
     end
   end
 end

@@ -41,7 +41,7 @@ defmodule Cashtrail.StatusesTest do
   end
 
   test "filter_by_status/2 create a query that find the given statuses" do
-    assert Statuses.filter_by_status(Cashtrail.Entities.Entity, %{status: [:active, :archived]})
+    assert Statuses.filter_by_status(Cashtrail.Entities.Entity, %{status: [:active, :archived, :invalid]})
            |> to_sql() =~
              ~s|WHERE (NOT (e0."archived_at" IS NULL) OR ((e0."archived_at" IS NULL) OR $1))|
 
