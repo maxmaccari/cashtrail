@@ -93,32 +93,54 @@ defmodule Cashtrail.Statuses do
   ## Arguments
   * query
   """
-  @spec filter(Ecto.Queryable.t() | Ecto.Query.t(), atom() | list(atom())) :: Ecto.Query.t()
-  def filter(%Ecto.Query{from: %{source: {_, schema}}} = query, status_or_statuses) do
+  @spec filter_by_status(Ecto.Queryable.t() | Ecto.Query.t(), map(), atom()) :: Ecto.Query.t()
+  def filter_by_status(queryable, params, status_key \\ :status)
+
+  def filter_by_status(queryable, nil, _status_key), do: queryable
+
+  def filter_by_status(queryable, params, status_key) do
+    status_or_statuses =
+      case Map.get(params, status_key) || Map.get(params, to_string(status_key)) do
+        [status | _] = statuses when is_binary(status) ->
+          Enum.map(statuses, &String.to_existing_atom/1)
+
+        status when is_binary(status) ->
+          String.to_existing_atom(status)
+
+        status_or_statuses ->
+          status_or_statuses
+      end
+
+    build_filter(queryable, status_or_statuses)
+  end
+
+  @spec build_filter(Ecto.Queryable.t() | Ecto.Query.t(), atom() | list(atom())) :: Ecto.Query.t()
+  defp build_filter(%Ecto.Query{from: %{source: {_, schema}}} = query, status_or_statuses) do
     schema = Cashtrail.Repo.load(schema, %{})
 
-    filter(query, status_or_statuses, schema)
+    build_filter(query, status_or_statuses, schema)
   end
 
-  def filter(query, status_or_statuses) do
+  defp build_filter(query, status_or_statuses) do
     schema = Cashtrail.Repo.load(query, %{})
 
-    filter(query, status_or_statuses, schema)
+    build_filter(query, status_or_statuses, schema)
   end
 
-  @spec filter(Ecto.Queryable.t(), atom() | list(atom()), Ecto.Schema.t()) :: Ecto.Query.t()
-  defp filter(query, statuses, schema) when is_list(statuses) do
-    conditions = Enum.reduce(statuses, false, fn status, condition ->
-      case WithStatus.filter_condition(schema, status) do
-        nil -> condition
-        filter_condition -> dynamic([q], ^filter_condition or ^condition)
-      end
-    end)
+  @spec build_filter(Ecto.Queryable.t(), atom() | list(atom()), Ecto.Schema.t()) :: Ecto.Query.t()
+  defp build_filter(query, statuses, schema) when is_list(statuses) do
+    conditions =
+      Enum.reduce(statuses, false, fn status, condition ->
+        case WithStatus.filter_condition(schema, status) do
+          nil -> condition
+          filter_condition -> dynamic([q], ^filter_condition or ^condition)
+        end
+      end)
 
     from(query, where: ^conditions)
   end
 
-  defp filter(query, status, schema) do
+  defp build_filter(query, status, schema) do
     conditions = WithStatus.filter_condition(schema, status) || []
 
     from(query, where: ^conditions)
