@@ -35,9 +35,6 @@ defmodule Cashtrail.Entities.Entity do
 
   * `:id` - The unique id of the entity.
   * `:name` - The name (or description) of the entity.
-  * `:status` - The status of the entity, that can be:
-    * `:active` - if the entity is used.
-    * `:archived` -if the entity is no longer used, but want to keep the data history.
   * `:type` - The type of the entity, that can be:
     * `:personal` - if the entity is used for personal reasons, like control
     your finances, your family finances, personal project finances,
@@ -53,6 +50,7 @@ defmodule Cashtrail.Entities.Entity do
   `Cashtrail.Entities.EntityMember`.
   * `:inserted_at` - When the entity was inserted at the first time.
   * `:updated_at` - When the entity was updated at the last time.
+  * `:archived_at` - When the entity was archived.
 
   See `Cashtrail.Entities` to know how to list, get, insert, update, delete, and
   transfer the ownership of an entity.
@@ -66,25 +64,28 @@ defmodule Cashtrail.Entities.Entity do
   @type t :: %Cashtrail.Entities.Entity{
           id: Ecto.UUID.t() | nil,
           name: String.t() | nil,
-          status: atom() | nil,
           type: atom() | nil,
           owner_id: Ecto.UUID.t() | nil,
           owner: Ecto.Association.NotLoaded.t() | Users.User.t() | nil,
           members: Ecto.Association.NotLoaded.t() | list(Entities.EntityMember.t()),
+          archived_at: NaiveDateTime.t() | nil,
           inserted_at: NaiveDateTime.t() | nil,
           updated_at: NaiveDateTime.t() | nil,
           __meta__: Ecto.Schema.Metadata.t()
         }
 
+  @derive [Cashtrail.Statuses.WithStatus]
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "entities" do
     field :name, :string
-    field :status, Ecto.Enum, values: [:active, :archived], default: :active
     field :type, Ecto.Enum, values: [:personal, :company, :other], default: :personal
+
     belongs_to :owner, Users.User
     has_many :members, Entities.EntityMember
 
+    field :archived_at, :naive_datetime
     timestamps()
   end
 
@@ -92,7 +93,7 @@ defmodule Cashtrail.Entities.Entity do
   @spec changeset(t() | Ecto.Changeset.t(t()), map) :: Ecto.Changeset.t(t())
   def changeset(entity, attrs) do
     entity
-    |> cast(attrs, [:name, :type, :status])
+    |> cast(attrs, [:name, :type])
     |> validate_required([:name, :owner_id])
     |> foreign_key_constraint(:owner_id)
   end
@@ -104,5 +105,13 @@ defmodule Cashtrail.Entities.Entity do
     |> cast(attrs, [:owner_id])
     |> validate_required([:owner_id])
     |> foreign_key_constraint(:owner_id)
+  end
+
+  def archive_changeset(entity) do
+    change(entity, %{archived_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)})
+  end
+
+  def unarchive_changeset(entity) do
+    change(entity, %{archived_at: nil})
   end
 end

@@ -19,12 +19,13 @@ defmodule Cashtrail.Entities do
   alias Cashtrail.{Entities, Paginator, Users}
 
   import Cashtrail.QueryBuilder, only: [build_filter: 3, build_search: 3]
+  import Cashtrail.Statuses, only: [filter_by_status: 3]
 
   @doc """
   Returns a `%Cashtrail.Paginator.Page{}` struct with a list of entities in the
   `:entries` field.
 
-  ## Expected arguments
+  ## Arguments
 
   * options - A `keyword` list of the following options:
     * `:filter` => filters by following attributes:
@@ -51,7 +52,8 @@ defmodule Cashtrail.Entities do
   @spec list_entities(keyword) :: Paginator.Page.t(entity())
   def list_entities(options \\ []) do
     from(e in Entities.Entity)
-    |> build_filter(Keyword.get(options, :filter), [:type, :status])
+    |> build_filter(Keyword.get(options, :filter), [:type])
+    |> filter_by_status(Keyword.get(options, :filter), :status)
     |> build_search(Keyword.get(options, :search), [:name])
     |> Paginator.paginate(options)
   end
@@ -60,7 +62,7 @@ defmodule Cashtrail.Entities do
   Returns a `%Cashtrail.Paginator.Page{}` struct with a list of entities in the
   `:entries` field from the given user.
 
-  ## Expected arguments
+  ## Arguments
 
   * user - A `%Cashtrail.Users.User{}` that owns or is member of the entity.
   * options - A `keyword` list of the following options:
@@ -90,7 +92,8 @@ defmodule Cashtrail.Entities do
   @spec list_entities_for(user, keyword) :: Paginator.Page.t(entity())
   def list_entities_for(%Users.User{id: user_id}, options \\ []) do
     from(e in Entities.Entity)
-    |> build_filter(Keyword.get(options, :filter), [:type, :status])
+    |> build_filter(Keyword.get(options, :filter), [:type])
+    |> filter_by_status(Keyword.get(options, :filter), :status)
     |> build_search(Keyword.get(options, :search), [:name])
     |> of_relation(user_id, Keyword.get(options, :relation_type, :both))
     |> Paginator.paginate(options)
@@ -120,7 +123,7 @@ defmodule Cashtrail.Entities do
   See `Cashtrail.Entities.Entity` to have more detailed info about the returned
   struct.
 
-  ## Expected Arguments
+  ## Arguments
 
   * id - A `string` that is the unique id of the entity to be found.
 
@@ -139,7 +142,7 @@ defmodule Cashtrail.Entities do
   @doc """
   Creates an entity.
 
-  ## Expected Arguments
+  ## Arguments
 
   * params - A `map` with the params of the entity to be created:
     * `:name` (required) - A `string` with the name or description of the entity.
@@ -184,7 +187,7 @@ defmodule Cashtrail.Entities do
   @doc """
   Updates an entity.
 
-  ## Expected Arguments
+  ## Arguments
 
   * user - The `%Cashtrail.Entities.Entity{}` to be updated.
   * params - A `map` with the field of the entity to be updated. See
@@ -212,9 +215,65 @@ defmodule Cashtrail.Entities do
   end
 
   @doc """
+  Archives an entity.
+
+  ## Returns
+
+  * `{:ok, %Cashtrail.Entities.Entity{}}` in case of success.
+  * `{:error, %Ecto.Changeset{}}` in case of error.
+  * `{:error, :already_archived}` in case of entity being already archived.
+
+  ## Examples
+
+      iex> archive_entity(entity)
+      {:ok, %Cashtrail.Entities.Entity{}}
+
+      iex> archive_entity(entity)
+      {:error, :already_archived}
+
+  """
+  @spec archive_entity(Cashtrail.Entities.Entity.t()) ::
+          {:ok, entity()} | {:error, Ecto.Changeset.t(entity()) | :already_archived}
+  def archive_entity(%Entities.Entity{archived_at: nil} = entity) do
+    entity
+    |> Entities.Entity.archive_changeset()
+    |> Repo.update()
+  end
+
+  def archive_entity(%Entities.Entity{}), do: {:error, :already_archived}
+
+  @doc """
+  Unarchives an entity.
+
+  ## Returns
+
+  * `{:ok, %Cashtrail.Entities.Entity{}}` in case of success.
+  * `{:error, %Ecto.Changeset{}}` in case of error.
+  * `{:error, :already_archived}` in case of entity being already archived.
+
+  ## Examples
+
+      iex> unarchive_entity(entity)
+      {:ok, %Cashtrail.Entities.Entity{}}
+
+      iex> unarchive_entity(entity)
+      {:error, :already_archived}
+
+  """
+  @spec unarchive_entity(Cashtrail.Entities.Entity.t()) ::
+          {:ok, entity()} | {:error, Ecto.Changeset.t(entity())}
+  def unarchive_entity(%Entities.Entity{archived_at: nil}), do: {:error, :already_unarchived}
+
+  def unarchive_entity(%Entities.Entity{} = entity) do
+    entity
+    |> Entities.Entity.unarchive_changeset()
+    |> Repo.update()
+  end
+
+  @doc """
   Deletes an entity.
 
-  ## Expected Arguments
+  ## Arguments
 
   * entity - The `%Cashtrail.Entities.Entity{}` to be deleted.
 
@@ -251,7 +310,7 @@ defmodule Cashtrail.Entities do
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking entity changes.
 
-  ## Expected Arguments
+  ## Arguments
 
   * entity - The `%Cashtrail.Entities.Entity{}` to be tracked.
 
@@ -269,7 +328,7 @@ defmodule Cashtrail.Entities do
   @doc """
   Transfer the ownership of an entity from one user to another.
 
-  ## Expected Arguments
+  ## Arguments
 
   * entity - The `%Cashtrail.Entities.Entity{}` to be transfered.
   * from_user - The `%Cashtrail.Users.User{}` to be transfered.
@@ -320,7 +379,7 @@ defmodule Cashtrail.Entities do
   @doc """
   Returns a `boolean` that says if the entity belongs to the user.
 
-  ## Expected Arguments
+  ## Arguments
 
   * user - The `%Cashtrail.Users.User{}` to be deleted.
 
@@ -341,7 +400,7 @@ defmodule Cashtrail.Entities do
   Returns a `%Cashtrail.Paginator.Page{}` struct with a list of entity_members in the
   `:entries` field.
 
-  ## Expected arguments
+  ## Arguments
 
   * options - A `keyword` list of the following options:
     * `:filter` => filters by following attributes:
@@ -385,7 +444,7 @@ defmodule Cashtrail.Entities do
   @doc """
   Creates an entity_member for the entity.
 
-  ## Expected Arguments
+  ## Arguments
 
   * entity - The `%Cashtrail.Entities.Entity{}` that the member will be created.
   * params - A `map` with the params of the user to be created:
@@ -439,7 +498,7 @@ defmodule Cashtrail.Entities do
   @doc """
   Add a user as an entity_member for the entity giving permission.
 
-  ## Expected Arguments
+  ## Arguments
 
   * entity - The `%Cashtrail.Entities.Entity{}` that the member will be added.
   * user - A `%Cashtrail.Users.User{}` that is the user to be added as a member.
@@ -484,7 +543,7 @@ defmodule Cashtrail.Entities do
   @doc """
   Removes an entity_member from the entity.
 
-  ## Expected Arguments
+  ## Arguments
 
   * entity - The `%Cashtrail.Entities.Entity{}` that the member will be removed.
   * user - A `%Cashtrail.Users.User{}` that is the user to be removed as a member
@@ -519,7 +578,7 @@ defmodule Cashtrail.Entities do
   If the user is not a member or is the owner, it returns an error. The owner will always
   have admin permission.
 
-  ## Expected Arguments
+  ## Arguments
 
   * entity - The `%Cashtrail.Entities.Entity{}` that the member will have the
   permissions updated.
@@ -578,7 +637,7 @@ defmodule Cashtrail.Entities do
   Returns the member permission as an atom or :unauthorized if the member is not
   found. If the user is the owner, return permission as :admin.
 
-  ## Expected Arguments
+  ## Arguments
 
   * entity - The `%Cashtrail.Entities.Entity{}` that the member belongs.
   * user - The `%Cashtrail.Users.User{}` to know the permission.
@@ -612,7 +671,7 @@ defmodule Cashtrail.Entities do
   Returns the `%Cashtrail.Entities.EntityMember{}` from the user and the entity. Returns
   `nil` if the user is not a member of the entity or if it is the owner.
 
-  ## Expected Arguments
+  ## Arguments
 
   * entity - The `%Cashtrail.Entities.Entity{}` that the member belongs.
   * user - The `%Cashtrail.Users.User{}` to have the entity_member found.
@@ -637,7 +696,7 @@ defmodule Cashtrail.Entities do
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking entity_member changes.
 
-  ## Expected Arguments
+  ## Arguments
 
   * entity_member - The `%Cashtrail.Entities.EntityMember{}` to be tracked.
 

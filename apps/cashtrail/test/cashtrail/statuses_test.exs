@@ -41,16 +41,15 @@ defmodule Cashtrail.StatusesTest do
   end
 
   test "filter_by_status/2 create a query that find the given statuses" do
-    expected_query =
-      ~s|SELECT e0."id", e0."name", e0."type", e0."archived_at", e0."owner_id", e0."inserted_at", e0."updated_at" FROM "entities" AS e0 WHERE (NOT (e0."archived_at" IS NULL) OR ((e0."archived_at" IS NULL) OR $1))|
-
     assert Statuses.filter_by_status(Cashtrail.Entities.Entity, %{status: [:active, :archived]})
-           |> to_sql() == expected_query
+           |> to_sql() =~
+             ~s|WHERE (NOT (e0."archived_at" IS NULL) OR ((e0."archived_at" IS NULL) OR $1))|
 
     assert Statuses.filter_by_status(Cashtrail.Entities.Entity, %{
              "status" => ["active", "archived"]
            })
-           |> to_sql() == expected_query
+           |> to_sql() =~
+             ~s|WHERE (NOT (e0."archived_at" IS NULL) OR ((e0."archived_at" IS NULL) OR $1))|
   end
 
   defp to_sql(query) do
