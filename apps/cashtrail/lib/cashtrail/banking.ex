@@ -10,6 +10,7 @@ defmodule Cashtrail.Banking do
 
   import Cashtrail.Entities.Tenants, only: [to_prefix: 1]
   import Cashtrail.QueryBuilder, only: [build_filter: 3, build_search: 3]
+  import Cashtrail.Statuses, only: [filter_by_status: 3]
 
   @type institution :: Banking.Institution.t()
 
@@ -234,8 +235,9 @@ defmodule Cashtrail.Banking do
   """
   def list_accounts(%Entities.Entity{} = entity, options \\ []) do
     Banking.Account
-    |> build_filter(Keyword.get(options, :filter), [:type, :status, :currency, :institution_id])
+    |> build_filter(Keyword.get(options, :filter), [:type, :currency, :institution_id])
     |> build_search(Keyword.get(options, :search), [:description])
+    |> filter_by_status(Keyword.get(options, :filter), :status)
     |> Ecto.Queryable.to_query()
     |> Map.put(:prefix, to_prefix(entity))
     |> Paginator.paginate(options)
@@ -262,7 +264,7 @@ defmodule Cashtrail.Banking do
   end
 
   @doc """
-  Creates a account.
+  Creates an account.
 
   * entity - The `%Cashtrail.Entities.Entity{}` that the account references.
   * params - A `map` with the params of the account to be created:
@@ -304,7 +306,7 @@ defmodule Cashtrail.Banking do
   end
 
   @doc """
-  Updates a account.
+  Updates an account.
 
   * params - A `map` with the field of the account to be updated. See
   `create_account/2` to know about the params that can be given.
@@ -325,7 +327,43 @@ defmodule Cashtrail.Banking do
   end
 
   @doc """
-  Deletes a account.
+  Archives an account.
+
+  ## Examples
+
+      iex> archive_account(account)
+      {:ok, %Account{}}
+
+      iex> archive_account(account})
+      {:error, :already_archived}
+
+  """
+  def archive_account(%Banking.Account{} = account) do
+    account
+    |> Banking.Account.archive_changeset()
+    |> Repo.update()
+  end
+
+  @doc """
+  Unarchives an account.
+
+  ## Examples
+
+      iex> unarchive_account(account)
+      {:ok, %Account{}}
+
+      iex> unarchive_account(account})
+      {:error, :already_archived}
+
+  """
+  def unarchive_account(%Banking.Account{} = account) do
+    account
+    |> Banking.Account.unarchive_changeset()
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes an account.
 
   ## Arguments
 

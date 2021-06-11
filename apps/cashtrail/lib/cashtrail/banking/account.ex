@@ -24,10 +24,6 @@ defmodule Cashtrail.Banking.Account do
     * `:credit` - To be used to track loans, financings, or credit cards.
     * `:investment` - To be used to track investments, like broker account.
     * `:other` - To be used to track other kind of account that was not listed.
-  * `:status` - The status of the account, that can be:
-    * `:active` - if the account is used and movimented.
-    * `:archived` -if the account is no longer used and cannot be movimented, but want to keep
-    the data history.
   * `:initial_balance_amount` - The initial balance of the account.
   * `:initial_balance_date` - The date of the initial balance of account. This cannot be changed
   after creation.
@@ -42,6 +38,7 @@ defmodule Cashtrail.Banking.Account do
   more inforation.
   * `:predicted_account` - If this account is a credit card or a loan, the predicted_account is
   where the transaction will be created.
+  * `:archived_at` - When the account was archived.
   * `:inserted_at` - When the account was inserted at the first time.
   * `:updated_at` - When the account was updated at the last time.
 
@@ -53,14 +50,14 @@ defmodule Cashtrail.Banking.Account do
 
   alias Cashtrail.Banking
 
+  @derive Cashtrail.Statuses.WithStatus
+
   @type account_type :: :cash | :checking | :saving | :digital | :credit | :investment | :other
   @type transaction_type :: :income | :expense | :tax | :transfer | :exchange | :refund
-  @type status :: :active | :archived
   @type t :: %Cashtrail.Banking.Account{
           id: Ecto.UUID.t() | nil,
           description: String.t() | nil,
           type: account_type() | nil,
-          status: status() | nil,
           initial_balance_amount: Decimal.t() | nil,
           initial_balance_date: Date.t() | nil,
           avatar_url: String.t() | nil,
@@ -69,6 +66,7 @@ defmodule Cashtrail.Banking.Account do
           currency: String.t() | nil,
           institution: Banking.Institution.t() | nil,
           predicted_account: Banking.Account.t() | nil,
+          archived_at: NaiveDateTime.t() | nil,
           updated_at: NaiveDateTime.t() | nil,
           inserted_at: NaiveDateTime.t() | nil,
           __meta__: Ecto.Schema.Metadata.t()
@@ -84,7 +82,6 @@ defmodule Cashtrail.Banking.Account do
       values: [:cash, :checking, :saving, :digital, :credit, :investment, :other],
       default: :cash
 
-    field :status, Ecto.Enum, values: [:active, :archived], default: :active
     field :initial_balance_amount, :decimal, default: 0
     field :initial_balance_date, :date
     field :avatar_url, :string
@@ -98,6 +95,7 @@ defmodule Cashtrail.Banking.Account do
     belongs_to :institution, Banking.Institution
     belongs_to :predicted_account, Banking.Account
 
+    field :archived_at, :naive_datetime
     timestamps()
   end
 
@@ -129,12 +127,19 @@ defmodule Cashtrail.Banking.Account do
       :initial_balance_amount,
       :avatar_url,
       :institution_id,
-      :predicted_account_id,
-      :status
+      :predicted_account_id
     ])
     |> validate_required([:description])
     |> cast_embed(:identifier)
     |> foreign_key_constraint(:institution_id)
     |> foreign_key_constraint(:predicted_account_id)
+  end
+
+  def archive_changeset(account) do
+    change(account, %{archived_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)})
+  end
+
+  def unarchive_changeset(account) do
+    change(account, %{archived_at: nil})
   end
 end

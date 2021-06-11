@@ -4,6 +4,7 @@ defmodule Cashtrail.BankingTest do
   use Cashtrail.TenantCase
 
   alias Cashtrail.{Banking, Paginator}
+  alias Cashtrail.Statuses
 
   describe "institutions" do
     test "list_institutions/2 returns all institutions", %{tenant: tenant} do
@@ -164,8 +165,8 @@ defmodule Cashtrail.BankingTest do
     end
 
     test "list_accounts/2 filtering by status", %{tenant: tenant} do
-      insert(:account, tenant: tenant, status: :archived)
-      %{id: account_id} = insert(:account, tenant: tenant, status: :active)
+      insert(:account, tenant: tenant, archived_at: NaiveDateTime.utc_now())
+      %{id: account_id} = insert(:account, tenant: tenant)
 
       assert %Paginator.Page{
                entries: [%Banking.Account{id: ^account_id}]
@@ -251,7 +252,6 @@ defmodule Cashtrail.BankingTest do
       account_params = params_for(:account, tenant: tenant)
 
       assert {:ok, %Banking.Account{} = account} = Banking.create_account(tenant, account_params)
-      assert account.status == :active
       assert account.type == account_params.type
       assert account.avatar_url == account_params.avatar_url
       assert account.description == account_params.description
@@ -273,7 +273,6 @@ defmodule Cashtrail.BankingTest do
       initial_balance_amount: "abc",
       initial_balance_date: "2019",
       restricted_transaction_types: ["invalid"],
-      status: :invalid,
       type: :invalid
     }
 
@@ -304,8 +303,7 @@ defmodule Cashtrail.BankingTest do
         swift: "JEKPQS9478",
         iban: "NL49DLNW6040434458"
       },
-      initial_balance_amount: "123.4",
-      status: "archived"
+      initial_balance_amount: "123.4"
     }
 
     test "update_account/2 with valid data updates the account", %{tenant: tenant} do
@@ -315,7 +313,6 @@ defmodule Cashtrail.BankingTest do
       assert account.avatar_url == "some updated avatar_url"
       assert account.description == "some updated description"
       assert account.initial_balance_amount == Decimal.new("123.4")
-      assert account.status == :archived
 
       assert %Banking.AccountIdentifier{
                bank_code: "000",
@@ -330,7 +327,6 @@ defmodule Cashtrail.BankingTest do
       %{
         id: account_id,
         description: account_description,
-        status: status,
         identifier: identifier
       } = account = insert(:account, tenant: tenant)
 
@@ -339,9 +335,26 @@ defmodule Cashtrail.BankingTest do
       assert %{
                id: ^account_id,
                description: ^account_description,
-               status: ^status,
                identifier: ^identifier
              } = Banking.get_account!(tenant, account.id)
+    end
+
+    test "archive_account/1 archives the account", %{tenant: tenant} do
+      account = insert(:account, tenant: tenant)
+
+      {:ok, account} = Banking.archive_account(account)
+
+      assert not is_nil(account.archived_at)
+      assert Statuses.status(account) == :archived
+    end
+
+    test "unarchive_account/1 unarchives the account", %{tenant: tenant} do
+      account = insert(:account, tenant: tenant, archived_at: NaiveDateTime.utc_now())
+
+      {:ok, account} = Banking.unarchive_account(account)
+
+      assert is_nil(account.archived_at)
+      assert Statuses.status(account) == :active
     end
 
     test "delete_account/1 deletes the account", %{tenant: tenant} do
