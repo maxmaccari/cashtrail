@@ -4,6 +4,16 @@
 ![Elixir CI](https://github.com/maxmaccari/cashtrail/workflows/Elixir%20CI/badge.svg?branch=master)
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/maxmaccari/cashtrail) 
 
+## Important Notes About this Project
+When I started, I wanted to make an Open Source project similar to some tools I used to deal with money. However, I realized that I had difficulties in using those tools, due to their complexity, and that I was bringing that same complexity to this tool. The idea of cashtrail was to be flexible, however, unfortunately, too much flexibility also brings with it too much complexity.
+
+So I decided to take some time to study a little, and check out other tools on the market. What really caught my attention were the plain-text-based tools, like [hledger](https://github.com/simonmichael/hledger) and [beancount](https://github.com/beancount/beancount). As these tools meet my goals, I decided to study and use them for a while.
+And I want to bring a tool like these to Elixir world, because I think it makes a lot of sense using Elixir to manage and query things related to Money.
+
+So this project will remain archived for while. I really like using this project as a reference for Multi Tenancy, because I really did a great job with it here. 
+Maybe, after finishing the text-base tool for handling finances, I'll come back to this project. Perhaps I'll have to refactory lots of things, but it will be a project
+that brings a good balance between flexibility and complexity.
+
 ## !!!Warning!!!
 
 **This is a working in progress project that is in Phase 1 of development.**
